@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../static/style.css">
+    <title>{% block title %}GAFS Alert Service{%endblock %}</title>
+</head>
+
+<div>
+    <p class="message"><span>Please Login or Sign Up</span></p>
+</div>
+
+<div class="center third-width">
+    <a href="/login">
+        <button class="button">Login</button>
+    </a>
+    <a href="/signup">
+        <button class="button">Sign Up</button>
+    </a>
+</div>
+{% endblock %}

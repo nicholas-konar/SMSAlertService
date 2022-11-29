@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../static/style.css">
+    <title>{% block title %}GAFS Alert Service{% endblock %}</title>
+</head>
+
+{% if message  %}
+<div>
+    <p class="message">{{ message }}</p>
+</div>
+{% endif %}
+
+    <form action="" method="post" class="center third-width">
+            <label for="Username">Username:</label>
+            <input class="center" name="username" id="Username" aria-describedby="phoneHelp">
+            <label for="InputPassword">Password:</label>
+            <input class="center" type="password" name="password" id="InputPassword">
+            <button type="submit" class="button">Log In</button>
+    </form>
+
+{% endblock %}

@@ -1,0 +1,83 @@
+.message {
+  text-align: center;
+  vertical-align: middle;
+  box-sizing: border-box;
+  position: relative;
+  margin: auto;
+  margin-top: 1%;
+  margin-bottom: 1%;
+  padding: 1%;
+  width: 50%;
+  border-style: solid;
+  border-color: white;
+  border-width: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0px 10px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.center {
+  margin: auto;
+  text-align: center;
+}
+
+.third-width {
+  box-sizing: border-box;
+  width: 25%;
+}
+
+.button {
+  width: 10%;
+  position: relative;
+  background-color: white;
+  border-radius: 10px;
+  border-style: solid;
+  border-color: white;
+  border-width: 0px;
+  color: black;
+  padding: 1%;
+  width: 100%;
+  margin-top: 10%;
+  text-align: center;
+  display: inline-block;
+  transition-duration: 0.3s;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}
+
+.navbar-toggler{
+  background-color: black;
+  color: white;
+  border-color: white;
+  border-width: 2px;
+  text-color: white;
+}
+
+.button:hover {
+  background-color: black;
+  color: white;
+}
+
+.form-style {
+  margin: auto;
+  margin-top: 1%;
+}
+
+input {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  position: relative;
+  border-style: solid;
+  border-color: white;
+  border-width: 2px;
+  padding: 1%;
+  width: 100%;
+  margin: 5%;
+}
+
+h1 {
+  color: navy;
+  margin-left: 20px;
+}
+
+h2 {
+  font-family: Sans-serif;
+}
