@@ -4,14 +4,12 @@ import pymongo
 
 from SMSAlertService import app
 
+# NO VPN
 # In compass, enter regular_url value from below, then select default tls and upload mongodb.pem in the second file upload box (nothing in the first)
-# NO VPN!!!
-# NO VPN!!!
-# NO VPN!!! test
 
 # to get the certs to work, in the command line say:
-# (SMSAlertService) Nicholass-MBP:SMSAlertService nicholaskonar$ python3 -m pip install certifi
-# (SMSAlertService) Nicholass-MBP:SMSAlertService nicholaskonar$ export SSL_CERT_FILE=$(python3 -c "import certifi; print(certifi.where())")
+# python3 -m pip install certifi
+# export SSL_CERT_FILE=$(python3 -c "import certifi; print(certifi.where())")
 # and use pymongo.MongoClient(regular_url, tls=True) in the code
 
 app.secret_key = 'testing'
@@ -66,9 +64,9 @@ def get_keywords(username):
     return user['Keywords']
 
 
-# def get_subscription_status(username):
-#     user = user_records.find_one({"Username": username})
-#     return user['Subscription']['Active']
+def get_subscription_status(username):
+    user = user_records.find_one({"Username": username})
+    return user['Subscription']['Active']
 
 
 def create_user(username, password, phonenumber):
