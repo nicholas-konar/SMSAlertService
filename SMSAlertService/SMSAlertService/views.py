@@ -1,31 +1,7 @@
-import ssl
-
 from bcrypt import checkpw
-import pymongo
 from flask import request, redirect, render_template, session, url_for, jsonify
 from twilio.twiml.messaging_response import MessagingResponse
-
 from SMSAlertService import app, mongo, notification
-
-# PayPal
-pp_access_token_DEV = 'A21AAIWQ8JmpLwLc98Dupzfy0A-xo2-o8YxK1d_C_XSf7HUG_C6GcjX0SidjaqvnoAtnZy-XNvSwV49AenLXUj1UdYuF14FWA'
-pp_client_id_DEV = 'AcP7hzgEzQPWCWHLjdf-bndJwyxF59cjM7VYPk1rdOlSk6we6297xWyvsDuxALbNh_6er7t1AVuqzDsl'
-pp_product_id_DEV = 'PROD-4N235400WD644974Y'
-pp_plan_id_DEV = 'P-9F522710GA548083PMHL3TSY'
-pp_subscription_link_DEV = 'https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-33F52811MW323513PMHILFDA'
-
-# Mongo SHOULD BE ABLE TO DELETE THIS AND KEEP IN MONGO.PY OR CONFIG FILE
-import certifi
-
-ca = certifi.where()
-
-app.secret_key = "testing"
-connection = "mongodb+srv://admin:6aQumg0BN557148F@cluster0.xwyrq.mongodb.net/test"
-# client_DEV = pymongo.MongoClient(connection, tls=True, tlsAllowInvalidCertificates=True)
-client_DEV = pymongo.MongoClient(connection)
-db_DEV = client_DEV['gafs_alert_service_db']
-user_records = db_DEV.user_data
-app_records = db_DEV.app_data
 
 
 # -------------------------------- ABOUT + LOGIN + LOGOUT + SIGNUP --------------------------------
@@ -44,7 +20,7 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        username_found = user_records.find_one({"Username": username})
+        username_found = mongo.get_user(username)
         if username_found:
             passwordcheck = username_found['Password']
 
@@ -285,7 +261,7 @@ def notify():
     return resp
 
 
-# link username & subscriptionID from js pp button
+# link username & subscriptionID from js pp subscription button
 @app.route('/record-subscription-id')
 def record_subscription_id():
     username = request.args.get('username')
