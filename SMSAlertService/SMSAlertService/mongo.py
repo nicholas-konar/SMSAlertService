@@ -7,7 +7,7 @@ from SMSAlertService import app
 # In compass, enter regular_url value from below, then select default tls and upload mongodb.pem in the second file upload box (nothing in the first)
 # NO VPN!!!
 # NO VPN!!!
-# NO VPN!!!
+# NO VPN!!! test
 
 # to get the certs to work, in the command line say:
 # (SMSAlertService) Nicholass-MBP:SMSAlertService nicholaskonar$ python3 -m pip install certifi
