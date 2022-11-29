@@ -1,0 +1,32 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+
+<div role="alert">
+    <p class="message">Sign Up</p>
+</div>
+
+
+<form action="/signup" method="POST" class="center third-width">
+        <label for="Username">Reddit Username</label>
+        <input name="username" class="center" id="Username" aria-describedby="phoneHelp" placeholder="Reddit Username">
+        <small id="usernameHelp" class="form-text text-muted">Please enter a username</small>
+        <label for="InputPhoneNumber">Phone Number</label>
+        <input type="number"
+               name="phonenumber"
+               class="center"
+               id="InputPhoneNumber"
+               placeholder="No spaces or dashes"
+               pattern="[0-9]{10}"
+               required="required">
+        <small id="phoneHelp" class="form-text text-muted">Your information will not be shared, sold, or abused.</small>
+        <label for="InputPassword">Password</label>
+        <input type="password" name="password" class="center" id="InputPassword" placeholder="Password">
+        <button type="submit" class="button" style="button;">Submit</button>
+</form>
+
+
+{% endblock %}

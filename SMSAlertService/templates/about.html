@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+{% if message  %}
+    <p class="message">{{ message }}</p>
+{% endif %}
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <link rel="stylesheet" href="style.css">
+            <script src="scripts.js"></script>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <!-- Ensures optimal rendering on mobile devices. -->
+            <meta http-equiv="X-UA-Compatible" content="IE=edge"/> <!-- Optimal Internet Explorer compatibility -->
+        </head>
+
+<div class="message">
+    <h3>What is the SMS Alert Service?</h3>
+    <br/>
+    <p>We're the exclusive 'in stock notification' provider for our favorite buy/sell/trade subreddit!
+        <br/><br/>Does that certain something just keep slipping away? With the SMS Alert Service, you're only 3 steps away from finally acquiring that rare or obscure item :</p>
+        <ul>
+            <li>Create an <strong>Account</strong></li>
+            <li>Buy an <strong>SMS Package</strong></li>
+            <li>Enter your <strong>Keywords</strong></li>
+        </ul>
+    <br/>
+    <p>
+            We scan Reddit every 30 seconds. As soon as we spot a post that contains one of your keywords, we text you the link.<br/><br/>Kick back, relax, and get ready to say <strong>dibs!</strong>
+    </p>
+
+</div>
+{% endblock %}
