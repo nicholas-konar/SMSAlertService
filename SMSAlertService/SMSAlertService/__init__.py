@@ -6,8 +6,7 @@ import SMSAlertService.views
 
 SMSAlertService.secret_key = "testing"
 
-SMSAlertService.app.run()
+if __name__ == "__init__":
+    SMSAlertService.app.run()
 
 # FLASK_APP=SMSAlertService/__init__.py --> in terminal
-
-# test
