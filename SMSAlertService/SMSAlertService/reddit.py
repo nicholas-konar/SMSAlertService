@@ -1,14 +1,22 @@
+import configparser
+import os
 import praw
-
 from SMSAlertService import mongo, app
 
-reddit = praw.Reddit(client_id='lOIWSUwdm3Ld2llq-XDEZA',
-                     client_secret='1nG-J-vaasQMavUhfB_mmnonlBAnoQ',
-                     user_agent='GAFSAlertService',
-                     username='GAFSAlertService',
-                     password='qaXwuw-7bubsu-caqtec')
+config = configparser.RawConfigParser()
+thisfolder = os.path.dirname(os.path.abspath(__file__))
+initfile = os.path.join(thisfolder, 'config.init')
+config.read(initfile)
 
-subreddit = reddit.subreddit('GunAccessoriesForSale')
+
+reddit = praw.Reddit(client_id=config.get('reddit', 'client_id'),
+                     client_secret=config.get('reddit', 'client_secret'),
+                     user_agent=config.get('reddit', 'user_agent'),
+                     username=config.get('reddit', 'username'),
+                     password=config.get('reddit', 'password'))
+
+subreddit_name = config.get('reddit', 'subreddit')
+subreddit = reddit.subreddit('subreddit_name')
 
 
 def has_new_post():
@@ -23,7 +31,6 @@ def has_new_post():
         return False
 
 
-
 def get_latest_post():
     for post in subreddit.new(limit=1):
         return post
@@ -31,4 +38,3 @@ def get_latest_post():
 
 def set_last_post(post):
     mongo.save_post_data(post)
-

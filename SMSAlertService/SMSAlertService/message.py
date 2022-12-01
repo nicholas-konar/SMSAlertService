@@ -1,10 +1,21 @@
+import configparser
 import logging
+import os
 
 from twilio.rest import Client
 
-twilio_number = '+12163508050'
-account_sid = 'AC861b4f8f25965d16957760151a510667'
-auth_token = 'redacted'
+from SMSAlertService import app
+
+config = configparser.RawConfigParser()
+thisfolder = os.path.dirname(os.path.abspath(__file__))
+initfile = os.path.join(thisfolder, 'config.init')
+config.read(initfile)
+app.logger.debug(initfile)
+
+twilio_number = config.get('twilio', 'twilio_number')
+account_sid = config.get('twilio', 'account_sid')
+auth_token = config.get('twilio', 'auth_token')
+messaging_service_sid = config.get('twilio', 'messaging_service_sid')
 
 
 def send(destination, link, keywords):
@@ -12,11 +23,15 @@ def send(destination, link, keywords):
     body = create_body(link, keywords)
     message = client.messages.create(
         body=body,
-        messaging_service_sid='MGca7ef8a1981f4ae814dc3a60fe0caa15',
+        messaging_service_sid=messaging_service_sid,
         to=destination
     )
-    log = logging.getLogger('GAFSAlertService')
-    log.info('Message sent to ' + destination + ' with SID: ' + message.sid)
+    app.logger.debug('Message sent to ' + destination + ' with SID: ' + message.sid)
+
+
+def create_body(link, keywords):
+    formatted_keywords = format_keywords(keywords)
+    return 'There\'s a new post on GAFS that matched some of your keywords: ' + formatted_keywords + '\n' + link
 
 
 def format_keywords(keywords):
@@ -24,10 +39,4 @@ def format_keywords(keywords):
     for keyword in keywords:
         formatted_keywords += ' ' + keyword
     return formatted_keywords
-
-
-def create_body(link, keywords):
-    formatted_keywords = format_keywords(keywords)
-    return 'There\'s a new post on GAFS that matched some of your keywords: ' + formatted_keywords + '\n' + link
-
 
