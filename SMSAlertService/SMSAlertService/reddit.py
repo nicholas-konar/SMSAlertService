@@ -4,9 +4,9 @@ import praw
 from SMSAlertService import mongo, app
 
 config = configparser.RawConfigParser()
-thisfolder = os.path.dirname(os.path.abspath(__file__))
-initfile = os.path.join(thisfolder, 'config.init')
-config.read(initfile)
+folder = os.path.dirname(os.path.abspath(__file__))
+file = os.path.join(folder, 'config.init')
+config.read(file)
 
 
 reddit = praw.Reddit(client_id=config.get('reddit', 'client_id'),
@@ -16,7 +16,7 @@ reddit = praw.Reddit(client_id=config.get('reddit', 'client_id'),
                      password=config.get('reddit', 'password'))
 
 subreddit_name = config.get('reddit', 'subreddit')
-subreddit = reddit.subreddit('subreddit_name')
+subreddit = reddit.subreddit(subreddit_name)
 
 
 def has_new_post():
