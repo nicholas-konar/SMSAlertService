@@ -9,7 +9,7 @@ def send():
         new_post = True
         post = reddit.get_latest_post()
         users = mongo.get_users()
-        for user in users:
+        for user in users: # todo: this needs to be top level so we stop sending everyone every message
             try:
                 if user['Messages'] > 0:
                     for keyword in user['Keywords']:
@@ -21,13 +21,13 @@ def send():
                             'PhoneNumber'])
                         message.send(user['PhoneNumber'], post.url, matching_keywords)
                         messages_sent += 1
+                matching_keywords = []
             except KeyError as key:
                 app.logger.error(
                     'Error parsing the following key in database: ' + str(key) + " for User " + str(user['Username']))
                 continue
     response = {
         "NewPost": new_post,
-        "KeywordsMatched": len(matching_keywords),
         "MessagesSent": messages_sent
     }
     return response

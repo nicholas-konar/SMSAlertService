@@ -1,0 +1,18 @@
+[twilio]
+twilio_number = +12163508050
+account_sid = AC861b4f8f25965d16957760151a510667
+messaging_service_sid = MGca7ef8a1981f4ae814dc3a60fe0caa15
+auth_token = 090c9846b50ac44150266671017b4c67
+
+[reddit]
+client_id = lOIWSUwdm3Ld2llq-XDEZA
+client_secret = 1nG-J-vaasQMavUhfB_mmnonlBAnoQ
+user_agent = GAFSAlertService
+username = GAFSAlertService
+password = qaXwuw-7bubsu-caqtec
+subreddit = GunAccessoriesForSale
+
+[mongo]
+secret_key = testing
+url = mongodb+srv://admin:6aQumg0BN557148F@cluster0.xwyrq.mongodb.net/test
+db_dev = gafs_alert_service_db
