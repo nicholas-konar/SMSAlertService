@@ -16,3 +16,4 @@ subreddit = GunAccessoriesForSale
 secret_key = testing
 url = mongodb+srv://admin:6aQumg0BN557148F@cluster0.xwyrq.mongodb.net/test
 db_dev = gafs_alert_service_db
+blacklist_id = 638975538999be35d4a4f46f

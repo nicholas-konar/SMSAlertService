@@ -229,7 +229,7 @@ def sms_reply():
 @app.route("/reddit-webhook", methods=['POST'])
 def reddit_webhook():
     app.logger.debug('Reddit webhook POST request: ' + str(request.get_json()))
-    notification.send()
+    notification.distribute()
     return jsonify({"status": True})
 
 
@@ -256,8 +256,7 @@ def process_sale():
 
 @app.route("/notify", methods=['GET'])
 def notify():
-    resp = notification.send()
-    # return jsonify(resp)
+    resp = notification.distribute()
     return resp
 
 
