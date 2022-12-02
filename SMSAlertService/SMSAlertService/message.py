@@ -7,10 +7,9 @@ from twilio.rest import Client
 from SMSAlertService import app
 
 config = configparser.RawConfigParser()
-thisfolder = os.path.dirname(os.path.abspath(__file__))
-initfile = os.path.join(thisfolder, 'config.init')
-config.read(initfile)
-app.logger.debug(initfile)
+folder = os.path.dirname(os.path.abspath(__file__))
+file = os.path.join(folder, 'config.init')
+config.read(file)
 
 twilio_number = config.get('twilio', 'twilio_number')
 account_sid = config.get('twilio', 'account_sid')

@@ -1,5 +1,8 @@
+import os
+
 import arrow
 import bcrypt
+import configparser
 import pymongo
 
 from SMSAlertService import app
@@ -12,13 +15,18 @@ from SMSAlertService import app
 # export SSL_CERT_FILE=$(python3 -c "import certifi; print(certifi.where())")
 # and use pymongo.MongoClient(regular_url, tls=True) in the code
 
-app.secret_key = 'testing'
-regular_url = 'mongodb+srv://admin:6aQumg0BN557148F@cluster0.xwyrq.mongodb.net/test'
-url_with_cert = "mongodb+srv://admin:6aQumg0BN557148F@cluster0.xwyrq.mongodb.net/test?tls=true&tlsCertificateKeyFile=%2FUsers%2Fnicholaskonar%2Fmongodb.pem"
-# client_DEV = pymongo.MongoClient(regular_url, tls=True, tlsCAFile="/Users/nicholaskonar/mongodb-cert.pem")
-client_DEV = pymongo.MongoClient(regular_url, tls=True)
 
-db_DEV = client_DEV.get_database('gafs_alert_service_db')
+config = configparser.RawConfigParser()
+folder = os.path.dirname(os.path.abspath(__file__))
+file = os.path.join(folder, 'config.init')
+config.read(file)
+
+app.secret_key = config.get('mongo', 'secret_key')
+url = config.get('mongo', 'url')
+client_DEV = pymongo.MongoClient(url, tls=True)
+
+db_dev_name = config.get('mongo', 'db_dev')
+db_DEV = client_DEV.get_database(db_dev_name)
 user_records = db_DEV.user_data
 app_records = db_DEV.app_data
 

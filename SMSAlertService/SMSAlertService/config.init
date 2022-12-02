@@ -11,3 +11,8 @@ user_agent = GAFSAlertService
 username = GAFSAlertService
 password = qaXwuw-7bubsu-caqtec
 subreddit = GunAccessoriesForSale
+
+[mongo]
+secret_key = testing
+url = mongodb+srv://admin:6aQumg0BN557148F@cluster0.xwyrq.mongodb.net/test
+db_dev = gafs_alert_service_db
