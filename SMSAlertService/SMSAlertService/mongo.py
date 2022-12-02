@@ -57,7 +57,7 @@ def process_transaction(username, new_msg_count, amount):
                     "Amount": amount
                 }
             }
-        }
+    }
 
     user_records.update_one(query, new_value)
     app.logger.debug(f'{username} just purchased {new_msg_count} messages')
@@ -207,11 +207,10 @@ def update_message_data(username):
                 "Messages": updated_msg_count,
                 "MessagesSent": updated_sent_count
             }
-        }
+    }
 
     user_records.update_one(query, new_value)
     app.logger.debug(f'Updated DB msging data for {username}')
-
 
 
 def add_keyword(username, keyword):
@@ -219,6 +218,19 @@ def add_keyword(username, keyword):
     new_value = {"$push": {"Keywords": keyword}}
     user_records.update_one(query, new_value)
     app.logger.debug('Added new keyword "' + keyword + '"to User "' + username + '"')
+
+
+def add_to_blacklist(phonenumber):
+    blacklist_id = config.get('mongo', 'blacklist_id')
+    query = {"id": blacklist_id}
+    new_value = {"$push": {"Keywords": phonenumber}}
+    app_records.update_one(query, new_value)
+    app.logger.debug('Added ' + phonenumber + 'to blacklist')
+
+
+def get_blacklist():
+    blacklist = app_records.find_one({"Document": "Blacklist"})
+    return blacklist['Blacklist']
 
 
 def delete_all_keywords(username):
