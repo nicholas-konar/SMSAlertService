@@ -18,7 +18,7 @@ from SMSAlertService import app
 
 config = configparser.RawConfigParser()
 folder = os.path.dirname(os.path.abspath(__file__))
-file = os.path.join(folder, 'config.init')
+file = os.path.join(folder, 'config.ini')
 config.read(file)
 
 app.secret_key = config.get('mongo', 'secret_key')
@@ -231,6 +231,16 @@ def add_to_blacklist(phonenumber):
 def get_blacklist():
     blacklist = app_records.find_one({"Document": "Blacklist"})
     return blacklist['Blacklist']
+
+
+def blacklisted(user):
+    blacklist = get_blacklist()
+    app.logger.info('Checking blacklist for ' + user['PhoneNumber'])
+    for number in blacklist:
+        if user['PhoneNumber'] == number:
+            app.logger.debug(f'Blacklisted number detected for user {user["Username"]}: {user["PhoneNumber"]}')
+            return True
+    return False
 
 
 def delete_all_keywords(username):
