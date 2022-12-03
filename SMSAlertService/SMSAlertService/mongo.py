@@ -32,12 +32,12 @@ app_records = db_DEV.app_data
 
 
 def process_transaction(username, new_msg_count, amount):
-    user = get_user(username)
     timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
 
     old_msg_count = get_message_count(username)
     updated_msg_count = old_msg_count + int(new_msg_count)
 
+    user = get_user(username)
     updated_txn_count = user["TransactionCount"] + 1
     updated_total_spent = user["TotalAmountSpent"] + float(amount)
 
@@ -61,6 +61,22 @@ def process_transaction(username, new_msg_count, amount):
 
     user_records.update_one(query, new_value)
     app.logger.debug(f'{username} just purchased {new_msg_count} messages')
+
+
+def reduce_msg_count(username):
+    old_msg_count = get_message_count(username)
+    updated_msg_count = old_msg_count - 1
+
+    query = {"Username": username}
+    new_value = {
+        "$set":
+            {
+                "Messages": updated_msg_count
+            }
+    }
+
+    user_records.update_one(query, new_value)
+    app.logger.debug(f'Message count reduced by 1 for user {username}')
 
 
 def get_users():
