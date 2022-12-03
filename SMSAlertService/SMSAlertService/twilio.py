@@ -8,7 +8,7 @@ from SMSAlertService import app
 
 config = configparser.RawConfigParser()
 folder = os.path.dirname(os.path.abspath(__file__))
-file = os.path.join(folder, 'config.init')
+file = os.path.join(folder, 'config.ini')
 config.read(file)
 
 twilio_number = config.get('twilio', 'twilio_number')
@@ -25,13 +25,13 @@ def send(username, destination, link, keywords):
         messaging_service_sid=messaging_service_sid,
         to=destination
     )
-    app.logger.debug('Message sent to ' + username + ' at: ' + destination + ' with SID: ' + message.sid)
+    app.logger.debug(f'Message sent to {username} at: {destination} with SID: {message.sid}')
 
 
 def create_body(link, keywords):
     formatted_keywords = format_keywords(keywords)
     subreddit = config.get('reddit', 'subreddit')
-    return 'A post on ' + subreddit + ' matched some of your keywords: ' + formatted_keywords + '\n' + link
+    return f'A post on {subreddit} matched some of your keywords: {formatted_keywords}\n{link}'
 
 
 def format_keywords(keywords):

@@ -5,7 +5,7 @@ from SMSAlertService import mongo, app
 
 config = configparser.RawConfigParser()
 folder = os.path.dirname(os.path.abspath(__file__))
-file = os.path.join(folder, 'config.init')
+file = os.path.join(folder, 'config.ini')
 config.read(file)
 
 
