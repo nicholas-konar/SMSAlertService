@@ -4,7 +4,7 @@
 {% block content %}
 
 {% if message  %}
-    <p class="message"><strong>Hello, {{ username }}!</strong><br/>{{ message }}</p>
+<p class="message"><strong>Hello, {{ username }}!</strong><br/><i>{{ message }}</i></p>
 {% endif %}
     <!DOCTYPE html>
     <html>
@@ -18,7 +18,8 @@
 <div id="smart-button-container" class="message">
       <div style="text-align: center; width: 100%;">
         <div style="margin-bottom: 1.25rem;">
-            <p>Buy SMS Alerts below:</p>
+          <p style="border-bottom: black">Buy SMS Alerts below:</p>
+          <p><a href="/about">What is this?</a></p>
           <select id="item-options">
               <option value="10 Messages" price="5.00">10 SMS Alerts - 5.00 USD</option>
               <option value="50 Messages" price="10.00">50 SMS Alerts - 10.00 USD</option>
@@ -182,7 +183,7 @@
         document.getElementById("keywords").innerHTML = keywordvar;
 
         function myFunction(keyword, index) {
-          keywordvar += "<tr><td>" + keyword + "</td><?tr>";
+          keywordvar += "<tr><td>" + keyword + "</td></tr>";
         }
         </script>
     </div>
