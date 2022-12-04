@@ -63,21 +63,19 @@ def process_transaction(username, units_purchased, amount):
 
     query = {"Username": username}
     new_value = {
-        "$set":
-            {
+        "$set": {
                 "Units": updated_unit_count,
                 "UnitsPurchased": updated_units_purchased,
                 "TotalRevenue": updated_total_revenue
             },
-        "$push":
-            {
+        "$push": {
                 "SalesRecords": {
                     "Date": timestamp,
                     "Units": units_purchased,
                     "Revenue": amount
                 }
             }
-    }
+        }
 
     user_records.update_one(query, new_value)
     app.logger.debug(f'{username} just purchased {units_purchased} units')
@@ -92,19 +90,28 @@ def get_message_count(username):
     return user["Units"]
 
 
-def reduce_msg_count(username):
+def update_user_msg_data(username, message):
+    timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
     user = get_user(username)
     updated_msg_count = user["Units"] - 1
     updated_sent_count = user["UnitsSent"] + 1
 
     query = {"Username": username}
     new_value = {
-        "$set":
-            {
+        "$set": {
                 "Units": updated_msg_count,
                 "UnitsSent": updated_sent_count
+            },
+        "$push": {
+                "TwilioRecords": {
+                    "Date": timestamp,
+                    "Status": message.status,
+                    "MessageSID": message.sid,
+                    "Body": message.body,
+                    "ErrorMessage": message.error_message
+                }
             }
-    }
+        }
 
     user_records.update_one(query, new_value)
     app.logger.debug(f'Unit count reduced by 1 for user {username}')

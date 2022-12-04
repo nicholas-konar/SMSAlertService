@@ -15,8 +15,8 @@ def distribute():
                     app.logger.debug('keyword match: ' + keyword)
                     matching_keywords.append(keyword + ', ')
             if matching_keywords and not mongo.blacklisted(user):
-                twilio.send(user['Username'], user['PhoneNumber'], post.url, matching_keywords)
-                mongo.reduce_msg_count(user['Username'])
+                message = twilio.send(user['Username'], user['PhoneNumber'], post.url, matching_keywords)
+                mongo.update_user_msg_data(user['Username'], message)
                 messages_sent += 1
     response = {
         "NewPost": new_post,
