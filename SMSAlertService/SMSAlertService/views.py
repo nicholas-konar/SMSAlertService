@@ -242,13 +242,6 @@ def process_sale():
     status = request.args.get('status')
     units = request.args.get('units')
     amount = request.args.get('amount')
-
-    app.logger.debug(f"status: {status}")
-    app.logger.debug(f"units: {units}")
-    app.logger.debug(f"Username: {username}")
-    app.logger.debug(status == "COMPLETED")
-    app.logger.debug(status == "COMPLETED")
-
     if status == "COMPLETED":
         mongo.process_transaction(username, units, amount)
         return redirect(url_for("profile"))

@@ -31,52 +31,83 @@ user_records = db_DEV.user_data
 app_records = db_DEV.app_data
 
 
-def process_transaction(username, new_msg_count, amount):
+def create_user(username, password, phonenumber):
+    timestamp = arrow.now().format('MM-DD-YYYY HH:mm:ss')
+    hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    user_data = {
+        'SignUpDate': timestamp,
+        'Password': hashed_pw,
+        'Username': username,
+        'PhoneNumber': phonenumber,
+        'TotalRevenue': 0,
+        'Units': 0,
+        'UnitsSent': 0,
+        'UnitsPurchased': 0,
+        'TwilioRecords': [],
+        'SalesRecords': [],
+        'Keywords': []
+    }
+    user_records.insert_one(user_data)
+    app.logger.info(f"Created new user '{username}'")
+
+
+def process_transaction(username, units_purchased, amount):
     timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
 
-    old_msg_count = get_message_count(username)
-    updated_msg_count = old_msg_count + int(new_msg_count)
+    old_unit_count = get_message_count(username)
+    updated_unit_count = old_unit_count + int(units_purchased)
 
     user = get_user(username)
-    updated_txn_count = user["TransactionCount"] + 1
-    updated_revenue = user["Revenue"] + float(amount)
+    updated_units_purchased = user['UnitsPurchased'] + int(units_purchased)
+    updated_total_revenue = user["TotalRevenue"] + float(amount)
 
     query = {"Username": username}
     new_value = {
         "$set":
             {
-                "Messages": updated_msg_count,
-                "TransactionCount": updated_txn_count,
-                "Revenue": updated_revenue
+                "Units": updated_unit_count,
+                "UnitsPurchased": updated_units_purchased,
+                "TotalRevenue": updated_total_revenue
             },
         "$push":
             {
-                "PurchaseHistory": {
+                "SalesRecords": {
                     "Date": timestamp,
-                    "Units": new_msg_count,
-                    "Amount": amount
+                    "Units": units_purchased,
+                    "Revenue": amount
                 }
             }
     }
 
     user_records.update_one(query, new_value)
-    app.logger.debug(f'{username} just purchased {new_msg_count} messages')
+    app.logger.debug(f'{username} just purchased {units_purchased} units')
+
+
+def get_user(username):
+    return user_records.find_one({"Username": username})
+
+
+def get_message_count(username):
+    user = get_user(username)
+    return user["Units"]
 
 
 def reduce_msg_count(username):
-    old_msg_count = get_message_count(username)
-    updated_msg_count = old_msg_count - 1
+    user = get_user(username)
+    updated_msg_count = user["Units"] - 1
+    updated_sent_count = user["UnitsSent"] + 1
 
     query = {"Username": username}
     new_value = {
         "$set":
             {
-                "Messages": updated_msg_count
+                "Units": updated_msg_count,
+                "UnitsSent": updated_sent_count
             }
     }
 
     user_records.update_one(query, new_value)
-    app.logger.debug(f'Message count reduced by 1 for user {username}')
+    app.logger.debug(f'Unit count reduced by 1 for user {username}')
 
 
 def get_users():
@@ -86,26 +117,6 @@ def get_users():
 def get_subscription_status(username):
     user = user_records.find_one({"Username": username})
     return user['Subscription']['Active']
-
-
-def create_user(username, password, phonenumber):
-    timestamp = arrow.now().format('MM-DD-YYYY HH:mm:ss')
-    hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    user_input = {
-        'SignUpDate': timestamp,
-        'Password': hashed_pw,
-        'Username': username,
-        'PhoneNumber': phonenumber,
-        'Messages': 0,
-        'MessagesSent': 0,
-        'TransactionCount': 0,
-        'TotalAmountSpent': 0,
-        'PurchaseHistory': [],
-        'MessageHistory': [],
-        'Keywords': []
-    }
-    user_records.insert_one(user_input)
-    app.logger.info(f"Created new user '{username}'")
 
 
 def reset_password(phonenumber, password):
@@ -195,33 +206,6 @@ def deactivate(subscription_id):
             user_records.update_one(query, value)
             app.logger.info(
                 'Deactivated User ' + username + 'because Subscription ' + subscription_id + ' was canceled.')
-
-
-def get_user(username):
-    return user_records.find_one({"Username": username})
-
-
-def get_message_count(username):
-    user = get_user(username)
-    return user["Messages"]
-
-
-def update_message_data(username):
-    user = get_user(username)
-    updated_msg_count = user["Messages"] - 1
-    updated_sent_count = user["MessagesSent"] + 1
-
-    query = {"Username": username}
-    new_value = {
-        "$set":
-            {
-                "Messages": updated_msg_count,
-                "MessagesSent": updated_sent_count
-            }
-    }
-
-    user_records.update_one(query, new_value)
-    app.logger.debug(f'Updated DB msging data for {username}')
 
 
 def add_to_blacklist(phonenumber):
