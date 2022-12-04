@@ -39,7 +39,7 @@ def process_transaction(username, new_msg_count, amount):
 
     user = get_user(username)
     updated_txn_count = user["TransactionCount"] + 1
-    updated_total_spent = user["TotalAmountSpent"] + float(amount)
+    updated_revenue = user["Revenue"] + float(amount)
 
     query = {"Username": username}
     new_value = {
@@ -47,7 +47,7 @@ def process_transaction(username, new_msg_count, amount):
             {
                 "Messages": updated_msg_count,
                 "TransactionCount": updated_txn_count,
-                "TotalAmountSpent": updated_total_spent
+                "Revenue": updated_revenue
             },
         "$push":
             {
@@ -81,11 +81,6 @@ def reduce_msg_count(username):
 
 def get_users():
     return user_records.find()
-
-
-def get_keywords(username):
-    user = user_records.find_one({"Username": username})
-    return user['Keywords']
 
 
 def get_subscription_status(username):
@@ -229,13 +224,6 @@ def update_message_data(username):
     app.logger.debug(f'Updated DB msging data for {username}')
 
 
-def add_keyword(username, keyword):
-    query = {"Username": username}
-    new_value = {"$push": {"Keywords": keyword}}
-    user_records.update_one(query, new_value)
-    app.logger.debug('Added new keyword "' + keyword + '"to User "' + username + '"')
-
-
 def add_to_blacklist(phonenumber):
     blacklist_id = config.get('mongo', 'blacklist_id')
     query = {"id": blacklist_id}
@@ -257,6 +245,18 @@ def blacklisted(user):
             app.logger.debug(f'Blacklisted number detected for user {user["Username"]}: {user["PhoneNumber"]}')
             return True
     return False
+
+
+def get_keywords(username):
+    user = user_records.find_one({"Username": username})
+    return user['Keywords']
+
+
+def add_keyword(username, keyword):
+    query = {"Username": username}
+    new_value = {"$push": {"Keywords": keyword}}
+    user_records.update_one(query, new_value)
+    app.logger.debug('Added new keyword "' + keyword + '"to User "' + username + '"')
 
 
 def delete_all_keywords(username):

@@ -4,23 +4,27 @@
 {% block content %}
 
 {% if message  %}
-    <p class="message"><strong>{{ message }}</strong></p>
+    <p class="message"><strong>Hello, {{ username }}!</strong><br/>{{ message }}</p>
 {% endif %}
     <!DOCTYPE html>
     <html>
         <head>
             <link rel="stylesheet" href="style.css">
-            <script src="scripts.js"></script>
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <!-- Ensures optimal rendering on mobile devices. -->
             <meta http-equiv="X-UA-Compatible" content="IE=edge"/> <!-- Optimal Internet Explorer compatibility -->
         </head>
 
 <div id="smart-button-container" class="message">
-      <div style="text-align: center;">
+      <div style="text-align: center; width: 100%;">
         <div style="margin-bottom: 1.25rem;">
-          <p>Choose your SMS package</p>
-          <select id="item-options"><option value="10 Messages" price="5.00">10 Messages - 5.00 USD</option><option value="50 Messages" price="9.00">50 Messages - 9.00 USD</option><option value="100 Messages" price="15.00">100 Messages - 15.00 USD</option><option value="250 Messages" price="29.00">250 Messages - 29.00 USD</option></select>
+            <p>Buy SMS Alerts below:</p>
+          <select id="item-options">
+              <option value="10 Messages" price="5.00">10 SMS Alerts - 5.00 USD</option>
+              <option value="50 Messages" price="10.00">50 SMS Alerts - 10.00 USD</option>
+              <option value="250 Messages" price="25.00">250 SMS Alerts - 25.00 USD</option>
+              <option value="500 Messages" price="40.00">500 SMS Alerts - 40.00 USD</option>
+          </select>
           <select style="visibility: hidden" id="quantitySelect"></select>
         </div>
       <div id="paypal-button-container"></div>
@@ -147,14 +151,14 @@
 <!--    {% endif %}-->
     </html>
 <div class="message">
-    <p>You currently have {{message_count}} messages</p>
+    <p>You have {{message_count}} SMS Alerts remaining</p>
     <form action="/add-keyword" method="POST">
         <div class="form-group  center ">
             <label for="NewKeyword">Add a keyword below:</label>
-            <input name="newkeyword" class="form-control" id="NewKeyword" aria-describedby="keywordHelp"
+            <input name="newkeyword" class="form-control input" id="NewKeyword" aria-describedby="keywordHelp"
                    placeholder="" type="text" required="required">
             <small id="newKeywordHelp" class="form-text text-muted">When a new post contains a keyword, we'll send you
-                the link!</small><br/>
+                an alert!</small><br/>
         <button type="submit" class="btn btn-primary container">Add Keyword</button>
         </div>
     </form>
@@ -163,5 +167,25 @@
             <button class="btn btn-danger container">Delete All Keywords</button>
         </a>
     </div>
+</div>
+<div class="message">
+        <div class="center">
+        <p>Your Keywords:</p>
+        <table class="center" id="keywords"></table>
+        <script>
+        let keywordvar = "";
+        const fruits = ["apple", "orange", "cherry"];
+        keywords = {{ keywords|tojson }};
+        console.log(keywords);
+        keywords.forEach(myFunction);
+
+        document.getElementById("keywords").innerHTML = keywordvar;
+
+        function myFunction(keyword, index) {
+          keywordvar += "<tr><td>" + keyword + "</td><?tr>";
+        }
+        </script>
+    </div>
+
 </div>
 {% endblock %}

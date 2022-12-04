@@ -63,7 +63,7 @@
 }
 
 input {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.2);
   position: relative;
   border-style: solid;
   border-color: white;
@@ -73,6 +73,10 @@ input {
   margin: 5%;
 }
 
+table {
+  width: 100%;
+}
+
 h1 {
   color: navy;
   margin-left: 20px;
@@ -80,4 +84,8 @@ h1 {
 
 h2 {
   font-family: Sans-serif;
+}
+
+tr:nth-child(odd) {
+  background-color: #f2f2f2;
 }
