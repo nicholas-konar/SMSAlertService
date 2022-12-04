@@ -4,7 +4,7 @@ from SMSAlertService import app, mongo, reddit, twilio
 def distribute():
     messages_sent = 0
     new_post = False
-    if not reddit.has_new_post():
+    if reddit.has_new_post():
         new_post = True
         post = reddit.get_latest_post()
         users = mongo.get_users()
