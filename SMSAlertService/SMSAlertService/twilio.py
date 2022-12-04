@@ -26,6 +26,7 @@ def send(username, destination, link, keywords):
         to=destination
     )
     app.logger.debug(f'Message sent to {username} at: {destination} with SID: {message.sid}')
+    return message
 
 
 def create_body(link, keywords):
