@@ -83,10 +83,11 @@ def profile():
     else:
         username = session["username"]
         current_phone = session['phonenumber']
-        message = 'SMS packages starting at $5.00!'
+        message = 'SMS packages start at $5.00!'
         message_count = mongo.get_message_count(username)
-
-        return render_template('profile.html', message=message, message_count=message_count, username=username, current_phone=current_phone)
+        keywords = mongo.get_keywords(username)
+        return render_template('profile.html', message=message, message_count=message_count,
+                               keywords=keywords, username=username, current_phone=current_phone)
 
 
 @app.route('/edit-info')
@@ -144,8 +145,9 @@ def add_keyword():
         phonenumber = mongo.get_phonenumber(username)
         message_count = mongo.get_message_count(username)
         message = f'"{keyword}" has been added to keywords!'
-        return render_template('profile.html', message=message, username=username, current_phone=phonenumber,
-                               message_count=message_count)
+        keywords = mongo.get_keywords(username)
+        return redirect(url_for('profile', message=message, username=username, current_phone=phonenumber,
+                                keywords=keywords, message_count=message_count))
 
 
 @app.route("/delete-all-keywords", methods=['GET', 'POST'])
@@ -160,7 +162,7 @@ def delete_all_keywords():
         message_count = mongo.get_message_count(username)
         app.logger.info(f'{username} cleared all keywords.')
         return redirect(url_for('profile', message=message,
-                               username=username, current_phone=phonenumber,message_count=message_count))
+                                username=username, current_phone=phonenumber, message_count=message_count))
 
 
 # -------------------------------- PAYPAL WEBHOOKS --------------------------------
@@ -244,7 +246,7 @@ def process_sale():
     app.logger.debug(f"status: {status}")
     app.logger.debug(f"units: {units}")
     app.logger.debug(f"Username: {username}")
-    app.logger.debug(status is "COMPLETED")
+    app.logger.debug(status == "COMPLETED")
     app.logger.debug(status == "COMPLETED")
 
     if status == "COMPLETED":
