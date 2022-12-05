@@ -1,10 +1,12 @@
+import os
+
 from flask import Flask
 
 app = Flask(__name__)
 
 import SMSAlertService.views
 
-SMSAlertService.secret_key = "testing"
+SMSAlertService.secret_key = os.environ.get('sms_alert_service_secret_key')
 
 if __name__ == "__init__":
     SMSAlertService.app.run()

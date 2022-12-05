@@ -6,15 +6,10 @@ from twilio.rest import Client
 
 from SMSAlertService import app
 
-config = configparser.RawConfigParser()
-folder = os.path.dirname(os.path.abspath(__file__))
-file = os.path.join(folder, 'config.ini')
-config.read(file)
-
-twilio_number = config.get('twilio', 'twilio_number')
-account_sid = config.get('twilio', 'account_sid')
-auth_token = config.get('twilio', 'auth_token')
-messaging_service_sid = config.get('twilio', 'messaging_service_sid')
+twilio_number = os.environ.get('twilio_number')
+account_sid = os.environ.get('twilio_account_sid')
+auth_token = os.environ.get('twilio_auth_token')
+messaging_service_sid = os.environ.get('twilio_messaging_service_sid')
 
 
 def send(username, destination, link, keywords):
@@ -31,7 +26,7 @@ def send(username, destination, link, keywords):
 
 def create_body(link, keywords):
     formatted_keywords = format_keywords(keywords)
-    subreddit = config.get('reddit', 'subreddit')
+    subreddit = os.environ.get('reddit_subreddit')
     return f'A post on {subreddit} matched some of your keywords: {formatted_keywords}\n{link}'
 
 
