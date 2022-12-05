@@ -2,14 +2,13 @@ import os
 import praw
 from SMSAlertService import mongo, app
 
+reddit = praw.Reddit(client_id=os.environ.get('REDDIT_CLIENT_ID'),
+                     client_secret=os.environ.get('REDDIT_CLIENT_SECRET'),
+                     user_agent=os.environ.get('REDDIT_USER_AGENT'),
+                     username=os.environ.get('REDDIT_USERNAME'),
+                     password=os.environ.get('REDDIT_PASSWORD'))
 
-reddit = praw.Reddit(client_id=os.environ['reddit_client_id'],
-                     client_secret=os.environ['reddit_client_secret'],
-                     user_agent=os.environ['reddit_user_agent'],
-                     username=os.environ['reddit_username'],
-                     password=os.environ['reddit_password'])
-
-subreddit_name = os.environ['reddit_subreddit']
+subreddit_name = os.environ.get('REDDIT_SUBREDDIT')
 subreddit = reddit.subreddit(subreddit_name)
 
 
