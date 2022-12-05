@@ -14,11 +14,11 @@ from SMSAlertService import app
 # and use pymongo.MongoClient(regular_url, tls=True) in the code
 
 
-app.secret_key = os.environ['MONGO_SECRET_KEY']
-url = os.environ['MONGO_URL']
+app.secret_key = os.environ.get('MONGO_SECRET_KEY')
+url = os.environ.get('MONGO_URL')
 client_DEV = pymongo.MongoClient(url, tls=True)
 
-db_dev_name = os.environ['MONGO_DB_DEV']
+db_dev_name = os.environ.get('MONGO_DB_DEV')
 db_DEV = client_DEV.get_database(db_dev_name)
 user_records = db_DEV.user_data
 app_records = db_DEV.app_data
