@@ -1,8 +1,6 @@
 import os
-
 import arrow
 import bcrypt
-import configparser
 import pymongo
 
 from SMSAlertService import app
@@ -16,16 +14,11 @@ from SMSAlertService import app
 # and use pymongo.MongoClient(regular_url, tls=True) in the code
 
 
-config = configparser.RawConfigParser()
-folder = os.path.dirname(os.path.abspath(__file__))
-file = os.path.join(folder, 'config.ini')
-config.read(file)
-
-app.secret_key = config.get('mongo', 'secret_key')
-url = config.get('mongo', 'url')
+app.secret_key = os.environ.get('mongo_secret_key')
+url = os.environ.get('mongo_url')
 client_DEV = pymongo.MongoClient(url, tls=True)
 
-db_dev_name = config.get('mongo', 'db_dev')
+db_dev_name = os.environ.get('mongo_db_dev')
 db_DEV = client_DEV.get_database(db_dev_name)
 user_records = db_DEV.user_data
 app_records = db_DEV.app_data

@@ -1,21 +1,15 @@
-import configparser
 import os
 import praw
 from SMSAlertService import mongo, app
 
-config = configparser.RawConfigParser()
-folder = os.path.dirname(os.path.abspath(__file__))
-file = os.path.join(folder, 'config.ini')
-config.read(file)
 
+reddit = praw.Reddit(client_id=os.environ.get('reddit_client_id'),
+                     client_secret=os.environ.get('reddit_client_secret'),
+                     user_agent=os.environ.get('reddit_user_agent'),
+                     username=os.environ.get('reddit_username'),
+                     password=os.environ.get('reddit_password'))
 
-reddit = praw.Reddit(client_id=config.get('reddit', 'client_id'),
-                     client_secret=config.get('reddit', 'client_secret'),
-                     user_agent=config.get('reddit', 'user_agent'),
-                     username=config.get('reddit', 'username'),
-                     password=config.get('reddit', 'password'))
-
-subreddit_name = config.get('reddit', 'subreddit')
+subreddit_name = os.environ.get('reddit_subreddit')
 subreddit = reddit.subreddit(subreddit_name)
 
 
