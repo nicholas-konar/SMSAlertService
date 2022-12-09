@@ -2,8 +2,7 @@ import os
 import arrow
 import bcrypt
 import pymongo
-
-from SMSAlertService import app
+from SMSAlertService import application
 
 # NO VPN
 # In compass, enter regular_url value from below, then select default tls and upload mongodb.pem in the second file upload box (nothing in the first)
@@ -14,14 +13,14 @@ from SMSAlertService import app
 # and use pymongo.MongoClient(regular_url, tls=True) in the code
 
 
-app.secret_key = os.environ.get('MONGO_SECRET_KEY')
-url = os.environ.get('MONGO_URL')
+application.secret_key = os.getenv('MONGO_SECRET_KEY')
+url = os.getenv('MONGO_URL')
 client_DEV = pymongo.MongoClient(url, tls=True)
 
-db_dev_name = os.environ.get('MONGO_DB_DEV')
+db_dev_name = os.getenv('MONGO_DB_DEV')
 db_DEV = client_DEV.get_database(db_dev_name)
 user_records = db_DEV.user_data
-app_records = db_DEV.app_data
+app_records = db_DEV.application_data
 
 
 def create_user(username, password, phonenumber):
@@ -41,7 +40,7 @@ def create_user(username, password, phonenumber):
         'Keywords': []
     }
     user_records.insert_one(user_data)
-    app.logger.info(f"Created new user '{username}'")
+    application.logger.info(f"Created new user '{username}'")
 
 
 def process_transaction(username, units_purchased, amount):
@@ -71,7 +70,7 @@ def process_transaction(username, units_purchased, amount):
         }
 
     user_records.update_one(query, new_value)
-    app.logger.debug(f'{username} just purchased {units_purchased} units')
+    application.logger.debug(f'{username} just purchased {units_purchased} units')
 
 
 def get_user(username):
@@ -107,7 +106,7 @@ def update_user_msg_data(username, message):
         }
 
     user_records.update_one(query, new_value)
-    app.logger.debug(f'Unit count reduced by 1 for user {username}')
+    application.logger.debug(f'Unit count reduced by 1 for user {username}')
 
 
 def get_users():
@@ -121,10 +120,10 @@ def get_subscription_status(username):
 
 def reset_password(phonenumber, password):
     phonenumber = phonenumber[2:]  # trims the +1 off the ph. number
-    app.logger.debug('full phone = ' + phonenumber)
+    application.logger.debug('full phone = ' + phonenumber)
     query = {"PhoneNumber": phonenumber}
     hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    app.logger.debug('pw hash = ' + str(hashed_pw))
+    application.logger.debug('pw hash = ' + str(hashed_pw))
     new_value = {"$set": {"Password": hashed_pw}}
     user_records.update_one(query, new_value)
 
@@ -149,7 +148,7 @@ def activate_subscription(username, subscription_id):
             }
         }}
     user_records.update_one(query, value)
-    app.logger.info('SubscriptionId ' + subscription_id + ' now linked to User ' + username)
+    application.logger.info('SubscriptionId ' + subscription_id + ' now linked to User ' + username)
 
 
 def suspend(subscription_id):
@@ -176,7 +175,7 @@ def suspend(subscription_id):
                     }
                 }}
             user_records.update_one(query, value)
-            app.logger.info(
+            application.logger.info(
                 'Deactivated User ' + username + 'because Subscription ' + subscription_id + ' was suspended.')
 
 
@@ -204,7 +203,7 @@ def deactivate(subscription_id):
                     }
                 }}
             user_records.update_one(query, value)
-            app.logger.info(
+            application.logger.info(
                 'Deactivated User ' + username + 'because Subscription ' + subscription_id + ' was canceled.')
 
 
@@ -212,7 +211,7 @@ def add_to_blacklist(phonenumber):
     query = {"Document": "Blacklist"}
     new_value = {"$push": {"Keywords": phonenumber}}
     app_records.update_one(query, new_value)
-    app.logger.debug('Added ' + phonenumber + 'to blacklist')
+    application.logger.debug('Added ' + phonenumber + 'to blacklist')
 
 
 def get_blacklist():
@@ -222,10 +221,10 @@ def get_blacklist():
 
 def blacklisted(user):
     blacklist = get_blacklist()
-    app.logger.info('Checking blacklist for ' + user['PhoneNumber'])
+    application.logger.info('Checking blacklist for ' + user['PhoneNumber'])
     for number in blacklist:
         if user['PhoneNumber'] == number:
-            app.logger.debug(f'Blacklisted number detected for user {user["Username"]}: {user["PhoneNumber"]}')
+            application.logger.debug(f'Blacklisted number detected for user {user["Username"]}: {user["PhoneNumber"]}')
             return True
     return False
 
@@ -239,14 +238,14 @@ def add_keyword(username, keyword):
     query = {"Username": username}
     new_value = {"$push": {"Keywords": keyword}}
     user_records.update_one(query, new_value)
-    app.logger.debug('Added new keyword "' + keyword + '"to User "' + username + '"')
+    application.logger.debug('Added new keyword "' + keyword + '"to User "' + username + '"')
 
 
 def delete_all_keywords(username):
     query = {"Username": username}
     new_value = {"$set": {"Keywords": []}}
     user_records.update_one(query, new_value)
-    app.logger.debug(f'Deleted all keywords in DB for user {username}')
+    application.logger.debug(f'Deleted all keywords in DB for user {username}')
 
 
 def get_phonenumber(username):
@@ -258,14 +257,14 @@ def update_phonenumber(username, phonenumber):
     query = {"Username": username}
     new_value = {"$set": {"PhoneNumber": phonenumber}}
     user_records.update_one(query, new_value)
-    app.logger.debug('User ' + username + ' updated PhoneNumber to ' + phonenumber)
+    application.logger.debug('User ' + username + ' updated PhoneNumber to ' + phonenumber)
 
 
 def update_username(old_username, new_username):
     query = {"Username": old_username}
     new_value = {"$set": {"Username": new_username}}
     user_records.update_one(query, new_value)
-    app.logger.debug('User ' + old_username + ' changed username to ' + new_username)
+    application.logger.debug('User ' + old_username + ' changed username to ' + new_username)
 
 
 def phonenumber_taken(phonenumber):
@@ -280,7 +279,7 @@ def username_taken(username):
 def get_last_post_id():
     doc = app_records.find_one({"Document": "POST_INFO"})
     last_post_id = doc["LastPostID"]
-    app.logger.debug('LastPostID: ' + last_post_id)
+    application.logger.debug('LastPostID: ' + last_post_id)
     return last_post_id
 
 
@@ -300,4 +299,4 @@ def save_post_data(post):
             }
         }}
     app_records.update_one(query, post_log)
-    app.logger.debug('LastPostID is now ' + post.id)
+    application.logger.debug('LastPostID is now ' + post.id)

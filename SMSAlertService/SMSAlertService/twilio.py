@@ -1,15 +1,13 @@
-import configparser
-import logging
 import os
 
 from twilio.rest import Client
 
-from SMSAlertService import app
+from SMSAlertService import application
 
-twilio_number = os.environ['twilio_number']
-account_sid = os.environ['twilio_account_sid']
-auth_token = os.environ['twilio_auth_token']
-messaging_service_sid = os.environ['twilio_messaging_service_sid']
+twilio_number = os.getenv('twilio_number')
+account_sid = os.getenv('twilio_account_sid')
+auth_token = os.getenv('twilio_auth_token')
+messaging_service_sid = os.getenv('twilio_messaging_service_sid')
 
 
 def send(username, destination, link, keywords):
@@ -20,7 +18,7 @@ def send(username, destination, link, keywords):
         messaging_service_sid=messaging_service_sid,
         to=destination
     )
-    app.logger.debug(f'Message sent to {username} at: {destination} with SID: {message.sid}')
+    application.logger.debug(f'Message sent to {username} at: {destination} with SID: {message.sid}')
     return message
 
 

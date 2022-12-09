@@ -1,36 +1,34 @@
 from bcrypt import checkpw
 from flask import request, redirect, render_template, session, url_for, jsonify
 from twilio.twiml.messaging_response import MessagingResponse
-from SMSAlertService import app, mongo, notification
+from SMSAlertService import mongo, notification, application
 
 
 # -------------------------------- ABOUT + LOGIN + LOGOUT + SIGNUP --------------------------------
-@app.route("/", methods=["POST", "GET"])
+from SMSAlertService.application import application
+
+
+@application.route("/", methods=["POST", "GET"])
 def index():
     return render_template('index.html')
 
 
-@app.route("/login", methods=["POST", "GET"])
+@application.route("/login", methods=["POST", "GET"])
 def login():
     message = 'Please login to your account'
     if "username" in session:
         return redirect(url_for("profile"))
-
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-
         username_found = mongo.get_user(username)
         if username_found:
             passwordcheck = username_found['Password']
-
             if checkpw(password.encode('utf-8'), passwordcheck):
                 session["username"] = username
                 session["phonenumber"] = mongo.get_phonenumber(username_found['Username'])
                 return redirect(url_for('profile'))
             else:
-                # if "username" in session:
-                #     return redirect(url_for("profile"))
                 message = 'Wrong password'
                 return render_template('login.html', message=message)
         else:
@@ -39,7 +37,7 @@ def login():
     return render_template('login.html', message=message)
 
 
-@app.route("/logout", methods=["POST", "GET"])
+@application.route("/logout", methods=["POST", "GET"])
 def logout():
     if "username" in session:
         session.pop("username", None)
@@ -49,7 +47,7 @@ def logout():
         return redirect(url_for("index"))
 
 
-@app.route("/signup", methods=['GET', 'POST'])
+@application.route("/signup", methods=['GET', 'POST'])
 def signup():
     message = 'Thank you for using the SMS Alert Service'
     if "username" in session:
@@ -70,13 +68,13 @@ def signup():
     return render_template('signup.html')
 
 
-@app.route("/about")
+@application.route("/about")
 def about():
     return render_template('about.html')
 
 
 # -------------------------------- PROFILE --------------------------------
-@app.route('/profile')
+@application.route('/profile')
 def profile():
     if "username" not in session:
         return redirect(url_for("login"))
@@ -90,7 +88,7 @@ def profile():
                                keywords=keywords, username=username, current_phone=current_phone)
 
 
-@app.route('/edit-info')
+@application.route('/edit-info')
 def edit_info():
     username = session["username"]
     current_phone = session['phonenumber']
@@ -99,7 +97,7 @@ def edit_info():
 
 
 # -------------------------------- PROFILE COMMANDS --------------------------------
-@app.route("/update-username", methods=['GET', 'POST'])
+@application.route("/update-username", methods=['GET', 'POST'])
 def update_username():
     if "username" not in session:
         return redirect(url_for("index"))
@@ -120,7 +118,7 @@ def update_username():
                                    current_phone=current_phone)
 
 
-@app.route("/update-phone-number", methods=['GET', 'POST'])
+@application.route("/update-phone-number", methods=['GET', 'POST'])
 def update_phone_number():
     if "username" not in session:
         return redirect(url_for("index"))
@@ -134,7 +132,7 @@ def update_phone_number():
                                )
 
 
-@app.route("/add-keyword", methods=['GET', 'POST'])
+@application.route("/add-keyword", methods=['GET', 'POST'])
 def add_keyword():
     if "username" not in session:
         return redirect(url_for("login"))
@@ -150,7 +148,7 @@ def add_keyword():
                                 keywords=keywords, message_count=message_count))
 
 
-@app.route("/delete-all-keywords", methods=['GET', 'POST'])
+@application.route("/delete-all-keywords", methods=['GET', 'POST'])
 def delete_all_keywords():
     if "username" not in session:
         return redirect(url_for("login"))
@@ -160,50 +158,50 @@ def delete_all_keywords():
         mongo.delete_all_keywords(username)
         message = 'All Keywords have been cleared.'
         message_count = mongo.get_message_count(username)
-        app.logger.info(f'{username} cleared all keywords.')
+        application.logger.info(f'{username} cleared all keywords.')
         return redirect(url_for('profile', message=message,
                                 username=username, current_phone=phonenumber, message_count=message_count))
 
 
 # -------------------------------- PAYPAL WEBHOOKS --------------------------------
-@app.route("/billing-subscription-created", methods=["POST", "GET"])
+@application.route("/billing-subscription-created", methods=["POST", "GET"])
 def webhook_billing_subscription_created():
     req = request.get_json()
     subscription = req['resource']['id']
-    app.logger.debug('Billing subscription ' + subscription + ' was created.')
+    application.logger.debug('Billing subscription ' + subscription + ' was created.')
     return jsonify({"status": True})
 
 
-@app.route("/billing-subscription-suspended", methods=["POST", "GET"])
+@application.route("/billing-subscription-suspended", methods=["POST", "GET"])
 def webhook_billing_subscription_suspended():
     req = request.get_json()
     subscription = req['resource']['id']
-    app.logger.debug('Attempting to suspend SubscriptionId ' + subscription)
+    application.logger.debug('Attempting to suspend SubscriptionId ' + subscription)
     mongo.suspend(subscription)
     return jsonify({"status": True})
 
 
-@app.route("/billing-subscription-cancelled", methods=["POST", "GET"])
+@application.route("/billing-subscription-cancelled", methods=["POST", "GET"])
 def webhook_billing_subscription_cancelled():
     req = request.get_json()
     subscription = req['resource']['id']
-    app.logger.debug('Attempting to cancel SubscriptionId ' + subscription)
+    application.logger.debug('Attempting to cancel SubscriptionId ' + subscription)
     mongo.deactivate(subscription)
     return jsonify({"status": True})
 
 
 # -------------------------------- TWILLIO WEBHOOKS --------------------------------
-@app.route("/sms", methods=['GET', 'POST'])
+@application.route("/sms", methods=['GET', 'POST'])
 def sms_reply():
     req = request.values
     body = req['Body']
     from_number = req['From']
 
-    app.logger.debug('the body is as follows: ' + str(body))
-    app.logger.debug('the from number is as follows: ' + str(from_number))
+    application.logger.debug('the body is as follows: ' + str(body))
+    application.logger.debug('the from number is as follows: ' + str(from_number))
 
     if body.lower().startswith('reset password'):
-        app.logger.debug('Password reset requested for ' + from_number)
+        application.logger.debug('Password reset requested for ' + from_number)
         body = body.lower()
         password = body.split(' ')[2]
         mongo.reset_password(from_number, password)
@@ -212,7 +210,7 @@ def sms_reply():
         return str(resp)
 
     if body.lower().startswith("what's my username"):
-        app.logger.debug('Username reminder requested for ' + from_number)
+        application.logger.debug('Username reminder requested for ' + from_number)
         # reply with username
         username = mongo.get_username_by_phonenumber(from_number)
         resp = MessagingResponse()
@@ -228,15 +226,15 @@ def sms_reply():
 
 
 # -------------------------------- REDDIT WEBHOOKS --------------------------------
-@app.route("/reddit-webhook", methods=['POST'])
+@application.route("/reddit-webhook", methods=['POST'])
 def reddit_webhook():
-    app.logger.debug('Reddit webhook POST request: ' + str(request.get_json()))
+    application.logger.debug('Reddit webhook POST request: ' + str(request.get_json()))
     notification.distribute()
     return jsonify({"status": True})
 
 
 # -------------------------------- COMMANDS --------------------------------
-@app.route("/process-sale")
+@application.route("/process-sale")
 def process_sale():
     username = session.get('username')
     status = request.args.get('status')
@@ -249,14 +247,14 @@ def process_sale():
         return jsonify({"status": False})
 
 
-@app.route("/notify", methods=['GET'])
+@application.route("/notify", methods=['GET'])
 def notify():
     resp = notification.distribute()
     return resp
 
 
 # link username & subscriptionID from js pp subscription button
-@app.route('/record-subscription-id')
+@application.route('/record-subscription-id')
 def record_subscription_id():
     username = request.args.get('username')
     subscription_id = request.args.get('id')
