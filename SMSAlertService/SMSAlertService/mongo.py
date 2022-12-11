@@ -14,7 +14,6 @@ from SMSAlertService import app
 # and use pymongo.MongoClient(regular_url, tls=True) in the code
 
 
-app.secret_key = os.environ['MONGO_SECRET_KEY']
 url = os.environ['MONGO_URL']
 client_DEV = pymongo.MongoClient(url, tls=True)
 
