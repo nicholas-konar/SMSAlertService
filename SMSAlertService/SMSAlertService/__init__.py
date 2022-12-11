@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 import SMSAlertService.views
 
-SMSAlertService.secret_key = os.environ['sms_alert_service_secret_key']
+SMSAlertService.secret_key = os.environ['SMS_ALERT_SERVICE_SECRET_KEY']
 
 if __name__ == "__init__":
     SMSAlertService.app.run()
