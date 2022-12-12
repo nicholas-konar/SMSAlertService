@@ -1,9 +1,5 @@
-import configparser
-import logging
 import os
-
 from twilio.rest import Client
-
 from SMSAlertService import app
 
 twilio_number = os.environ['TWILIO_NUMBER']
@@ -20,6 +16,7 @@ def send(username, destination, link, keywords):
         messaging_service_sid=messaging_service_sid,
         to=destination
     )
+    # todo: log msg data in mongo
     app.logger.debug(f'Message sent to {username} at: {destination} with SID: {message.sid}')
     return message
 
