@@ -6,18 +6,23 @@
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 </head>
 <body>
 
 <nav class="navbar navbar-light justify-content-center">
-        <a class="navbar-brand" href="/profile">The SMS Alert Service</a>
+    <a class="navbar-brand" href="/home"><i class="fa fa-envelope"></i> The SMS Alert Service</a>
 
     <ul class="nav">
         <li class="nav-item">
-            <a class="nav-item nav-link" href="/profile">Home</a>
+            <a class="nav-item nav-link" href="/home">Home</a>
         </li>
         <li class="nav-item">
-            <a class="nav-item nav-link" href="/about">About</a>
+            <a class="nav-item nav-link" href="/profile">My Profile</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-item nav-link" href="/contact">Contact</a>
         </li>
         {% if username %}
         <li class="nav-item">

@@ -1,23 +1,16 @@
+<!DOCTYPE html>
 {% extends "base.html" %}
-{% block title %}Profile{% endblock %}
+{% block title %}SMS Alert Service{% endblock %}
 
 {% block content %}
-
-{% if message  %}
-    <p class="message">{{ message }}</p>
-{% endif %}
-    <!DOCTYPE html>
     <html>
         <head>
-            <link rel="stylesheet" href="style.css">
-            <script src="scripts.js"></script>
+            <link rel="stylesheet" href="static/style.css">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <!-- Ensures optimal rendering on mobile devices. -->
-            <meta http-equiv="X-UA-Compatible" content="IE=edge"/> <!-- Optimal Internet Explorer compatibility -->
         </head>
 
-<div class="message">
-    <h3>What is the SMS Alert Service?</h3>
+<div class="box-area">
+    <h3>What is the SMS Alert Service?<br/><br/><i class="glyphicon glyphicon-envelope"></i></h3>
     <br/>
     <p>We're the "in stock notification" provider for the following buy/sell/trade subreddits:</p>
     <p><strong>r/GunAccessoriesForSale</strong></p>

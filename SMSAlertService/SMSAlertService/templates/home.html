@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block title %}SMS Alert Service{% endblock %}
+
+{% block content %}
+    <html>
+        <head>
+            <link rel="stylesheet" href="static/style.css">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+            <meta charset="utf-8">
+        </head>
+
+<div class="box-area">
+    <h3>Welcome to the SMS Alert Service<br/><br/><i class="fa fa-envelope fa-2x"></i></h3>
+    <br/>
+    <div class="alert">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+      <strong>Warning: </strong>The SMS Alert Service exists to make a positive contribution to our trading communities.
+        Anyone found abusing this service for scalping, profiteering, etc. will have their account terminated without warning.
+        Additionally, a ban from a subreddit may result in the termination of your account here.
+        <i>Terminated accounts will not be refunded.</i>
+    </div>
+    <div class="info">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        <strong>Notice: </strong>Your username here must match your username on Reddit. If you need to change it,
+        <a href="edit-info" class="info-link"><u>click here.</u></a>
+    </div>
+</div>
+<div class="box-area">
+    <p>We're the "in stock notification" provider for the following buy/sell/trade subreddits:</p>
+    <p class="subreddits bg-warning"><strong>r/GunAccessoriesForSale</strong></p>
+    <p>This service is for users who may be too busy to constantly check Reddit, are after a rare or uncommon item, or
+    just need an item fast! To use the service, simply:</p>
+    <ol class="steps">
+        <li>Create an <strong>Account</strong></li>
+        <li>Buy an <strong>SMS Package</strong></li>
+        <li>Enter your <strong>Keywords</strong></li>
+    </ol>
+    <p>The next time a post contains one of your keywords, we'll send you a text to let you know it's available!</p>
+
+</div>
+{% endblock %}
