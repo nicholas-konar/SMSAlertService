@@ -16,7 +16,7 @@ def has_new_post():
     post = get_latest_post()
     last_post_id = mongo.get_last_post_id()
     if post.id != last_post_id:
-        set_last_post(post)
+        mongo.save_post_id(post)
         app.logger.info('New PostId: ' + post.id)
         return True
     else:
@@ -28,6 +28,3 @@ def get_latest_post():
     for post in subreddit.new(limit=1):
         return post
 
-
-def set_last_post(post):
-    mongo.save_post_data(post)
