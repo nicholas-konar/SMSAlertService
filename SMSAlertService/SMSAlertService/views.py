@@ -10,6 +10,16 @@ def index():
     return render_template('index.html')
 
 
+@app.route("/home")
+def home():
+    return render_template('home.html')
+
+
+@app.route("/contact")
+def support():
+    return render_template('contact.html')
+
+
 @app.route("/login", methods=["POST", "GET"])
 def login():
     message = 'Please login to your account'
@@ -68,11 +78,6 @@ def signup():
             session["phonenumber"] = phonenumber
             return redirect(url_for("profile", message=message, username=username, phonenumber=phonenumber))
     return render_template('signup.html')
-
-
-@app.route("/about")
-def about():
-    return render_template('about.html')
 
 
 # -------------------------------- PROFILE --------------------------------

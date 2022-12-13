@@ -1,4 +1,4 @@
-.message {
+.box-area {
   text-align: center;
   vertical-align: middle;
   box-sizing: border-box;
@@ -90,10 +90,74 @@ tr:nth-child(odd) {
   background-color: #f2f2f2;
 }
 
-ul {
-  display: inline-block
+ol {
+  display: inline-block;
 }
 
 li {
   text-align: center;
+}
+
+.alert {
+  padding: 20px;
+  background-color: #f44336; /* Red */
+  color: white;
+  margin-bottom: 15px;
+}
+
+.info {
+  padding: 20px;
+  background-color: #0066ff; /* blue */
+  color: white;
+  margin-bottom: 15px;
+}
+
+.subreddits {
+  width: 50&;
+  padding-right: 10%;
+  padding-left: 10%;
+  padding-top: 3%;
+  padding-bottom: 3%;
+  color: black;
+  background: #ffc10700;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+  background-image: linear-gradient(#ffc107, orange);
+}
+
+.steps {
+  width: 50&;
+  padding-right: 10%;
+  padding-left: 10%;
+  padding-top: 3%;
+  padding-bottom: 3%;
+  color: white;
+  background: green;
+  border-style: solid;
+  border-color: green;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.closebtn:hover {
+  color: black;
+}
+
+.info-link {
+  color: white;
+  background-color: transparent;
+  text-decoration: none;
 }
