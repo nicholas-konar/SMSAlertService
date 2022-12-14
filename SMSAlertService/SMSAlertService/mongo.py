@@ -14,13 +14,13 @@ from SMSAlertService import app
 # and use pymongo.MongoClient(regular_url, tls=True) in the code
 
 
-url = os.environ['MONGO_URL']
-client_DEV = pymongo.MongoClient(url, tls=True)
+url = os.environ['MONGO_URL_PROD']
+client = pymongo.MongoClient(url, tls=True)
 
-db_dev_name = os.environ['MONGO_DB_DEV']
-db_DEV = client_DEV.get_database(db_dev_name)
-user_records = db_DEV.user_data
-app_records = db_DEV.app_data
+db_name = os.environ['MONGO_DB_PROD']
+db = client.get_database(db_name)
+user_records = db.user_data
+app_records = db.app_data
 
 
 def create_user(username, password, phonenumber):
@@ -208,15 +208,15 @@ def deactivate(subscription_id):
 
 
 def add_to_blacklist(phonenumber):
-    query = {"Document": "Blacklist"}
+    query = {"Document": "BLACKLIST"}
     new_value = {"$push": {"Keywords": phonenumber}}
     app_records.update_one(query, new_value)
     app.logger.debug('Added ' + phonenumber + 'to blacklist')
 
 
 def get_blacklist():
-    blacklist = app_records.find_one({"Document": "Blacklist"})
-    return blacklist['Blacklist']
+    document = app_records.find_one({"Document": "BLACKLIST"})
+    return document['Blacklist']
 
 
 def blacklisted(user):
@@ -277,26 +277,16 @@ def username_taken(username):
 
 # -------------------------------- REDDIT POST MANAGEMENT --------------------------------
 def get_last_post_id():
-    doc = app_records.find_one({"Document": "POST_INFO"})
-    last_post_id = doc["LastPostID"]
-    app.logger.debug('LastPostID: ' + last_post_id)
+    document = app_records.find_one({"Document": "POST_INFO"})
+    last_post_id = document["LastPostId"]
+    app.logger.debug('LastPostId: ' + last_post_id)
     return last_post_id
 
 
-def save_post_data(post):
-    timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
+def save_post_id(post):
     query = {"Document": "POST_INFO"}
     last_post_id = {"$set": {
-        "LastPostID": post.id
+        "LastPostId": post.id
     }}
     app_records.update_one(query, last_post_id)
-    post_log = {
-        "$push": {
-            "PostLog": {
-                "PostID": post.id,
-                "URL": post.url,
-                "TimeStamp": timestamp
-            }
-        }}
-    app_records.update_one(query, post_log)
-    app.logger.debug('LastPostID is now ' + post.id)
+    app.logger.debug('LastPostId is now ' + post.id)
