@@ -12,11 +12,27 @@
 <body>
 
 <nav class="navbar navbar-light justify-content-center">
-    <a class="navbar-brand" href="/home"><i class="fa fa-envelope"></i> The SMS Alert Service</a>
+    <a class="navbar-brand" href="/"><i class="fa fa-envelope"></i> The SMS Alert Service</a>
 
     <ul class="nav">
+        {% if not username %}
         <li class="nav-item">
-            <a class="nav-item nav-link" href="/home">Home</a>
+            <a class="nav-item nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-item nav-link" href="/contact">Contact</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-item nav-link" href="/signup">Sign Up</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-item nav-link" href="/login">Log In</a>
+        </li>
+        {% endif %}
+
+        {% if username %}
+        <li class="nav-item">
+            <a class="nav-item nav-link" href="/">Home</a>
         </li>
         <li class="nav-item">
             <a class="nav-item nav-link" href="/profile">My Profile</a>
@@ -24,19 +40,13 @@
         <li class="nav-item">
             <a class="nav-item nav-link" href="/contact">Contact</a>
         </li>
-        {% if username %}
         <li class="nav-item">
             <a class="nav-item nav-link" href="/edit-info">Edit Info</a>
         </li>
-        {% endif %}
-        {% if not username %}
-        <li class="nav-item">
-            <a class="nav-item nav-link" href="/signup">Sign Up</a>
-        </li>
-        {% endif %}
         <li class="nav-item">
             <a class="nav-item nav-link" href="/logout">Logout</a>
         </li>
+        {% endif %}
     </ul>
 </nav>
 

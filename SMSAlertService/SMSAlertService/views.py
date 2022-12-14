@@ -6,18 +6,21 @@ from SMSAlertService import app, mongo, notification
 
 # -------------------------------- ABOUT + LOGIN + LOGOUT + SIGNUP --------------------------------
 @app.route("/", methods=["POST", "GET"])
-def index():
-    return render_template('index.html')
-
-
-@app.route("/home")
 def home():
-    return render_template('home.html')
+    if "username" not in session:
+        return render_template('home.html')
+    else:
+        username = session["username"]
+        return render_template('home.html', username=username)
 
 
 @app.route("/contact")
-def support():
-    return render_template('contact.html')
+def contact():
+    if "username" not in session:
+        return render_template('contact.html')
+    else:
+        username = session["username"]
+        return render_template('contact.html', username=username)
 
 
 @app.route("/login", methods=["POST", "GET"])
@@ -99,8 +102,7 @@ def profile():
 def edit_info():
     username = session["username"]
     current_phone = session['phonenumber']
-    message = 'Edit Account Details'
-    return render_template('edit-info.html', message=message, username=username, current_phone=current_phone)
+    return render_template('edit-info.html', username=username, current_phone=current_phone)
 
 
 # -------------------------------- PROFILE COMMANDS --------------------------------
