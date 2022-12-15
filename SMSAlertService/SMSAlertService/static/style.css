@@ -1,13 +1,37 @@
+* {
+  box-sizing: border-box;
+}
+
+.main {
+  width: 70%;
+  float: left;
+}
+
+.list {
+  width: 28%;
+  float: right;
+  margin-left: 2%;
+}
+
+.grid {
+
+}
+
+.container {
+  width: 90%;
+}
+
+.billboard {
+  padding: 1% !important;
+  padding-top: 2% !important;
+}
+
 .box-area {
   text-align: center;
   vertical-align: middle;
   box-sizing: border-box;
-  position: relative;
-  margin: auto;
-  margin-top: 1%;
-  margin-bottom: 1%;
-  padding: 1%;
-  width: 50%;
+  margin-bottom: 1em;
+  padding: 5%;
   background-color: white;
   border-style: solid;
   border-color: white;
@@ -17,7 +41,6 @@
 }
 
 .center {
-  margin: auto;
   text-align: center;
 }
 

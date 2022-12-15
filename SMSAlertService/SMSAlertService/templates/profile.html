@@ -1,168 +1,206 @@
+<!DOCTYPE html>
 {% extends "base.html" %}
 {% block title %}Profile{% endblock %}
+<!-- ⌘Cmd + ⌥Option + Shift + L -->
 
 {% block content %}
+<html>
+<head>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+</head>
+<div class="container">
+    <div class="billboard box-area">
+        <h3>Hello, {{ username }}!</h3>
+        <p class="w3-panel w3-pale-red w3-leftbar w3-border-red">You have {{message_count}} SMS Alerts</p>
+    </div>
 
-{% if message  %}
-<div class="box-area">
-    <p><strong>Hello, {{ username }}!</strong></p>
-    <p class="w3-panel w3-pale-red w3-leftbar w3-border-red">You have {{message_count}} SMS Alerts</p>
-</div>
-{% endif %}
-    <!DOCTYPE html>
-    <html>
-        <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-        </head>
-
-        <div id="smart-button-container" class="box-area">
-              <div style="text-align: center; width: 100%;">
-                <div style="margin-bottom: 1.25rem;">
-                  <p style="border-bottom: black"><strong>Get SMS Alerts below:</strong></p>
-                  <p><a href="/about">What is this?</a></p>
-                  <select id="item-options">
-                      <option value="10 Messages" price="5.00">10 SMS Alerts - 5.00 USD</option>
-                      <option value="50 Messages" price="10.00">50 SMS Alerts - 10.00 USD</option>
-                      <option value="250 Messages" price="25.00">250 SMS Alerts - 25.00 USD</option>
-                      <option value="500 Messages" price="40.00">500 SMS Alerts - 40.00 USD</option>
-                  </select>
-                  <select style="visibility: hidden" id="quantitySelect"></select>
+    <div class="main">
+        <div class="box-area" id="smart-button-container">
+            <div>
+                <div>
+                    <p><strong>Get SMS Alerts below:</strong></p>
+                    <p><a href="/about">What is this?</a></p>
+                    <select id="item-options">
+                        <option price="5.00" value="10 Messages">10 SMS Alerts - 5.00 USD</option>
+                        <option price="10.00" value="50 Messages">50 SMS Alerts - 10.00 USD</option>
+                        <option price="25.00" value="250 Messages">250 SMS Alerts - 25.00 USD</option>
+                        <option price="40.00" value="500 Messages">500 SMS Alerts - 40.00 USD</option>
+                    </select>
+                    <select id="quantitySelect" style="visibility: hidden"></select>
                 </div>
-              <div id="paypal-button-container"></div>
-              </div>
-        </div>
-            <script src="https://www.paypal.com/sdk/js?client-id=AWAg3kGZplLsUzGcJNUYVmrVCNxfLkb_KHgPiU_Ob9oD-EUCh0xMS8dlyw0d0VjXmhMg-HN_0xmWZziC&enable-funding=venmo&currency=USD" data-sdk-integration-source="button-factory"></script>
+                <div id="paypal-button-container"></div>
+            </div>
+            <script data-sdk-integration-source="button-factory"
+                    src="https://www.paypal.com/sdk/js?client-id=AWAg3kGZplLsUzGcJNUYVmrVCNxfLkb_KHgPiU_Ob9oD-EUCh0xMS8dlyw0d0VjXmhMg-HN_0xmWZziC&enable-funding=venmo&currency=USD"></script>
             <script>
-              function initPayPalButton() {
-                var shipping = 0;
-                var itemOptions = document.querySelector("#smart-button-container #item-options");
-            var quantity = parseInt();
-            var quantitySelect = document.querySelector("#smart-button-container #quantitySelect");
-            if (!isNaN(quantity)) {
-              quantitySelect.style.visibility = "visible";
-            }
-            var orderDescription = 'Choose your SMS package';
-            if(orderDescription === '') {
-              orderDescription = 'Item';
-            }
-            paypal.Buttons({
-              style: {
-                shape: 'pill',
-                color: 'gold',
-                layout: 'horizontal',
-                label: 'paypal',
-
-              },
-              createOrder: function(data, actions) {
-                var selectedItemDescription = itemOptions.options[itemOptions.selectedIndex].value;
-                var selectedItemPrice = parseFloat(itemOptions.options[itemOptions.selectedIndex].getAttribute("price"));
-                var tax = (0 === 0 || false) ? 0 : (selectedItemPrice * (parseFloat(0)/100));
-                if(quantitySelect.options.length > 0) {
-                  quantity = parseInt(quantitySelect.options[quantitySelect.selectedIndex].value);
-                } else {
-                  quantity = 1;
+                  function initPayPalButton() {
+                    var shipping = 0;
+                    var itemOptions = document.querySelector("#smart-button-container #item-options");
+                var quantity = parseInt();
+                var quantitySelect = document.querySelector("#smart-button-container #quantitySelect");
+                if (!isNaN(quantity)) {
+                  quantitySelect.style.visibility = "visible";
                 }
+                var orderDescription = 'Choose your SMS package';
+                if(orderDescription === '') {
+                  orderDescription = 'Item';
+                }
+                paypal.Buttons({
+                  style: {
+                    shape: 'pill',
+                    color: 'gold',
+                    layout: 'horizontal',
+                    label: 'paypal',
 
-                tax *= quantity;
-                tax = Math.round(tax * 100) / 100;
-                var priceTotal = quantity * selectedItemPrice + parseFloat(shipping) + tax;
-                priceTotal = Math.round(priceTotal * 100) / 100;
-                var itemTotalValue = Math.round((selectedItemPrice * quantity) * 100) / 100;
+                  },
+                  createOrder: function(data, actions) {
+                    var selectedItemDescription = itemOptions.options[itemOptions.selectedIndex].value;
+                    var selectedItemPrice = parseFloat(itemOptions.options[itemOptions.selectedIndex].getAttribute("price"));
+                    var tax = (0 === 0 || false) ? 0 : (selectedItemPrice * (parseFloat(0)/100));
+                    if(quantitySelect.options.length > 0) {
+                      quantity = parseInt(quantitySelect.options[quantitySelect.selectedIndex].value);
+                    } else {
+                      quantity = 1;
+                    }
 
-                return actions.order.create({
-                  purchase_units: [{
-                    description: orderDescription,
-                    amount: {
-                      currency_code: 'USD',
-                      value: priceTotal,
-                      breakdown: {
-                        item_total: {
+                    tax *= quantity;
+                    tax = Math.round(tax * 100) / 100;
+                    var priceTotal = quantity * selectedItemPrice + parseFloat(shipping) + tax;
+                    priceTotal = Math.round(priceTotal * 100) / 100;
+                    var itemTotalValue = Math.round((selectedItemPrice * quantity) * 100) / 100;
+
+                    return actions.order.create({
+                      purchase_units: [{
+                        description: orderDescription,
+                        amount: {
                           currency_code: 'USD',
-                          value: itemTotalValue,
+                          value: priceTotal,
+                          breakdown: {
+                            item_total: {
+                              currency_code: 'USD',
+                              value: itemTotalValue,
+                            },
+                            shipping: {
+                              currency_code: 'USD',
+                              value: shipping,
+                            },
+                            tax_total: {
+                              currency_code: 'USD',
+                              value: tax,
+                            }
+                          }
                         },
-                        shipping: {
-                          currency_code: 'USD',
-                          value: shipping,
-                        },
-                        tax_total: {
-                          currency_code: 'USD',
-                          value: tax,
-                        }
-                      }
-                    },
-                    items: [{
-                      name: selectedItemDescription,
-                      unit_amount: {
-                        currency_code: 'USD',
-                        value: selectedItemPrice,
-                      },
-                      quantity: quantity
-                    }]
-                  }]
-                });
-              },
-              onApprove: function(data, actions) {
-                return actions.order.capture().then(function(orderData) {
+                        items: [{
+                          name: selectedItemDescription,
+                          unit_amount: {
+                            currency_code: 'USD',
+                            value: selectedItemPrice,
+                          },
+                          quantity: quantity
+                        }]
+                      }]
+                    });
+                  },
+                  onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(orderData) {
 
-                  // Full available details
-                  console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                      // Full available details
+                      console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
 
-                  // Show a success message within this page, e.g.
-                  const element = document.getElementById('paypal-button-container');
-                  element.innerHTML = '';
-                  element.innerHTML = '<h3>Thank you for your payment!</h3>';
-                  let unitSelection = orderData.purchase_units[0].items[0].name;
-                  let units = unitSelection.replace(" Messages", "");
-                  let amount = orderData.purchase_units[0].amount.value;
-                  fetch('/process-sale?user={{ username }}' + '&status=' + orderData.status + "&units=" + units + '&amount=' + amount).then(resp => resp.json()).then(response => console.log(response))
+                      // Show a success message within this page, e.g.
+                      const element = document.getElementById('paypal-button-container');
+                      element.innerHTML = '';
+                      element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                      let unitSelection = orderData.purchase_units[0].items[0].name;
+                      let units = unitSelection.replace(" Messages", "");
+                      let amount = orderData.purchase_units[0].amount.value;
+                      fetch('/process-sale?user={{ username }}' + '&status=' + orderData.status + "&units=" + units + '&amount=' + amount).then(resp => resp.json()).then(response => console.log(response))
 
-                  // Or go to another URL:  actions.redirect('thank_you.html');
+                      // Or go to another URL:  actions.redirect('thank_you.html');
 
-                });
-              },
-              onError: function(err) {
-                console.log(err);
-              },
-            }).render('#paypal-button-container');
-          }
-          initPayPalButton();
+                    });
+                  },
+                  onError: function(err) {
+                    console.log(err);
+                  },
+                }).render('#paypal-button-container');
+              }
+              initPayPalButton();
+
+
+
+
+
+
+
+
             </script>
-        </html>
-<div class="box-area">
-    <form action="/add-keyword" method="POST">
-        <div class="form-group  center ">
-            <label for="NewKeyword"><strong>Add keywords:</strong></label>
-            <input name="newkeyword" class="form-control input" id="NewKeyword" aria-describedby="keywordHelp"
-                   placeholder="" type="text" required="required">
-            <small id="newKeywordHelp" class="form-text text-muted">When a new post contains a keyword, we'll send you
-                an alert!</small><br/>
-        <button type="submit" class="btn btn-primary container">Add Keyword</button>
         </div>
-    </form>
-    <div class="center">
-        <a href="/delete-all-keywords">
-            <button class="btn btn-danger container">Delete All Keywords</button>
-        </a>
     </div>
-</div>
-<div class="box-area">
-        <div class="center">
-            <p><strong>Your keywords:</strong></p>
-        <table class="center" id="keywords"></table>
-        <script>
-        let keywordvar = "";
-        const fruits = ["apple", "orange", "cherry"];
-        keywords = {{ keywords|tojson }};
-        console.log(keywords);
-        keywords.forEach(myFunction);
+    <div class="list">
+        <div class="box-area">
+            <p><strong>SMS Alerts</strong></p>
+            <h3>{{ message_count }}</h3>
+        </div>
+    </div>
+    <div class="list">
+        <div class="box-area">
+            <p><strong>Your Keywords:</strong></p>
+            <table id="keywords"></table>
+            <script>
+            let keywordvar = "";
+            const fruits = ["apple", "orange", "cherry"];
+            keywords = {{ keywords|tojson }};
+            console.log(keywords);
+            keywords.forEach(myFunction);
 
-        document.getElementById("keywords").innerHTML = keywordvar;
+            document.getElementById("keywords").innerHTML = keywordvar;
 
-        function myFunction(keyword, index) {
-          keywordvar += "<tr><td>" + keyword + "</td></tr>";
-        }
-        </script>
+            function myFunction(keyword, index) {
+              keywordvar += "<tr><td>" + keyword + "</td></tr>";
+            }
+
+
+
+            </script>
+        </div>
+    </div>
+    {% if active_promo %}
+    <div class="list">
+        <div class="box-area">
+            <form action="/promo" method="POST">
+                <div class="form-group">
+                    <label for="Promo"><strong>Promo Code</strong></label>
+                    <input aria-describedby="keywordHelp" class="form-control input" id="Promo" name="newkeyword"
+                           placeholder="" required="required" type="text">
+                    <button class="btn btn-primary container" type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif%}
+    <div class="main">
+        <div class="box-area">
+            <form action="/add-keyword" method="POST">
+                <div class="form-group">
+                    <label for="NewKeyword"><strong>Add Keywords:</strong></label>
+                    <input aria-describedby="keywordHelp" class="form-control input" id="NewKeyword" name="newkeyword"
+                           placeholder="" required="required" type="text">
+                    <small class="form-text text-muted" id="newKeywordHelp">When a new post contains a keyword, we'll
+                        send
+                        you
+                        an alert!</small><br/>
+                    <button class="btn btn-primary container" type="submit">Add Keyword</button>
+                </div>
+            </form>
+            <div>
+                <a href="/delete-all-keywords">
+                    <button class="btn btn-danger container">Delete All Keywords</button>
+                </a>
+            </div>
+        </div>
     </div>
 
 </div>
+</html>
 {% endblock %}
