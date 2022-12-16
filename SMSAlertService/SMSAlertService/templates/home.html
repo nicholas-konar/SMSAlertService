@@ -10,7 +10,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <meta charset="utf-8">
 </head>
-
+<body>
 <div class="container">
     <div class="box-area billboard">
         <h3>Welcome to the SMS Alert Service<br/><br/><i class="fa fa-envelope fa-2x"></i></h3>
@@ -23,26 +23,57 @@
             Additionally, a ban from a subreddit may result in the termination of your account here.
             <i>Terminated accounts will not be refunded.</i>
         </div>
-        <div class="info">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            <strong>Notice: </strong>Your username here must match your username on Reddit. If you need to change it,
-            <a class="info-link" href="edit-info"><u>click here.</u></a>
+    </div>
+    <div class="main">
+        <div class="box-area">
+            <h4>What is the SMS Alert Service?</h4>
+            <p>We constantly scan online marketplaces and alert our users (via SMS) when items on their wishlist become
+                available. See the <strong>"Supported Markets"</strong> tab on this page to check which ones we cover.</p>
+            <h4>How do I use it?</h4>
+            <p>Once you've signed up, just add keywords to your profile and buy some alerts. That's it!
+                When someone makes a new post in a Supported Market
+                that contains one or more of those keywords, we'll text you a link to the post, so you don't miss
+                out.</p>
+            <ol class="steps">
+                <li>Create an <strong>Account</strong></li>
+                <li>Enter your <strong>Keywords</strong></li>
+                <li>Buy some <strong>SMS Alerts</strong></li>
+                <li><strong>Dibs!</strong></li>
+            </ol>
+        </div>
+        <div class="box-area">
+            <h4>Tips</h4>
+            <p>Computers take everything you say very literally, so be sure to structure your keywords
+                in a way that's not too general, but not too narrow either. Here's some tips and tricks to get the most
+                out of the service.</p>
+            <ul class="container">
+                <li>There is no limit on how many keywords you can use.</li>
+                <li>Using broad terms like "magazine" in your keywords might waste alerts on things you don't need or
+                want.<br/></li>
+                <li>However, if you use "Glock magazine" as your <strong>only</strong> keyword, you won't get notified if the seller's post says something like
+                "Glock mag" or even "Glock magazine<strong>s</strong>."<br/></li>
+                <li>The best strategy is to add <strong>multiple</strong> keywords for the same item. For example:
+                "Glock mag", "Glock mags", "Glock magazine", "Glock magazines", "G19 mag", "G19 mags", "G19 magazine", and so on.</li>
+                <li>You'll receive a maximum of one sms alert per post, regardless of how many of your keywords are present in that post.</li>
+            </ul>
         </div>
     </div>
-    <div class="box-area">
-        <p>We're the "in stock notification" provider for the following buy/sell/trade subreddits:</p>
-        <p class="subreddits bg-warning"><strong>r/GunAccessoriesForSale</strong></p>
-        <p>This service is for users who may be too busy to constantly check Reddit, are after a rare or uncommon item,
-            or
-            just need an item fast! To use the service, simply:</p>
-        <ol class="steps">
-            <li>Create an <strong>Account</strong></li>
-            <li>Buy an <strong>SMS Package</strong></li>
-            <li>Enter your <strong>Keywords</strong></li>
-        </ol>
-        <p>The next time a post contains one of your keywords, we'll send you a text to let you know it's available!</p>
-
+    <div class="sidebar">
+        <div class="box-area">
+            <h4>Sponsors</h4>
+            <p>Get promo codes by supporting our sponsors!</p>
+            <p><a href="https://www.example.com">example.com</a></p>
+            <p><a href="https://www.example.com">example.com</a></p>
+            <p><a href="https://www.example.com">example.com</a></p>
+        </div>
+    </div>
+    <div class="sidebar">
+        <div class="box-area">
+            <h4>Supported Markets</h4>
+            <p><a href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a></p>
+        </div>
     </div>
 </div>
+</body>
 </html>
 {% endblock %}
