@@ -4,34 +4,47 @@
 
 {% block content %}
 
-    <html>
-        <head>
-            <link rel="stylesheet" href="static/style.css">
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-        </head>
+<html>
+<head>
+    <link href="static/style.css" rel="stylesheet">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+</head>
 
-    <body>
+<body>
+<div class="container">
+    <div class="box-area billboard">
+        <h3>Edit Account Details<br/><br/><i class="fa fa-envelope fa-2x"></i></h3>
+    </div>
+    <div class="main">
         <div class="box-area">
-            <h3>Edit Account Details<br/><br/><i class="fa fa-envelope fa-2x"></i></h3>
+            <form action="/update-username" method="POST">
+                <h4><label for="NewUsername">Update Username</label></h4>
+                <input aria-describedby="usernameHelp" class="form-control input" id="NewUsername" name="newusername"
+                       placeholder="New Username">
+                <button class="button" type="submit">Submit</button>
+            </form>
             <br/>
-            <div class="edit-info center">
-                <form action="/update-username" method="POST" >
-                    <label for="NewUsername">Update Username</label>
-                    <small id="newUsernameHelp" class="form-text text-muted">Current Username: {{ username }}</small>
-                    <input name="newusername" class="form-control input" id="NewUsername" aria-describedby="usernameHelp"
-                           placeholder="New Username">
-                    <button type="submit" class="button">Submit</button>
-                </form>
-                <br/>
-                <form action="/update-phone-number" method="POST">
-                    <label for="NewNumber">Update Phone Number</label>
-                    <small id="newNumberHelp" class="form-text text-muted">Current Phone Number: {{ current_phone }}</small>
-                    <input name="newnumber" class="form-control input" id="NewNumber" aria-describedby="phoneHelp"
-                           placeholder="New Number" type="tel" pattern="[0-9]{10}">
-                    <button type="submit" class="button">Submit</button>
-                </form>
-            </div>
+            <form action="/update-phone-number" method="POST">
+                <h4><label for="NewNumber">Update Phone Number</label></h4>
+                <input aria-describedby="phoneHelp" class="form-control input" id="NewNumber" name="newnumber"
+                       pattern="[0-9]{10}" placeholder="New Number" type="tel">
+                <button class="button" type="submit">Submit</button>
+            </form>
         </div>
-    </body>
+    </div>
+    <div class="sidebar">
+        <div class="box-area">
+            <h4>Current Username:</h4>
+            <p>{{ username }}</p>
+        </div>
+    </div>
+    <div class="sidebar">
+        <div class="box-area">
+            <h4>Current Ph. Number:</h4>
+            <p>{{ current_phone }}</p>
+        </div>
+    </div>
+</div>
+</body>
 </html>
 {% endblock %}

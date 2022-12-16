@@ -3,22 +3,45 @@
 {% block content %}
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="../static/style.css">
+    <link href="../static/style.css" rel="stylesheet">
     <title>{% block title %}SMS Alert Service{% endblock %}</title>
 </head>
-
-{% if message  %}
-<div>
-    <p class="box-area">{{ message }}</p>
+<div class="container">
+    <div class="box-area billboard">
+        <h3>Please Log In or Sign Up<br/><br/><i class="fa fa-envelope fa-2x"></i></h3>
+    </div>
+    <div class="leftside">
+        <div class="box-area">
+            <h4>Log In</h4>
+            <form action="" method="post">
+                <label for="NewUsername">Username:</label>
+                <input aria-describedby="phoneHelp" class="center" id="NewUsername" name="username">
+                <label for="InputNewPassword">Password:</label>
+                <input class="center" id="InputNewPassword" name="password" type="password">
+                <button class="button" type="submit">Log In</button>
+            </form>
+        </div>
+    </div>
+    <div class="rightside">
+        <div class="box-area">
+            <h4>Sign Up</h4>
+            <form action="/signup" method="POST">
+                <label for="Username">Reddit Username</label>
+                <input aria-describedby="phoneHelp" class="center" id="Username" name="username"
+                       placeholder="Reddit Username">
+                <label for="InputPhoneNumber">Phone Number</label>
+                <input class="center"
+                       id="InputPhoneNumber"
+                       name="phonenumber"
+                       pattern="[0-9]{10}"
+                       placeholder="No spaces or dashes"
+                       required="required"
+                       type="number">
+                <label for="InputPassword">Password</label>
+                <input class="center" id="InputPassword" name="password" placeholder="Password" type="password">
+                <button class="button" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
 </div>
-{% endif %}
-
-    <form action="" method="post" class="center third-width">
-            <label for="Username">Username:</label>
-            <input class="center" name="username" id="Username" aria-describedby="phoneHelp">
-            <label for="InputPassword">Password:</label>
-            <input class="center" type="password" name="password" id="InputPassword">
-            <button type="submit" class="button">Log In</button>
-    </form>
-
 {% endblock %}

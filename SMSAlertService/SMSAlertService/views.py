@@ -40,10 +40,8 @@ def login():
             if checkpw(password.encode('utf-8'), passwordcheck):
                 session["username"] = username
                 session["phonenumber"] = mongo.get_phonenumber(username_found['Username'])
-                return redirect(url_for('profile'))
+                return redirect(url_for('home'))
             else:
-                # if "username" in session:
-                #     return redirect(url_for("profile"))
                 message = 'Wrong password'
                 return render_template('login.html', message=message)
         else:
@@ -57,9 +55,9 @@ def logout():
     if "username" in session:
         session.pop("username", None)
         session.pop("phonenumber", None)
-        return redirect(url_for("index"))
+        return redirect(url_for("login"))
     else:
-        return redirect(url_for("index"))
+        return redirect(url_for("login"))
 
 
 @app.route("/signup", methods=['GET', 'POST'])
@@ -91,10 +89,9 @@ def profile():
     else:
         username = session["username"]
         current_phone = session['phonenumber']
-        message = 'SMS packages start at $5.00!'
         message_count = mongo.get_message_count(username)
         keywords = mongo.get_keywords(username)
-        return render_template('profile.html', message=message, message_count=message_count,
+        return render_template('profile.html', message_count=message_count,
                                keywords=keywords, username=username, current_phone=current_phone)
 
 
