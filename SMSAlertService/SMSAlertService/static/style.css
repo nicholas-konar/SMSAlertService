@@ -25,12 +25,14 @@
   margin-left: 1%;
 }
 
-.grid {
-
+.container {
+  width: 100% !important;
 }
 
-.container {
-  width: 90%;
+.inner-container {
+  width: 90% !important;
+  margin-left: 5%;
+  position: center;
 }
 
 .billboard {
@@ -40,6 +42,7 @@
 }
 
 .box-area {
+  color: black;
   text-align: center;
   vertical-align: middle;
   box-sizing: border-box;
@@ -50,21 +53,13 @@
   border-color: lightgray;
   border-width: 1px;
   border-radius: 10px;
-  box-shadow: 0 0px 10px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 .base {
-  text-align: center;
-  vertical-align: middle;
-  box-sizing: border-box;
+  color: black;
   margin-top: 2%;
   padding: 0%;
-  background-color: white;
-  border-style: solid;
-  border-color: lightgray;
-  border-width: 1px;
-  border-radius: 10px;
-  box-shadow: 0 0px 10px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .sticky {
@@ -101,7 +96,7 @@
   text-align: center;
   display: inline-block;
   transition-duration: 0.3s;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 
 }
 
@@ -124,15 +119,16 @@
 }
 
 input {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   border-style: solid;
-  border-color: white;
-  border-width: 2px;
+  border-color: lightgray;
+  border-width: 1px;
+  border-radius: 10px;
   width: 100%;
 }
 
 label {
-  margin-top: 5%;
+  margin-top: 0%;
 }
 
 table {
@@ -141,6 +137,7 @@ table {
 
 
 h3 {
+  margin-top: 10px !important;
   font-family: Sans-serif;
 }
 
@@ -153,7 +150,8 @@ tr:nth-child(odd) {
 }
 
 ul {
-  padding: 0%;
+  padding-left: 5%;
+  padding-right: 5%;
 }
 
 ol {
@@ -161,7 +159,7 @@ ol {
 }
 
 li {
-  text-align: center;
+  text-align: left;
 }
 
 .alert {
@@ -178,6 +176,17 @@ li {
   color: white;
   margin-bottom: 15px;
   border-radius: 10px;
+}
+
+.info-link {
+  color: white;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+.nav-link {
+  color: black;
+
 }
 
 .subreddits {
@@ -224,14 +233,14 @@ li {
   color: black;
 }
 
-.info-link {
-  color: white;
-  background-color: transparent;
-  text-decoration: none;
+body {
+  text-align: center;
+  margin-top: 2% !important;
+  min-height: 100vh;
+  background-repeat: no-repeat;
+  background-image: url("white-hexagons.jpg");
+  background-size: cover;
 }
 
-body {
-  margin-top: 100px !important;
-  background-repeat: no-repeat;
-  background-size: auto;
+html {
 }

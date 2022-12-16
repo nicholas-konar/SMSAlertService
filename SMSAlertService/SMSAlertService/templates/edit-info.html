@@ -13,19 +13,19 @@
 <body>
 <div class="container">
     <div class="box-area billboard">
-        <h3>Edit Account Details<br/><br/><i class="fa fa-envelope fa-2x"></i></h3>
+        <h3>Edit Account Details<br/><i class="fa fa-envelope fa-2x"></i></h3>
     </div>
     <div class="main">
         <div class="box-area">
             <form action="/update-username" method="POST">
-                <h4><label for="NewUsername">Update Username</label></h4>
+                <h5><label for="NewUsername">Update Username</label></h5>
                 <input aria-describedby="usernameHelp" class="form-control input" id="NewUsername" name="newusername"
                        placeholder="New Username">
                 <button class="button" type="submit">Submit</button>
             </form>
             <br/>
             <form action="/update-phone-number" method="POST">
-                <h4><label for="NewNumber">Update Phone Number</label></h4>
+                <h5><label for="NewNumber">Update Phone Number</label></h5>
                 <input aria-describedby="phoneHelp" class="form-control input" id="NewNumber" name="newnumber"
                        pattern="[0-9]{10}" placeholder="New Number" type="tel">
                 <button class="button" type="submit">Submit</button>
@@ -34,13 +34,13 @@
     </div>
     <div class="sidebar">
         <div class="box-area">
-            <h4>Current Username:</h4>
-            <p>{{ username }}</p>
+            <p><strong>Current Username:</strong></p>
+            <p>"{{ username }}"</p>
         </div>
     </div>
     <div class="sidebar">
         <div class="box-area">
-            <h4>Current Ph. Number:</h4>
+            <p><strong>Current Phone:</strong></p>
             <p>{{ current_phone }}</p>
         </div>
     </div>
