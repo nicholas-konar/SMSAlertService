@@ -7,10 +7,22 @@
   float: left;
 }
 
-.list {
+.sidebar {
   width: 28%;
   float: right;
   margin-left: 2%;
+}
+
+.leftside {
+  width: 49%;
+  float: left;
+  margin-right: 1%;
+}
+
+.rightside {
+  width: 49%;
+  float: right;
+  margin-left: 1%;
 }
 
 .grid {
@@ -24,6 +36,7 @@
 .billboard {
   padding: 1% !important;
   padding-top: 2% !important;
+  margin-top: 2%;
 }
 
 .box-area {
@@ -34,10 +47,31 @@
   padding: 5%;
   background-color: white;
   border-style: solid;
-  border-color: white;
-  border-width: 10px;
+  border-color: lightgray;
+  border-width: 1px;
   border-radius: 10px;
   box-shadow: 0 0px 10px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.base {
+  text-align: center;
+  vertical-align: middle;
+  box-sizing: border-box;
+  margin-top: 2%;
+  padding: 0%;
+  background-color: white;
+  border-style: solid;
+  border-color: lightgray;
+  border-width: 1px;
+  border-radius: 10px;
+  box-shadow: 0 0px 10px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.sticky {
+  width: 100%;
+  vertical-align: middle;
+  position: fixed;
+  top: 0;
 }
 
 .center {
@@ -63,7 +97,7 @@
   border-width: 0px;
   color: black;
   padding: 1%;
-  margin-top: 10%;
+  margin-top: 5%;
   text-align: center;
   display: inline-block;
   transition-duration: 0.3s;
@@ -97,21 +131,29 @@ input {
   width: 100%;
 }
 
+label {
+  margin-top: 5%;
+}
+
 table {
   width: 100%;
 }
 
-h1 {
-  color: navy;
-  margin-left: 20px;
-}
 
 h3 {
   font-family: Sans-serif;
 }
 
+h4 {
+  font-family: Sans-serif;
+}
+
 tr:nth-child(odd) {
-  background-color: #f2f2f2;
+  background-color: lightgray;
+}
+
+ul {
+  padding: 0%;
 }
 
 ol {
@@ -127,13 +169,15 @@ li {
   background-color: #f44336; /* Red */
   color: white;
   margin-bottom: 15px;
+  border-radius: 10px;
 }
 
 .info {
   padding: 20px;
-  background-color: #0066ff; /* blue */
+  background-color: #007bff; /* blue */
   color: white;
   margin-bottom: 15px;
+  border-radius: 10px;
 }
 
 .subreddits {
@@ -187,5 +231,7 @@ li {
 }
 
 body {
-  background-image: white;
+  margin-top: 100px !important;
+  background-repeat: no-repeat;
+  background-size: auto;
 }

@@ -8,10 +8,16 @@
 <head>
     <meta content="width=device-width, initial-scale=1" name="viewport">
 </head>
+<body>
 <div class="container">
-    <div class="billboard box-area">
-        <h3>Hello, {{ username }}!</h3>
-        <p class="w3-panel w3-pale-red w3-leftbar w3-border-red">You have {{message_count}} SMS Alerts</p>
+    <div class="box-area billboard">
+        <h3>Welcome, {{ username }}!</h3>
+        <p><i>Thank you for using the SMS Alert Service</i></p>
+    </div>
+    <div class="info container">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        <strong>Notice: </strong>Your username here must match your username on Reddit. If you need to change it,
+        <a class="info-link" href="edit-info"><u>click here.</u></a>
     </div>
 
     <div class="main">
@@ -134,16 +140,19 @@
 
 
 
+
+
+
             </script>
         </div>
     </div>
-    <div class="list">
+    <div class="sidebar">
         <div class="box-area">
             <p><strong>SMS Alerts</strong></p>
             <h3>{{ message_count }}</h3>
         </div>
     </div>
-    <div class="list">
+    <div class="sidebar">
         <div class="box-area">
             <p><strong>Your Keywords:</strong></p>
             <table id="keywords"></table>
@@ -162,23 +171,12 @@
 
 
 
+
+
+
             </script>
         </div>
     </div>
-    {% if active_promo %}
-    <div class="list">
-        <div class="box-area">
-            <form action="/promo" method="POST">
-                <div class="form-group">
-                    <label for="Promo"><strong>Promo Code</strong></label>
-                    <input aria-describedby="keywordHelp" class="form-control input" id="Promo" name="newkeyword"
-                           placeholder="" required="required" type="text">
-                    <button class="btn btn-primary container" type="submit">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    {% endif%}
     <div class="main">
         <div class="box-area">
             <form action="/add-keyword" method="POST">
@@ -200,7 +198,20 @@
             </div>
         </div>
     </div>
+    <div class="sidebar">
+        <div class="box-area">
+            <form action="/promo" method="POST">
+                <div class="form-group">
+                    <label for="promo"><strong>Promo Code</strong></label>
+                    <input aria-describedby="keywordHelp" class="form-control input" id="promo" name="newkeyword"
+                           placeholder="" required="required" type="text">
+                    <button class="button btn btn-primary container" type="submit">Redeem</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 </div>
+</body>
 </html>
 {% endblock %}
