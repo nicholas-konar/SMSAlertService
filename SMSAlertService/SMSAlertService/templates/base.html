@@ -9,11 +9,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
 </head>
-<div class="sticky">
     <div class="container">
         <div class="base box-area">
             <nav class="navbar navbar-light justify-content-center">
-                <a class="navbar-brand" href="/"><i class="fa fa-envelope"></i> The SMS Alert Service</a>
+                <a class="navbar-brand" href="/" style="color: black;"><i class="fa fa-envelope"></i> The SMS Alert Service</a>
 
                 <ul class="nav">
                     {% if not username %}
@@ -65,24 +64,9 @@
                     integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
                     src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
             <script>
-window.onscroll = function() {myFunction()};
-
-var header = document.getElementById("base");
-var sticky = header.offsetTop;
-
-function myFunction() {
-  if (window.pageYOffset > sticky) {
-    header.classList.add("sticky");
-  } else {
-    header.classList.remove("sticky");
-  }
-}
-
-
             </script>
         </div>
     </div>
-</div>
 {% block content %}{% endblock %}
 </html>
 

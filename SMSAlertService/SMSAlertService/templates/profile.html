@@ -13,8 +13,8 @@
     <div class="box-area billboard">
         <h3>Welcome, {{ username }}!</h3>
         <p><i>Thank you for using the SMS Alert Service</i></p>
-    </div>
-    <div class="info container">
+        <h3><i class="fa fa-envelope fa-2x"></i></h3></div>
+    <div class="info">
         <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
         <strong>Notice: </strong>Your username here must match your username on Reddit. If you need to change it,
         <a class="info-link" href="edit-info"><u>click here.</u></a>
@@ -24,8 +24,7 @@
         <div class="box-area" id="smart-button-container">
             <div>
                 <div>
-                    <p><strong>Get SMS Alerts below:</strong></p>
-                    <p><a href="/about">What is this?</a></p>
+                    <h5>Get SMS Alerts below:</h5>
                     <select id="item-options">
                         <option price="5.00" value="10 Messages">10 SMS Alerts - 5.00 USD</option>
                         <option price="10.00" value="50 Messages">50 SMS Alerts - 10.00 USD</option>
@@ -34,6 +33,7 @@
                     </select>
                     <select id="quantitySelect" style="visibility: hidden"></select>
                 </div>
+                <br/>
                 <div id="paypal-button-container"></div>
             </div>
             <script data-sdk-integration-source="button-factory"
@@ -132,35 +132,38 @@
                 }).render('#paypal-button-container');
               }
               initPayPalButton();
-
-
-
-
-
-
-
-
-
-
-
             </script>
         </div>
+        <div class="box-area">
+            <form action="/add-keyword" method="POST">
+                <div class="form-group">
+                    <h5><label for="NewKeyword">Add Keywords:</label></h5>
+                    <input aria-describedby="keywordHelp" class="form-control input" id="NewKeyword" name="newkeyword"
+                           placeholder="" required="required" type="text">
+                    <small class="form-text text-muted" id="newKeywordHelp">When a new post contains a keyword, we'll
+                        send you an alert!</small><br/>
+                    <button class="btn btn-primary container" type="submit">Add Keyword</button>
+                </div>
+            </form>
+            <div>
+                <a href="/delete-all-keywords">
+                    <button class="btn btn-danger container">Delete All Keywords</button>
+                </a>
+            </div>
+        </div>
+
     </div>
     <div class="sidebar">
         <div class="box-area">
-            <p><strong>SMS Alerts</strong></p>
+            <p><strong>SMS Alerts:</strong></p>
             <h3>{{ message_count }}</h3>
         </div>
-    </div>
-    <div class="sidebar">
         <div class="box-area">
             <p><strong>Your Keywords:</strong></p>
             <table id="keywords"></table>
             <script>
             let keywordvar = "";
-            const fruits = ["apple", "orange", "cherry"];
             keywords = {{ keywords|tojson }};
-            console.log(keywords);
             keywords.forEach(myFunction);
 
             document.getElementById("keywords").innerHTML = keywordvar;
@@ -174,35 +177,14 @@
 
 
 
+
+
             </script>
         </div>
-    </div>
-    <div class="main">
-        <div class="box-area">
-            <form action="/add-keyword" method="POST">
-                <div class="form-group">
-                    <label for="NewKeyword"><strong>Add Keywords:</strong></label>
-                    <input aria-describedby="keywordHelp" class="form-control input" id="NewKeyword" name="newkeyword"
-                           placeholder="" required="required" type="text">
-                    <small class="form-text text-muted" id="newKeywordHelp">When a new post contains a keyword, we'll
-                        send
-                        you
-                        an alert!</small><br/>
-                    <button class="btn btn-primary container" type="submit">Add Keyword</button>
-                </div>
-            </form>
-            <div>
-                <a href="/delete-all-keywords">
-                    <button class="btn btn-danger container">Delete All Keywords</button>
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="sidebar">
         <div class="box-area">
             <form action="/promo" method="POST">
                 <div class="form-group">
-                    <label for="promo"><strong>Promo Code</strong></label>
+                    <label for="promo"><strong>Promo Code:</strong></label>
                     <input aria-describedby="keywordHelp" class="form-control input" id="promo" name="newkeyword"
                            placeholder="" required="required" type="text">
                     <button class="button btn btn-primary container" type="submit">Redeem</button>
