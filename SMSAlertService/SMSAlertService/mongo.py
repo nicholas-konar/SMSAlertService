@@ -1,4 +1,6 @@
 import os
+import secrets
+import string
 
 import arrow
 import bcrypt
@@ -39,6 +41,7 @@ def create_user(username, password, phonenumber):
         'UnitsPurchased': 0,
         'TwilioRecords': [],
         'SalesRecords': [],
+        'PromoCodeRecords': [],
         'Keywords': []
     }
     user_records.insert_one(user_data)
@@ -63,26 +66,24 @@ def process_transaction(username, units_purchased, amount):
             "TotalRevenue": updated_total_revenue
         },
         "$push": {
-                "SalesRecords": {
-                    "Date": timestamp,
-                    "Units": units_purchased,
-                    "Revenue": amount
-                }
+            "SalesRecords": {
+                "Date": timestamp,
+                "Units": units_purchased,
+                "Revenue": amount
             }
         }
+    }
 
     user_records.update_one(query, new_value)
     app.logger.debug(f'{username} just purchased {units_purchased} units')
 
 
 def redeem(username, code):
-    app.logger.debug(f'PROMO CODE OBJECT IN REDEEM: {code}')
-
     timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
     promo_code = code['Code']
     reward = code['Reward']
     old_unit_count = get_message_count(username)
-    updated_unit_count = old_unit_count + reward
+    updated_unit_count = old_unit_count + int(reward)
 
     query = {"Username": username}
     new_value = {
@@ -99,33 +100,33 @@ def redeem(username, code):
     }
 
     user_records.update_one(query, new_value)
-    app.logger.debug(f'{username} just purchased {reward} units')
+    app.logger.debug(f'{username} just redeemed {reward} units')
 
 
 def process_promo_code(username, promo_code):
     try:
         code = get_code(promo_code)
+        app.logger.debug(f'Checking the following for active element: {code["Active"]}')
         if code['Active']:
             redeem(username, code)
             deactivate_code(code, username)
             app.logger.info(f'Processed promo code {promo_code}')
             return code
         else:
-            app.logger.debug(f'Failed to process promo code {promo_code} for user {username} because it is deactivated.')
+            app.logger.debug(
+                f'Failed to process promo code {promo_code} for user {username} because it is deactivated.')
             return False
-    except TypeError:
-        app.logger.debug(f'Failed to process promo code {promo_code} for user {username} because it is invalid.')
+    except TypeError as e:
+        app.logger.debug(f'Failed to process promo code {promo_code} for user {username} because it is invalid. {e}')
         return False
 
 
 def deactivate_code(code, username):
     timestamp = arrow.now().format('MM-DD-YYYY HH:mm:ss')
     value = code['Code']
-    reward = code['Reward']
     query = {'Code': value}
     promo_code_data = {
         '$set': {
-            'Reward': reward,
             'Active': False,
             'RedeemedBy': username,
             'DeactivationDate': timestamp, }
@@ -134,8 +135,36 @@ def deactivate_code(code, username):
     app.logger.info(f"Deactivated code {code['Code']}")
 
 
+def create_promo_codes(reward, batch_size, distributor, prefix):
+    timestamp = arrow.now().format('MM-DD-YYYY HH:mm:ss')
+    distributor = distributor.upper()
+    batch = int(batch_size)
+    for i in range(batch):
+        code = generate_code(prefix)
+        promo_code_data = {
+            'Code': code,
+            'Reward': reward,
+            'Active': True,
+            'RedeemedBy': "",
+            'Distributor': distributor,
+            'ActivationDate': timestamp,
+            'DeactivationDate': ""
+        }
+        promo_code_records.insert_one(promo_code_data)
+        app.logger.info(f"Created Promo Code '{code}' ({i+1} of {batch_size})")
+
+
+def generate_code(prefix):
+    length = 6
+    code = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                   for i in range(length))
+    code = prefix.upper() + "-" + code.upper()
+    app.logger.info(f"generated random string '{code}'")
+    return code
+
+
 def get_code(promo_code):
-    app.logger.debug(str(promo_code))
+    app.logger.debug(promo_code_records.find_one({"Code": promo_code}))
     return promo_code_records.find_one({"Code": promo_code})
 
 
