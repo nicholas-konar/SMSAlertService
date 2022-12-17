@@ -1,4 +1,7 @@
 import os
+import secrets
+import string
+
 import arrow
 import bcrypt
 import pymongo
@@ -21,6 +24,7 @@ db_name = os.environ['MONGO_DB_PROD']
 db = client.get_database(db_name)
 user_records = db.user_data
 app_records = db.app_data
+promo_code_records = db.promo_code_data
 
 
 def create_user(username, password, phonenumber):
@@ -37,6 +41,7 @@ def create_user(username, password, phonenumber):
         'UnitsPurchased': 0,
         'TwilioRecords': [],
         'SalesRecords': [],
+        'PromoCodeRecords': [],
         'Keywords': []
     }
     user_records.insert_one(user_data)
@@ -56,21 +61,111 @@ def process_transaction(username, units_purchased, amount):
     query = {"Username": username}
     new_value = {
         "$set": {
-                "Units": updated_unit_count,
-                "UnitsPurchased": updated_units_purchased,
-                "TotalRevenue": updated_total_revenue
-            },
+            "Units": updated_unit_count,
+            "UnitsPurchased": updated_units_purchased,
+            "TotalRevenue": updated_total_revenue
+        },
         "$push": {
-                "SalesRecords": {
-                    "Date": timestamp,
-                    "Units": units_purchased,
-                    "Revenue": amount
-                }
+            "SalesRecords": {
+                "Date": timestamp,
+                "Units": units_purchased,
+                "Revenue": amount
             }
         }
+    }
 
     user_records.update_one(query, new_value)
     app.logger.debug(f'{username} just purchased {units_purchased} units')
+
+
+def redeem(username, code):
+    timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
+    promo_code = code['Code']
+    reward = code['Reward']
+    old_unit_count = get_message_count(username)
+    updated_unit_count = old_unit_count + int(reward)
+
+    query = {"Username": username}
+    new_value = {
+        "$set": {
+            "Units": updated_unit_count,
+        },
+        "$push": {
+            "PromoCodeRecords": {
+                "Date": timestamp,
+                "Code": promo_code,
+                "Reward": reward
+            }
+        }
+    }
+
+    user_records.update_one(query, new_value)
+    app.logger.debug(f'{username} just redeemed {reward} units')
+
+
+def process_promo_code(username, promo_code):
+    try:
+        code = get_code(promo_code)
+        app.logger.debug(f'Checking the following for active element: {code["Active"]}')
+        if code['Active']:
+            redeem(username, code)
+            deactivate_code(code, username)
+            app.logger.info(f'Processed promo code {promo_code}')
+            return code
+        else:
+            app.logger.debug(
+                f'Failed to process promo code {promo_code} for user {username} because it is deactivated.')
+            return False
+    except TypeError as e:
+        app.logger.debug(f'Failed to process promo code {promo_code} for user {username} because it is invalid. {e}')
+        return False
+
+
+def deactivate_code(code, username):
+    timestamp = arrow.now().format('MM-DD-YYYY HH:mm:ss')
+    value = code['Code']
+    query = {'Code': value}
+    promo_code_data = {
+        '$set': {
+            'Active': False,
+            'RedeemedBy': username,
+            'DeactivationDate': timestamp, }
+    }
+    promo_code_records.update_one(query, promo_code_data)
+    app.logger.info(f"Deactivated code {code['Code']}")
+
+
+def create_promo_codes(reward, batch_size, distributor, prefix):
+    timestamp = arrow.now().format('MM-DD-YYYY HH:mm:ss')
+    distributor = distributor.upper()
+    batch = int(batch_size)
+    for i in range(batch):
+        code = generate_code(prefix)
+        promo_code_data = {
+            'Code': code,
+            'Reward': reward,
+            'Active': True,
+            'RedeemedBy': "",
+            'Distributor': distributor,
+            'ActivationDate': timestamp,
+            'DeactivationDate': ""
+        }
+        promo_code_records.insert_one(promo_code_data)
+        app.logger.info(f"Created Promo Code '{code}' ({i+1} of {batch_size})")
+
+
+def generate_code(prefix):
+    length = 6
+    code = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
+                   for i in range(length))
+    code = prefix.upper() + "-" + code.upper()
+    app.logger.info(f"generated random string '{code}'")
+    return code
+
+
+def get_code(promo_code):
+    app.logger.debug(promo_code_records.find_one({"Code": promo_code}))
+    return promo_code_records.find_one({"Code": promo_code})
 
 
 def get_user(username):
@@ -91,19 +186,19 @@ def update_user_msg_data(username, message):
     query = {"Username": username}
     new_value = {
         "$set": {
-                "Units": updated_msg_count,
-                "UnitsSent": updated_sent_count
-            },
+            "Units": updated_msg_count,
+            "UnitsSent": updated_sent_count
+        },
         "$push": {
-                "TwilioRecords": {
-                    "Date": timestamp,
-                    "Status": message.status,
-                    "MessageSID": message.sid,
-                    "Body": message.body,
-                    "ErrorMessage": message.error_message
-                }
+            "TwilioRecords": {
+                "Date": timestamp,
+                "Status": message.status,
+                "MessageSID": message.sid,
+                "Body": message.body,
+                "ErrorMessage": message.error_message
             }
         }
+    }
 
     user_records.update_one(query, new_value)
     app.logger.debug(f'Unit count reduced by 1 for user {username}')
@@ -111,11 +206,6 @@ def update_user_msg_data(username, message):
 
 def get_users():
     return user_records.find()
-
-
-def get_subscription_status(username):
-    user = user_records.find_one({"Username": username})
-    return user['Subscription']['Active']
 
 
 def reset_password(phonenumber, password):
@@ -126,85 +216,6 @@ def reset_password(phonenumber, password):
     app.logger.debug('pw hash = ' + str(hashed_pw))
     new_value = {"$set": {"Password": hashed_pw}}
     user_records.update_one(query, new_value)
-
-
-def activate_subscription(username, subscription_id):
-    timestamp = arrow.now().format('MM-DD-YYYY HH:mm:ss')
-    query = {"Username": username}
-    value = {
-        "$set": {
-            "Subscription": {
-                "Active": True,
-                "ID": subscription_id
-            }
-        }}
-    user_records.update_one(query, value)
-    value = {
-        "$push": {
-            "SubscriptionHistory": {
-                "ID": subscription_id,
-                "Action": "SUBSCRIBE",
-                "Timestamp": timestamp
-            }
-        }}
-    user_records.update_one(query, value)
-    app.logger.info('SubscriptionId ' + subscription_id + ' now linked to User ' + username)
-
-
-def suspend(subscription_id):
-    timestamp = arrow.now().format('MM-DD-YYYY HH:mm:ss')
-    users = get_users()
-    for user in users:
-        if user['Subscription']['ID'] == subscription_id:
-            username = user['Username']
-            query = {"Username": username}
-            value = {
-                "$set": {
-                    "Subscription": {
-                        "ID": subscription_id,
-                        "Active": False,
-                    }
-                }}
-            user_records.update_one(query, value)
-            value = {
-                "$push": {
-                    "SubscriptionHistory": {
-                        "ID": subscription_id,
-                        "Action": "SUSPEND",
-                        "Timestamp": timestamp
-                    }
-                }}
-            user_records.update_one(query, value)
-            app.logger.info(
-                'Deactivated User ' + username + 'because Subscription ' + subscription_id + ' was suspended.')
-
-
-def deactivate(subscription_id):
-    timestamp = arrow.now().format('MM-DD-YYYY HH:mm:ss')
-    users = get_users()
-    for user in users:
-        if user['Subscription']['ID'] == subscription_id:
-            username = user['Username']
-            query = {"Username": username}
-            value = {
-                "$set": {
-                    "Subscription": {
-                        "ID": subscription_id,
-                        "Active": False,
-                    }
-                }}
-            user_records.update_one(query, value)
-            value = {
-                "$push": {
-                    "SubscriptionHistory": {
-                        "ID": subscription_id,
-                        "Action": "CANCEL",
-                        "Timestamp": timestamp
-                    }
-                }}
-            user_records.update_one(query, value)
-            app.logger.info(
-                'Deactivated User ' + username + 'because Subscription ' + subscription_id + ' was canceled.')
 
 
 def add_to_blacklist(phonenumber):

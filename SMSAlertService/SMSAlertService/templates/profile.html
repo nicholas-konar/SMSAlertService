@@ -159,7 +159,7 @@
             <h3>{{ message_count }}</h3>
         </div>
         <div class="box-area">
-            <p><strong>Your Keywords:</strong></p>
+            <p><strong>Active Keywords:</strong></p>
             <table id="keywords"></table>
             <script>
             let keywordvar = "";
@@ -182,10 +182,10 @@
             </script>
         </div>
         <div class="box-area">
-            <form action="/promo" method="POST">
+            <form action="/promo-code" method="POST">
                 <div class="form-group">
-                    <label for="promo"><strong>Promo Code:</strong></label>
-                    <input aria-describedby="keywordHelp" class="form-control input" id="promo" name="newkeyword"
+                    <label for="promo-code"><strong>Promo Code:</strong></label>
+                    <input aria-describedby="keywordHelp" class="form-control input" id="promo-code" name="promo-code"
                            placeholder="" required="required" type="text">
                     <button class="button btn btn-primary container" type="submit">Redeem</button>
                 </div>
