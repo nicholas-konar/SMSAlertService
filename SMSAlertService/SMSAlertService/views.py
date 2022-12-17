@@ -89,8 +89,9 @@ def profile():
     else:
         username = session["username"]
         current_phone = session['phonenumber']
-        message_count = mongo.get_message_count(username)
-        keywords = mongo.get_keywords(username)
+        user = mongo.get_user(username)
+        message_count = user['Units']
+        keywords = user['Keywords']
         return render_template('profile.html', message_count=message_count,
                                keywords=keywords, username=username, current_phone=current_phone)
 
@@ -100,6 +101,14 @@ def edit_info():
     username = session["username"]
     current_phone = session['phonenumber']
     return render_template('edit-info.html', username=username, current_phone=current_phone)
+
+
+@app.route('/promo-code', methods=['POST'])
+def promo_code():
+    username = session['username']
+    code = request.form.get('promo-code')
+    mongo.process_promo_code(username, code)
+    return redirect(url_for("profile"))
 
 
 # -------------------------------- PROFILE COMMANDS --------------------------------
