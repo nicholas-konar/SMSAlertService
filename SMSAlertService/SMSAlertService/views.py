@@ -1,6 +1,7 @@
 from bcrypt import checkpw
 from flask import request, redirect, render_template, session, url_for, jsonify
 from twilio.twiml.messaging_response import MessagingResponse
+
 from SMSAlertService import app, mongo, notification
 
 
@@ -178,33 +179,6 @@ def delete_all_keywords():
                                 username=username, current_phone=phonenumber, message_count=message_count))
 
 
-# -------------------------------- PAYPAL WEBHOOKS --------------------------------
-@app.route("/billing-subscription-created", methods=["POST", "GET"])
-def webhook_billing_subscription_created():
-    req = request.get_json()
-    subscription = req['resource']['id']
-    app.logger.debug('Billing subscription ' + subscription + ' was created.')
-    return jsonify({"status": True})
-
-
-@app.route("/billing-subscription-suspended", methods=["POST", "GET"])
-def webhook_billing_subscription_suspended():
-    req = request.get_json()
-    subscription = req['resource']['id']
-    app.logger.debug('Attempting to suspend SubscriptionId ' + subscription)
-    mongo.suspend(subscription)
-    return jsonify({"status": True})
-
-
-@app.route("/billing-subscription-cancelled", methods=["POST", "GET"])
-def webhook_billing_subscription_cancelled():
-    req = request.get_json()
-    subscription = req['resource']['id']
-    app.logger.debug('Attempting to cancel SubscriptionId ' + subscription)
-    mongo.deactivate(subscription)
-    return jsonify({"status": True})
-
-
 # -------------------------------- TWILLIO WEBHOOKS --------------------------------
 @app.route("/sms", methods=['GET', 'POST'])
 def sms_reply():
@@ -268,10 +242,14 @@ def notify():
     return resp
 
 
-# link username & subscriptionID from js pp subscription button
-@app.route('/record-subscription-id')
-def record_subscription_id():
-    username = request.args.get('username')
-    subscription_id = request.args.get('id')
-    mongo.activate_subscription(username, subscription_id)
-    return jsonify({"status": True})
+@app.route("/generate-codes", methods=['GET'])
+def generate_codes():
+    # /generate-codes?reward=10&batch_size=5&distributor=Chad&prefix=nk
+    # http://127.0.0.1:5000/generate-codes?reward=10&batch_size=1&distributor=Chad&prefix=nk
+    reward = request.args.get('reward')
+    batch_size = request.args.get('batch_size')
+    distributor = request.args.get('distributor')
+    prefix = request.args.get('prefix')
+    mongo.create_promo_codes(reward, batch_size, distributor, prefix)
+    return jsonify(
+        {'Success': True, 'Reward': reward, 'BatchSize': batch_size, 'Distributor': distributor, 'Prefix': prefix})
