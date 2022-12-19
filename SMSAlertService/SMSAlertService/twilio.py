@@ -16,7 +16,6 @@ def send(username, destination, link, keywords):
         messaging_service_sid=messaging_service_sid,
         to=destination
     )
-    # todo: log msg data in mongo
     app.logger.debug(f'Message sent to {username} at: {destination} with SID: {message.sid}')
     return message
 
