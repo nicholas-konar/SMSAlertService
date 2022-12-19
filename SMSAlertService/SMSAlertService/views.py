@@ -2,7 +2,7 @@ from bcrypt import checkpw
 from flask import request, redirect, render_template, session, url_for, jsonify
 from twilio.twiml.messaging_response import MessagingResponse
 
-from SMSAlertService import app, mongo, notification
+from SMSAlertService import app, mongo, notification, util
 
 
 # -------------------------------- ABOUT + LOGIN + LOGOUT + SIGNUP --------------------------------
@@ -32,15 +32,17 @@ def login():
 
     if request.method == "POST":
         username = request.form.get("username")
-        password = request.form.get("password")
+        pw_input = request.form.get("password")
 
-        username_found = mongo.get_user(username)
-        if username_found:
-            passwordcheck = username_found['Password']
-
-            if checkpw(password.encode('utf-8'), passwordcheck):
-                session["username"] = username
-                session["phonenumber"] = mongo.get_phonenumber(username_found['Username'])
+        user = mongo.get_user(username)
+        if user:
+            password = user['Password']
+            if checkpw(pw_input.encode('utf-8'), password):
+                session["username"] = user['Username']
+                session["phonenumber"] = user['PhoneNumber']
+                if user['Username'] == "Admin":
+                    session['admin'] = True
+                    return redirect(url_for('admin'))
                 return redirect(url_for('home'))
             else:
                 message = 'Wrong password'
@@ -83,6 +85,28 @@ def signup():
 
 
 # -------------------------------- PROFILE --------------------------------
+@app.route('/admin')
+def admin():
+    if "admin" in session:
+        users = mongo.get_users()
+        total_users = len(users)
+        total_units_sent = util.calculate_total_units_sent(users)
+        total_units_sold = util.calculate_total_units_sold(users)
+        total_revenue = util.calculate_total_revenue(users)
+        total_codes_redeemed = util.calculate_total_codes_redeemed(users)
+
+        codes = mongo.get_codes()
+        total_codes = util.calculate_issued_codes(codes)
+        active_codes = util.calculate_total_active_codes(codes)
+
+        return render_template('admin.html', username=True, total_users=total_users, total_codes=total_codes,
+                               active_codes=active_codes, total_revenue=total_revenue,
+                               total_units_sent=total_units_sent, total_units_sold=total_units_sold,
+                               total_codes_redeemed=total_codes_redeemed)
+    else:
+        return redirect(url_for("login"))
+
+
 @app.route('/profile')
 def profile():
     if "username" not in session:
@@ -242,14 +266,16 @@ def notify():
     return resp
 
 
-@app.route("/generate-codes", methods=['GET'])
+@app.route("/generate-codes", methods=['POST'])
 def generate_codes():
     # /generate-codes?reward=10&batch_size=5&distributor=Chad&prefix=nk
     # http://127.0.0.1:5000/generate-codes?reward=10&batch_size=1&distributor=Chad&prefix=nk
-    reward = request.args.get('reward')
-    batch_size = request.args.get('batch_size')
-    distributor = request.args.get('distributor')
-    prefix = request.args.get('prefix')
-    mongo.create_promo_codes(reward, batch_size, distributor, prefix)
-    return jsonify(
-        {'Success': True, 'Reward': reward, 'BatchSize': batch_size, 'Distributor': distributor, 'Prefix': prefix})
+    if 'admin' in session:
+        reward = request.form.get('reward')
+        quantity = request.form.get('quantity')
+        distributor = request.form.get('distributor')
+        prefix = request.form.get('prefix')
+        mongo.create_promo_codes(reward, quantity, distributor, prefix)
+        return redirect(url_for('admin'))
+    else:
+        return None

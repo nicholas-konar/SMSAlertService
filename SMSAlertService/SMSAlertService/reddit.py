@@ -16,8 +16,8 @@ def has_new_post():
     post = get_latest_post()
     last_post_id = mongo.get_last_post_id()
     if post.id != last_post_id:
-        mongo.save_post_id(post)
         app.logger.info('New PostId: ' + post.id)
+        mongo.save_post_id(post)
         return True
     else:
         app.logger.info('No new posts yet.')

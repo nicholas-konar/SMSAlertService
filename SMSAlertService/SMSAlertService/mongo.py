@@ -6,7 +6,7 @@ import arrow
 import bcrypt
 import pymongo
 
-from SMSAlertService import app
+from SMSAlertService import app, util
 
 # NO VPN
 # In compass, enter regular_url value from below, then select default tls and upload mongodb.pem in the second file upload box (nothing in the first)
@@ -135,12 +135,12 @@ def deactivate_code(code, username):
     app.logger.info(f"Deactivated code {code['Code']}")
 
 
-def create_promo_codes(reward, batch_size, distributor, prefix):
+def create_promo_codes(reward, quantity, distributor, prefix):
     timestamp = arrow.now().format('MM-DD-YYYY HH:mm:ss')
     distributor = distributor.upper()
-    batch = int(batch_size)
+    batch = int(quantity)
     for i in range(batch):
-        code = generate_code(prefix)
+        code = util.generate_code(prefix)
         promo_code_data = {
             'Code': code,
             'Reward': reward,
@@ -151,25 +151,31 @@ def create_promo_codes(reward, batch_size, distributor, prefix):
             'DeactivationDate': ""
         }
         promo_code_records.insert_one(promo_code_data)
-        app.logger.info(f"Created Promo Code '{code}' ({i+1} of {batch_size})")
-
-
-def generate_code(prefix):
-    length = 6
-    code = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
-                   for i in range(length))
-    code = prefix.upper() + "-" + code.upper()
-    app.logger.info(f"generated random string '{code}'")
-    return code
+        app.logger.info(f"Created Promo Code '{code}' ({i+1} of {quantity})")
 
 
 def get_code(promo_code):
-    app.logger.debug(promo_code_records.find_one({"Code": promo_code}))
     return promo_code_records.find_one({"Code": promo_code})
+
+
+def get_codes():
+    codes = []
+    records = promo_code_records.find()
+    for code in records:
+        codes.append(code)
+    return codes
 
 
 def get_user(username):
     return user_records.find_one({"Username": username})
+
+
+def get_users():
+    users = []
+    records = user_records.find()
+    for user in records:
+        users.append(user)
+    return users
 
 
 def get_message_count(username):
@@ -202,10 +208,6 @@ def update_user_msg_data(username, message):
 
     user_records.update_one(query, new_value)
     app.logger.debug(f'Unit count reduced by 1 for user {username}')
-
-
-def get_users():
-    return user_records.find()
 
 
 def reset_password(phonenumber, password):
