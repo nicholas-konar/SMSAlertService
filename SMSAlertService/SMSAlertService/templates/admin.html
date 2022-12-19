@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+<!-- ⌘Cmd + ⌥Option + Shift + L -->
+
+{% block content %}
+<html>
+<head>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+</head>
+<body>
+<div class="container">
+    <div class="box-area billboard">
+        <h3>Admin Tools</h3>
+        <h3><i class="fa fa-envelope fa-2x"></i></h3>
+    </div>
+    <div class="flex-container">
+        <div class="box-area box-margin">
+            <div class="flex-item">
+                <p><strong>Users</strong></p>
+                <h5>{{ total_users }}</h5>
+            </div>
+        </div>
+        <div class="box-area box-margin">
+            <div class="flex-item">
+                <p><strong>Total Revenue</strong></p>
+                <h5>${{ total_revenue }}</h5>
+            </div>
+        </div>
+        <div class="box-area box-margin">
+            <div class="flex-item">
+                <p><strong>Units Sold</strong></p>
+                <h5>{{ total_units_sold }}</h5>
+            </div>
+        </div>
+        <div class="box-area box-margin">
+            <div class="flex-item">
+                <p><strong>Units Sent</strong></p>
+                <h5>{{ total_units_sent }}</h5>
+            </div>
+        </div>
+        <div class="box-area box-margin">
+            <div class="flex-item">
+                <p><strong>Posts Scanned</strong></p>
+                <h5>X</h5>
+            </div>
+        </div>
+        <div class="box-area box-margin">
+            <div class="flex-item">
+                <p><strong>$5 Purchases</strong></p>
+                <h5>X</h5>
+            </div>
+        </div>
+        <div class="box-area box-margin">
+            <div class="flex-item">
+                <p><strong>$10 Purchases</strong></p>
+                <h5>X</h5>
+            </div>
+        </div>
+        <div class="box-area box-margin">
+            <div class="flex-item">
+                <p><strong>$25 Purchases</strong></p>
+                <h5>X</h5>
+            </div>
+        </div>
+        <div class="box-area box-margin">
+            <div class="flex-item">
+                <p><strong>$40 Purchases</strong></p>
+                <h5>X</h5>
+            </div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="box-area">
+            <h5>Promo Code Generator</h5>
+            <form action="/generate-codes" method="POST">
+                <div class="leftside">
+                    <div class="form-group">
+                        <input class="form-control input" id="reward" name="reward" placeholder="Reward"
+                               required="required" type="text">
+                        <input class="form-control input" id="prefix" name="prefix" placeholder="Prefix"
+                               required="required" type="text">
+                    </div>
+                </div>
+                <div class="rightside">
+                    <div class="form-group">
+                        <input class="form-control input" id="quantity" name="quantity" placeholder="Quantity"
+                               required="required" type="text">
+                        <input class="form-control input" id="distributor" name="distributor" placeholder="Distributor"
+                               required="required" type="text">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary container" type="submit">Generate</button>
+            </form>
+        </div>
+    </div>
+    <div class="sidebar">
+        <div class="box-area">
+            <p><strong>Active Codes</strong></p>
+            <h5>{{ active_codes }}</h5>
+        </div>
+        <div class="box-area">
+            <p><strong>Codes Issued</strong></p>
+            <h5>{{ total_codes }}</h5>
+        </div>
+        <div class="box-area">
+            <p><strong>Codes Redeemed</strong></p>
+            <h5>{{ total_codes_redeemed }}</h5>
+        </div>
+    </div>
+</div>
+<div class="sidebar">
+</div>
+</body>
+</html>
+{% endblock %}
