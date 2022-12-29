@@ -6,17 +6,36 @@
   width: 70%;
   float: left;
 }
-
-.sidebar {
-  width: 28%;
-  float: right;
-  margin-left: 2%;
+@media (max-width: 900px) {
+ .sidebar {
+   width: 28%;
+   float: right;
+   margin-left: 2%;
+ }
 }
 
-.leftside {
+@media (min-width: 900px) {
+ .sidebar {
+   width: 29%;
+   float: right;
+   margin-left: .5em;
+ }
+}
+
+@media (max-width: 900px) {
+ .leftside {
+  width: 100%;
+  float: left;
+  margin-right: 0.5%;
+ }
+}
+
+@media (min-width: 900px) {
+ .leftside {
   width: 49.5%;
   float: left;
   margin-right: 0.5%;
+ }
 }
 
 .rightside {
@@ -37,8 +56,8 @@
 }
 
 @media (max-width: 800px) {
-  .flex-item, .flex-item-left, .flex-item-right {
-    flex: 48% !important;
+  .flex-item {
+    flex: 10% !important;
   }
 }
 
@@ -49,6 +68,81 @@
 .box-margin {
   margin: 1%;
   flex: 10%;
+}
+
+.banner {
+  margin-top: 0%;
+  padding: 5% !important;
+}
+
+.slim {
+  padding: 1% !important;
+  padding-top: .5em !important;
+  padding-bottom: 0% !important;
+  line-height: 80%;
+  margin: .2em;
+  margin-top: 0%;
+  flex: 20%;
+}
+
+.sponsor {
+  color: white !important;
+  backdrop-filter: blur(25px);
+  /* filter: blur(5px); */
+  background: #ff1d58 !important;
+  border-width: 2px !important;
+  box-shadow: 0 2px 4px 0 black !important;
+  border-color: white !important;
+}
+
+.sponsor2 {
+  color: white !important;
+  backdrop-filter: blur(25px);
+  /* filter: blur(5px); */
+  background: #fbaf08 !important;
+  border-width: 2px !important;
+  box-shadow: 0 2px 4px 0 black !important;
+  border-color: #fbaf08 !important;
+}
+
+.sponsor3 {
+  color: black !important;
+  backdrop-filter: blur(25px);
+  /* filter: blur(5px); */
+  background: #fbaf08 !important;
+  border-width: 2px !important;
+  box-shadow: 0 2px 4px 0 black !important;
+  border-color: #fbaf08 !important;
+}
+
+.sponsor4 {
+  color: #ff1d58 !important;
+  backdrop-filter: blur(25px);
+  /* filter: blur(5px); */
+  background: #51d0de !important;
+  border-width: 2px !important;
+  box-shadow: 0 2px 4px 0 black !important;
+  border-color: white !important;
+}
+
+.sponsor5 {
+  color: white !important;
+  backdrop-filter: blur(25px);
+  /* filter: blur(5px); */
+  background-image: linear-gradient(90deg, #51d0de, #bf4aa8) !important;
+  border-width: 0px !important;
+  box-shadow: 0 2px 4px 0 black !important;
+  border-color: white !important;
+}
+
+.sponsor6 {
+  color: #ff1d58 !important;
+  backdrop-filter: blur(25px);
+  /* filter: blur(5px); */
+  background: white !important;
+  border-width: 5px !important;
+  box-shadow: 0 2px 4px 0 black !important;
+  border-image: url("colorful-clouds.jpg") 30 stretch !important;
 }
 
 .inner-container {
@@ -68,14 +162,14 @@
   text-align: center;
   vertical-align: middle;
   box-sizing: border-box;
-  margin-bottom: 1em;
+  margin-bottom: .5em;
   padding: 5%;
   background-color: white;
   border-style: solid;
-  border-color: lightgray;
+  border-color: white;
   border-width: 1px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
 }
 
 .base {
@@ -119,7 +213,6 @@
   display: inline-block;
   transition-duration: 0.3s;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-
 }
 
 .navbar-toggler{
@@ -140,6 +233,14 @@
   margin-top: 1%;
 }
 
+@media (min-width: 900px) {
+ .mini-form {
+   width: 50%;
+   display: flex;
+   margin: auto;
+ }
+}
+
 input {
   margin-top: 10px !important;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -148,6 +249,10 @@ input {
   border-width: 1px;
   border-radius: 10px;
   width: 100%;
+}
+
+.word-wrap {
+  word-wrap: break-word;
 }
 
 label {
@@ -164,8 +269,9 @@ h3 {
   font-family: Sans-serif;
 }
 
-h4 {
+h5 {
   font-family: Sans-serif;
+  margin-bottom: 0% !important;
 }
 
 tr:nth-child(odd) {
@@ -189,7 +295,7 @@ li {
   padding: 20px;
   background-color: #f44336; /* Red */
   color: white;
-  margin-bottom: 15px;
+  margin-bottom: 0.5em;
   border-radius: 10px;
 }
 
@@ -261,7 +367,7 @@ body {
   margin-top: 2% !important;
   min-height: 100vh;
   background-repeat: no-repeat;
-  background-image: url("white-hexagons.jpg");
+  background-image: url("colorful-clouds.jpg");
   background-size: cover;
 }
 
