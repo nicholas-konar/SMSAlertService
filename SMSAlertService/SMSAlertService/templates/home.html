@@ -1,35 +1,83 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
 {% block title %}SMS Alert Service{% endblock %}
-
 {% block content %}
 <html>
 <head>
     <link href="static/style.css" rel="stylesheet">
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-colors-win.css">
     <meta charset="utf-8">
 </head>
 <div class="container">
-    <div class="box-area billboard">
-        <h3>Welcome to the SMS Alert Service<br/><i class="fa fa-envelope fa-2x"></i></h3>
+    <div class="alert">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        <strong>Warning: </strong>Using this service for profit is discouraged. The SMS Alert Service's mission
+        is to enhance the user experience for everyone in our trading communities. Please buy responsibly!
     </div>
-        <div class="alert">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            <strong>Warning: </strong>The SMS Alert Service exists to make a positive contribution to our trading
-            communities.
-            Anyone found abusing this service for scalping, profiteering, etc. will have their account terminated
-            without warning.
-            Additionally, a ban from a subreddit may result in the termination of your account here.
-            <i>Terminated accounts will not be refunded.</i>
+    <div class="banner box-area"><h5>Support our partners to get promo codes!</h5></div>
+    <div class="flex-container">
+        <div class="box-area slim sponsor w3-win8-amber">
+            <div class="flex-item">
+                <p><strong>Sponsor 1</strong></p>
+                <p><a href="https://www.example.com">example.com</a></p>
+                <p>Patches and slaps</p>
+            </div>
         </div>
+        <div class="box-area slim sponsor2">
+            <div class="flex-item">
+                <p><strong>Sponsor 2</strong></p>
+                <p><a href="https://www.example.com">example.com</a></p>
+                <p>Modified KAC Gear</p>
+            </div>
+        </div>
+        <div class="box-area slim sponsor3">
+            <div class="flex-item">
+                <p><strong>Sponsor 3</strong></p>
+                <p><a href="https://www.example.com">example.com</a></p>
+                <p>3D Printed accessories</p>
+            </div>
+        </div>
+        <div class="box-area slim sponsor4">
+            <div class="flex-item">
+                <p><strong>Sponsor 4</strong></p>
+                <p><a href="https://www.example.com">example.com</a></p>
+                <p>Short description</p>
+            </div>
+        </div>
+        <div class="box-area slim sponsor5">
+            <div class="flex-item">
+                <p><strong>Sponsor 4</strong></p>
+                <p><a href="https://www.example.com">example.com</a></p>
+                <p>Short description</p>
+            </div>
+        </div>
+        <div class="box-area slim sponsor6">
+            <div class="flex-item">
+                <p><strong>Sponsor 4</strong></p>
+                <p><a href="https://www.example.com">example.com</a></p>
+                <p>Short description</p>
+            </div>
+        </div>
+        <div class="box-area slim ">
+            <div class="flex-item">
+                <p><strong>Sponsor 5</strong></p>
+                <p><a href="https://www.example.com">example.com</a></p>
+                <p>No CSS</p>
+            </div>
+        </div>
+    </div>
+
     <div class="main">
         <div class="box-area">
             <h5>What is the SMS Alert Service?</h5>
-            <p>We constantly scan online marketplaces and alert our users (via SMS) when items on their wishlist become
-                available. See the <strong>"Supported Markets"</strong> tab on this page to check which ones we cover.
-            </p>
-            <br/>
+            <p>The SMS Alert Service scans online marketplaces and alerts you (via SMS) the instant items on your list
+                becomeavailable. See the <strong>Supported Markets</strong> tab above to check which ones we
+                cover. This list will grow over time.</p>
+        </div>
+        <div class="box-area">
             <h5>How do I use it?</h5>
             <p>Once you've signed up, just add keywords to your profile and buy some alerts. That's it!
                 When someone makes a new post in a Supported Market that contains one or more of those keywords, we'll
@@ -45,11 +93,13 @@
                     <li>There is no limit on how many keywords you can use.</li>
                     <li>Using broad terms like "magazine" in your keywords might waste alerts on things you don't need
                         or
-                        want.</li>
+                        want.
+                    </li>
                     <li>However, if you use "Glock magazine" as your <strong>only</strong> keyword, you won't get
                         notified
                         if the seller's post says something like
-                        "Glock mag" or even "Glock magazine<strong>s</strong>."</li>
+                        "Glock mag" or even "Glock magazine<strong>s</strong>."
+                    </li>
                     <li>The best strategy is to add <strong>multiple</strong> keywords for the same item. For example:
                         "Glock mag", "Glock mags", "Glock magazine", "Glock magazines", "G19 mag", "G19 mags", "G19
                         magazine", and so on.
@@ -63,13 +113,14 @@
     </div>
     <div class="sidebar">
         <div class="box-area">
-            <p><strong>Sponsors</strong></p>
-            <p>Get promo codes by supporting our sponsors!</p>
-            <p><a href="https://www.example.com">example.com</a></p>
-            <p><a href="https://www.example.com">example.com</a></p>
-            <p><a href="https://www.example.com">example.com</a></p>
+            <form action="/login" method="get" class="form-group">
+                <button class="btn btn-primary container" type="submit">Login</button>
+            </form>
+            <form action="/signup" method="get">
+                <button class="btn btn-primary container" type="submit">Sign Up</button>
+            </form>
         </div>
-        <div class="box-area">
+        <div class="box-area word-wrap">
             <p><strong>Supported Markets</strong></p>
             <p><a href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a></p>
         </div>
