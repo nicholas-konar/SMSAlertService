@@ -14,7 +14,6 @@ from SMSAlertService import app, util
 # to get the certs to work, in the command line say:
 # python3 -m pip install certifi
 # export SSL_CERT_FILE=$(python3 -c "import certifi; print(certifi.where())")
-# and use pymongo.MongoClient(regular_url, tls=True) in the code
 
 
 url = os.environ['MONGO_URL_PROD']
