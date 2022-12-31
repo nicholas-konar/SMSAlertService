@@ -33,8 +33,7 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         pw_input = request.form.get("password")
-
-        user = mongo.get_user(username)
+        user = mongo.get_user_by_username(username)
         if user:
             password = user['Password']
             if checkpw(pw_input.encode('utf-8'), password):
@@ -114,7 +113,7 @@ def profile():
     else:
         username = session["username"]
         current_phone = session['phonenumber']
-        user = mongo.get_user(username)
+        user = mongo.get_user_by_username(username)
         message_count = user['Units']
         keywords = user['Keywords']
         return render_template('profile.html', message_count=message_count,
@@ -126,6 +125,47 @@ def edit_info():
     username = session["username"]
     current_phone = session['phonenumber']
     return render_template('edit-info.html', username=username, current_phone=current_phone)
+
+
+@app.route('/reset-password')
+def reset_password():
+    return render_template('reset-password.html')
+
+
+@app.route('/send', methods=['POST'])
+def send():
+    ph = request.form.get('PhoneNumber')
+    session['phonenumber'] = ph
+    notification.send_otp(ph)
+    return redirect(url_for('authenticate'))
+
+
+@app.route('/authenticate', methods=['GET', 'POST'])
+def authenticate():
+    if request.method == 'GET':
+        return render_template('authenticate.html')
+    if request.method == 'POST':
+        ph = session['phonenumber']
+        otp = request.form.get('OTP')
+        authenticated = mongo.authenticate(otp, ph)
+        if authenticated:
+
+            return redirect(url_for('reset-password'))
+        else:
+            message = "Incorrect OTP."
+            return render_template('authenticate.html')
+
+
+@app.route('/process-pw-reset', methods=['POST'])
+def process_pw_reset():
+    ph = session.get('PhoneNumber')
+    pw = request.form.get('Password')
+    status = mongo.reset_password(ph, pw)
+    if status is True:
+        return redirect(url_for('login'))
+    else:
+        message = 'We were unable to reset your password. Please contact support@smsalertservice.com for assistance.'
+        return render_template('reset-password.html', message=message)
 
 
 @app.route('/promo-code', methods=['POST'])

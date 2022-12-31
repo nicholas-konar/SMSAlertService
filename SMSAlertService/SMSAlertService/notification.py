@@ -1,4 +1,4 @@
-from SMSAlertService import app, mongo, reddit, twilio
+from SMSAlertService import app, mongo, reddit, twilio, util
 
 
 def distribute():
@@ -15,7 +15,7 @@ def distribute():
                     app.logger.debug(f'Keyword match detected for user {user["Username"]}: "{keyword}"')
                     matching_keywords.append(keyword + ', ')
             if matching_keywords and not mongo.blacklisted(user):
-                message = twilio.send(user['Username'], user['PhoneNumber'], post.url, matching_keywords)
+                message = twilio.send_alert(user['Username'], user['PhoneNumber'], post.url, matching_keywords)
                 mongo.update_user_msg_data(user['Username'], message)
                 messages_sent += 1
     response = {
@@ -24,4 +24,10 @@ def distribute():
     }
     return response
 
+
+def send_otp(ph):
+    otp = util.generate_otp()
+    mongo.save_otp(ph, otp)
+    twilio.send_otp(ph, otp)
+    app.logger.debug(f'Sent OTP to {ph}')
 

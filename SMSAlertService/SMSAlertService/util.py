@@ -4,12 +4,20 @@ import string
 from SMSAlertService import app
 
 
+def generate_otp():
+    length = 6
+    code = ''.join(secrets.choice(string.digits)
+                   for i in range(length))
+    app.logger.info(f"Generated OTP '{code}'")
+    return code
+
+
 def generate_code(prefix):
     length = 6
     code = ''.join(secrets.choice(string.ascii_uppercase + string.digits)
                    for i in range(length))
     code = prefix.upper() + "-" + code.upper()
-    app.logger.info(f"generated random string '{code}'")
+    app.logger.info(f"Generated random string '{code}'")
     return code
 
 
