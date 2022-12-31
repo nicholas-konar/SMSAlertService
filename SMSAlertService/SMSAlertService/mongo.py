@@ -34,6 +34,7 @@ def create_user(username, password, phonenumber):
         'Password': hashed_pw,
         'Username': username,
         'PhoneNumber': phonenumber,
+        'OTP': None,
         'TotalRevenue': 0,
         'Units': 0,
         'UnitsSent': 0,
@@ -53,7 +54,7 @@ def process_transaction(username, units_purchased, amount):
     old_unit_count = get_message_count(username)
     updated_unit_count = old_unit_count + int(units_purchased)
 
-    user = get_user(username)
+    user = get_user_by_username(username)
     updated_units_purchased = user['UnitsPurchased'] + int(units_purchased)
     updated_total_revenue = user["TotalRevenue"] + float(amount)
 
@@ -165,8 +166,12 @@ def get_codes():
     return codes
 
 
-def get_user(username):
+def get_user_by_username(username):
     return user_records.find_one({"Username": username})
+
+
+def get_user_by_phonenumber(ph):
+    return user_records.find_one({"PhoneNumber": ph})
 
 
 def get_users():
@@ -178,13 +183,13 @@ def get_users():
 
 
 def get_message_count(username):
-    user = get_user(username)
+    user = get_user_by_username(username)
     return user["Units"]
 
 
 def update_user_msg_data(username, message):
     timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
-    user = get_user(username)
+    user = get_user_by_username(username)
     updated_msg_count = user["Units"] - 1
     updated_sent_count = user["UnitsSent"] + 1
 
@@ -214,9 +219,15 @@ def reset_password(phonenumber, password):
     app.logger.debug('full phone = ' + phonenumber)
     query = {"PhoneNumber": phonenumber}
     hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    app.logger.debug('pw hash = ' + str(hashed_pw))
     new_value = {"$set": {"Password": hashed_pw}}
     user_records.update_one(query, new_value)
+
+
+def save_otp(ph, otp):
+    query = {"PhoneNumber": ph}
+    value = {"$set": {"OTP": otp}}
+    user_records.update_one(query, value)
+    app.logger.debug(f'OTP {otp} saved successfully')
 
 
 def add_to_blacklist(phonenumber):
@@ -261,7 +272,7 @@ def delete_all_keywords(username):
 
 
 def get_phonenumber(username):
-    user = get_user(username)
+    user = get_user_by_username(username)
     return user['PhoneNumber']
 
 
