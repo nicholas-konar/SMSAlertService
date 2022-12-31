@@ -8,9 +8,9 @@ auth_token = os.environ['TWILIO_AUTH_TOKEN']
 messaging_service_sid = os.environ['TWILIO_MESSAGING_SERVICE_SID']
 
 
-def send(username, destination, link, keywords):
+def send_alert(username, destination, link, keywords):
     client = Client(account_sid, auth_token)
-    body = create_body(link, keywords)
+    body = build_alert_body(link, keywords)
     message = client.messages.create(
         body=body,
         messaging_service_sid=messaging_service_sid,
@@ -20,10 +20,26 @@ def send(username, destination, link, keywords):
     return message
 
 
-def create_body(link, keywords):
+def send_otp(destination, otp):
+    client = Client(account_sid, auth_token)
+    body = build_otp_body(otp)
+    message = client.messages.create(
+        body=body,
+        messaging_service_sid=messaging_service_sid,
+        to=destination
+    )
+    app.logger.debug(f'OTP sent to {destination} with SID: {message.sid}')
+    return message
+
+
+def build_alert_body(link, keywords):
     formatted_keywords = format_keywords(keywords)
     subreddit = os.environ['REDDIT_SUBREDDIT']
-    return f'A post on {subreddit} matched some of your keywords: {formatted_keywords}\n{link}'
+    return f'www.smsalertservice.com\n\nA post on {subreddit} matched the following keywords: {formatted_keywords}\n{link}'
+
+
+def build_otp_body(otp):
+    return f'SMS Alert Service: Your one time password is {otp}.\nwww.smsalertservice.com'
 
 
 def format_keywords(keywords):
@@ -31,4 +47,3 @@ def format_keywords(keywords):
     for keyword in keywords:
         formatted_keywords += ' ' + keyword
     return formatted_keywords
-

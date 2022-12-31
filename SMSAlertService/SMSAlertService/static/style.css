@@ -164,7 +164,7 @@
   box-sizing: border-box;
   margin-bottom: .5em;
   padding: 5%;
-  background-color: #FFFEF2;
+  background-color: white;
   border-style: solid;
   border-color: white;
   border-width: 1px;
@@ -201,18 +201,17 @@
 .button {
   width: 100%;
   position: relative;
-  background-color: white;
   border-radius: 10px;
   border-style: solid;
   border-color: white;
   border-width: 0px;
-  color: black;
+  color: white;
   padding: 1%;
   margin-top: 5%;
   text-align: center;
   display: inline-block;
   transition-duration: 0.3s;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.5);
 }
 
 .navbar-toggler{
@@ -223,11 +222,6 @@
   text-color: white;
 }
 
-.button:hover {
-  background-color: black;
-  color: white;
-}
-
 .form-style {
   margin: auto;
   margin-top: 1%;
@@ -236,16 +230,18 @@
 @media (min-width: 900px) {
  .mini-form {
    width: 50%;
-   display: flex;
-   margin: auto;
+   display: block;
+   margin: 0 auto;
+   flex: 100%;
+   align-content: stretch;
  }
 }
 
 input {
   margin-top: 10px !important;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.5);
   border-style: solid;
-  border-color: lightgray;
+  border-color: white;
   border-width: 1px;
   border-radius: 10px;
   width: 100%;
@@ -256,7 +252,8 @@ input {
 }
 
 label {
-  margin-top: 0%;
+  margin-top: 1em;
+  margin-bottom: 0em;
 }
 
 table {
@@ -289,6 +286,10 @@ ol {
 
 li {
   text-align: left;
+}
+
+.red {
+  background-color: #f44336 !important; /* Red */
 }
 
 .alert {
