@@ -214,13 +214,13 @@ def update_user_msg_data(username, message):
     app.logger.debug(f'Unit count reduced by 1 for user {username}')
 
 
-def reset_password(phonenumber, password):
-    phonenumber = phonenumber[2:]  # trims the +1 off the ph. number
-    app.logger.debug('full phone = ' + phonenumber)
-    query = {"PhoneNumber": phonenumber}
-    hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    new_value = {"$set": {"Password": hashed_pw}}
-    user_records.update_one(query, new_value)
+def reset_password(ph, pw):
+    #phonenumber = phonenumber[2:]  # trims the +1 off the ph. number
+    app.logger.debug('full phone = ' + ph)
+    hashed_pw = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
+    query = {"PhoneNumber": ph}
+    value = {"$set": {"Password": hashed_pw}}
+    user_records.update_one(query, value)
 
 
 def save_otp(ph, otp):
