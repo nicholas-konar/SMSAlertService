@@ -116,13 +116,13 @@
           console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
 
           // Show a success message within this page, e.g.
-                      const element = document.getElementById('paypal-button-container');
-                      element.innerHTML = '';
-                      element.innerHTML = '<h3>Thank you for your payment!</h3>';
-                      let unitSelection = orderData.purchase_units[0].items[0].name;
-                      let units = unitSelection.replace(" Messages", "");
-                      let amount = orderData.purchase_units[0].amount.value;
-                      fetch('/process-sale?user={{ username }}' + '&status=' + orderData.status + "&units=" + units + '&amount=' + amount).then(resp => resp.json()).then(response => console.log(response))
+           const element = document.getElementById('paypal-button-container');
+           element.innerHTML = '';
+           element.innerHTML = '<h3>Thank you for your payment!</h3>';
+           let unitSelection = orderData.purchase_units[0].items[0].name;
+           let units = unitSelection.replace(" Alerts", "");
+           let amount = orderData.purchase_units[0].amount.value;
+           fetch('/process-sale?user={{ username }}' + '&status=' + orderData.status + "&units=" + units + '&amount=' + amount).then(resp => resp.json()).then(response => console.log(response))
 
           // Or go to another URL:  actions.redirect('thank_you.html');
 
@@ -134,6 +134,7 @@
     }).render('#paypal-button-container');
   }
   initPayPalButton();
+
             </script>
         </div>
         <div class="box-area">
@@ -173,6 +174,7 @@
             function myFunction(keyword, index) {
               keywordvar += "<tr><td>" + keyword + "</td></tr>";
             }
+
             </script>
         </div>
         <div class="box-area">
