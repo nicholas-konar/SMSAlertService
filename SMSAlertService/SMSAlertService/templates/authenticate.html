@@ -11,12 +11,13 @@
 
 <div class="container">
     <div class="box-area billboard">
-        <h3>Enter OTP<br/><i class="fa fa-envelope fa-2x"></i></h3>
+        <h3>Account Recovery<br/><i class="fa fa-envelope fa-2x"></i></h3>
     </div>
     <div class="box-area">
         <h4>Account Verification</h4>
         <p>Enter your Verification Code below to continue.</p>
         <form action="/authenticate" class="mini-form" method="post">
+            {{ test }}
             {% if message %}
             <p class="alert">{{ message }}</p>
             {% endif %}

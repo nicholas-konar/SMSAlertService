@@ -42,7 +42,7 @@ def login():
                 if user['Username'] == "Admin":
                     session['admin'] = True
                     return redirect(url_for('admin'))
-                return redirect(url_for('home'))
+                return redirect(url_for('profile'))
             else:
                 message = 'Wrong password'
                 return render_template('login.html', message=message)
@@ -54,12 +54,8 @@ def login():
 
 @app.route("/logout", methods=["POST", "GET"])
 def logout():
-    if "username" in session:
-        session.pop("username", None)
-        session.pop("phonenumber", None)
-        return redirect(url_for("login"))
-    else:
-        return redirect(url_for("login"))
+    session.clear()
+    return redirect(url_for("login"))
 
 
 @app.route("/signup", methods=['GET', 'POST'])
@@ -127,9 +123,9 @@ def edit_info():
     return render_template('edit-info.html', username=username, current_phone=current_phone)
 
 
-@app.route('/reset-password')
-def reset_password():
-    return render_template('reset-password.html')
+@app.route('/account-recovery')
+def account_recovery():
+    return render_template('account-recovery.html')
 
 
 @app.route('/send', methods=['POST'])
@@ -149,29 +145,27 @@ def resend():
 
 @app.route('/authenticate', methods=['GET', 'POST'])
 def authenticate():
-    if request.method == 'GET':
-        return render_template('authenticate.html')
     if request.method == 'POST':
         ph = session['phonenumber']
         otp = request.form.get('otp')
-        authenticated = mongo.authenticate(ph, otp)
+        authenticated = util.authenticate(ph, otp)
         if authenticated:
-            return redirect(url_for('reset-password'))
+            return redirect(url_for('reset_password'))
         else:
             message = "Incorrect OTP."
             return render_template('authenticate.html', message=message)
+    return render_template('authenticate.html')
 
 
-@app.route('/process-pw-reset', methods=['POST'])
-def process_pw_reset():
-    ph = session.get('phonenumber')
-    pw = request.form.get('Password')
-    status = mongo.reset_password(ph, pw)
-    if status is True:
+@app.route('/reset-password', methods=['GET', 'POST'])
+def reset_password():
+    if request.method == 'GET':
+        return render_template('reset-password.html')
+    if request.method == 'POST':
+        ph = session['phonenumber']
+        pw = request.form.get('password')
+        mongo.reset_password(ph, pw)
         return redirect(url_for('login'))
-    else:
-        message = 'We were unable to reset your password. Please contact support@smsalertservice.com for assistance.'
-        return render_template('reset-password.html', message=message)
 
 
 @app.route('/promo-code', methods=['POST'])
