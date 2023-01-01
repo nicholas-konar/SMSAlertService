@@ -23,97 +23,99 @@
     <div class="main">
         <div class="box-area" id="smart-button-container">
             <div>
-                <div>
-                    <h5>Get SMS Alerts below:</h5>
-                    <select id="item-options">
-                        <option price="5.00" value="10 Messages">10 SMS Alerts - 5.00 USD</option>
-                        <option price="10.00" value="50 Messages">50 SMS Alerts - 10.00 USD</option>
-                        <option price="25.00" value="250 Messages">250 SMS Alerts - 25.00 USD</option>
-                        <option price="40.00" value="500 Messages">500 SMS Alerts - 40.00 USD</option>
-                    </select>
-                    <select id="quantitySelect" style="visibility: hidden"></select>
+                <div style="text-align: center;">
+                    <div style="margin-bottom: 1.25rem;">
+                        <p>Buy SMS Alerts here:</p>
+                        <select id="item-options">
+                            <option price="5" value="10 Alerts">10 Alerts - 5 USD</option>
+                            <option price="10" value="25 Alerts">25 Alerts - 10 USD</option>
+                            <option price="25" value="100 Alerts">100 Alerts - 25 USD</option>
+                            <option price="35" value="250 Alerts">250 Alerts - 35 USD</option>
+                            <option price="50" value="500 Alerts">500 Alerts - 50 USD</option>
+                        </select>
+                        <select id="quantitySelect" style="visibility: hidden"></select>
+                    </div>
+                    <div id="paypal-button-container"></div>
                 </div>
-                <br/>
-                <div id="paypal-button-container"></div>
             </div>
             <script data-sdk-integration-source="button-factory"
-                    src="https://www.paypal.com/sdk/js?client-id=AWAg3kGZplLsUzGcJNUYVmrVCNxfLkb_KHgPiU_Ob9oD-EUCh0xMS8dlyw0d0VjXmhMg-HN_0xmWZziC&enable-funding=venmo&currency=USD"></script>
+                    src="https://www.paypal.com/sdk/js?client-id=ATp90AxmHSm8HQwm8pdEyibtZVhsjC0eQnONlaZB2Z_ovQw6gKrvVuL6_gkuvfqzpu6TmHM0VQjXTBpp&enable-funding=venmo&currency=USD"></script>
             <script>
-                  function initPayPalButton() {
-                    var shipping = 0;
-                    var itemOptions = document.querySelector("#smart-button-container #item-options");
-                var quantity = parseInt();
-                var quantitySelect = document.querySelector("#smart-button-container #quantitySelect");
-                if (!isNaN(quantity)) {
-                  quantitySelect.style.visibility = "visible";
+      function initPayPalButton() {
+        var shipping = 0;
+        var itemOptions = document.querySelector("#smart-button-container #item-options");
+    var quantity = parseInt();
+    var quantitySelect = document.querySelector("#smart-button-container #quantitySelect");
+    if (!isNaN(quantity)) {
+      quantitySelect.style.visibility = "visible";
+    }
+    var orderDescription = 'Buy SMS Alerts here:';
+    if(orderDescription === '') {
+      orderDescription = 'Item';
+    }
+    paypal.Buttons({
+      style: {
+        shape: 'rect',
+        color: 'gold',
+        layout: 'vertical',
+        label: 'paypal',
+
+      },
+      createOrder: function(data, actions) {
+        var selectedItemDescription = itemOptions.options[itemOptions.selectedIndex].value;
+        var selectedItemPrice = parseFloat(itemOptions.options[itemOptions.selectedIndex].getAttribute("price"));
+        var tax = (7.25 === 0 || false) ? 0 : (selectedItemPrice * (parseFloat(7.25)/100));
+        if(quantitySelect.options.length > 0) {
+          quantity = parseInt(quantitySelect.options[quantitySelect.selectedIndex].value);
+        } else {
+          quantity = 1;
+        }
+
+        tax *= quantity;
+        tax = Math.round(tax * 100) / 100;
+        var priceTotal = quantity * selectedItemPrice + parseFloat(shipping) + tax;
+        priceTotal = Math.round(priceTotal * 100) / 100;
+        var itemTotalValue = Math.round((selectedItemPrice * quantity) * 100) / 100;
+
+        return actions.order.create({
+          purchase_units: [{
+            description: orderDescription,
+            amount: {
+              currency_code: 'USD',
+              value: priceTotal,
+              breakdown: {
+                item_total: {
+                  currency_code: 'USD',
+                  value: itemTotalValue,
+                },
+                shipping: {
+                  currency_code: 'USD',
+                  value: shipping,
+                },
+                tax_total: {
+                  currency_code: 'USD',
+                  value: tax,
                 }
-                var orderDescription = 'Choose your SMS package';
-                if(orderDescription === '') {
-                  orderDescription = 'Item';
-                }
-                paypal.Buttons({
-                  style: {
-                    shape: 'pill',
-                    color: 'gold',
-                    layout: 'horizontal',
-                    label: 'paypal',
+              }
+            },
+            items: [{
+              name: selectedItemDescription,
+              unit_amount: {
+                currency_code: 'USD',
+                value: selectedItemPrice,
+              },
+              quantity: quantity
+            }]
+          }]
+        });
+      },
+      onApprove: function(data, actions) {
+        return actions.order.capture().then(function(orderData) {
 
-                  },
-                  createOrder: function(data, actions) {
-                    var selectedItemDescription = itemOptions.options[itemOptions.selectedIndex].value;
-                    var selectedItemPrice = parseFloat(itemOptions.options[itemOptions.selectedIndex].getAttribute("price"));
-                    var tax = (0 === 0 || false) ? 0 : (selectedItemPrice * (parseFloat(0)/100));
-                    if(quantitySelect.options.length > 0) {
-                      quantity = parseInt(quantitySelect.options[quantitySelect.selectedIndex].value);
-                    } else {
-                      quantity = 1;
-                    }
+          // Full available details
+          console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
 
-                    tax *= quantity;
-                    tax = Math.round(tax * 100) / 100;
-                    var priceTotal = quantity * selectedItemPrice + parseFloat(shipping) + tax;
-                    priceTotal = Math.round(priceTotal * 100) / 100;
-                    var itemTotalValue = Math.round((selectedItemPrice * quantity) * 100) / 100;
-
-                    return actions.order.create({
-                      purchase_units: [{
-                        description: orderDescription,
-                        amount: {
-                          currency_code: 'USD',
-                          value: priceTotal,
-                          breakdown: {
-                            item_total: {
-                              currency_code: 'USD',
-                              value: itemTotalValue,
-                            },
-                            shipping: {
-                              currency_code: 'USD',
-                              value: shipping,
-                            },
-                            tax_total: {
-                              currency_code: 'USD',
-                              value: tax,
-                            }
-                          }
-                        },
-                        items: [{
-                          name: selectedItemDescription,
-                          unit_amount: {
-                            currency_code: 'USD',
-                            value: selectedItemPrice,
-                          },
-                          quantity: quantity
-                        }]
-                      }]
-                    });
-                  },
-                  onApprove: function(data, actions) {
-                    return actions.order.capture().then(function(orderData) {
-
-                      // Full available details
-                      console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-
-                      // Show a success message within this page, e.g.
+          // Show a success message within this page, e.g.
                       const element = document.getElementById('paypal-button-container');
                       element.innerHTML = '';
                       element.innerHTML = '<h3>Thank you for your payment!</h3>';
@@ -122,16 +124,16 @@
                       let amount = orderData.purchase_units[0].amount.value;
                       fetch('/process-sale?user={{ username }}' + '&status=' + orderData.status + "&units=" + units + '&amount=' + amount).then(resp => resp.json()).then(response => console.log(response))
 
-                      // Or go to another URL:  actions.redirect('thank_you.html');
+          // Or go to another URL:  actions.redirect('thank_you.html');
 
-                    });
-                  },
-                  onError: function(err) {
-                    console.log(err);
-                  },
-                }).render('#paypal-button-container');
-              }
-              initPayPalButton();
+        });
+      },
+      onError: function(err) {
+        console.log(err);
+      },
+    }).render('#paypal-button-container');
+  }
+  initPayPalButton();
             </script>
         </div>
         <div class="box-area">
@@ -151,8 +153,8 @@
                 </a>
             </div>
         </div>
-
     </div>
+
     <div class="sidebar">
         <div class="box-area">
             <p><strong>SMS Alerts:</strong></p>
@@ -171,21 +173,14 @@
             function myFunction(keyword, index) {
               keywordvar += "<tr><td>" + keyword + "</td></tr>";
             }
-
-
-
-
-
-
-
-
             </script>
         </div>
         <div class="box-area">
             <form action="/promo-code" method="POST">
                 <div class="form-group">
                     <label for="promo-code"><strong>Promo Code:</strong></label>
-                    <input aria-describedby="keywordHelp" class="form-control input" id="promo-code" name="promo-code"
+                    <input aria-describedby="keywordHelp" class="form-control input" id="promo-code"
+                           name="promo-code"
                            placeholder="" required="required" type="text">
                     <button class="button btn btn-primary container" type="submit">Redeem</button>
                 </div>
