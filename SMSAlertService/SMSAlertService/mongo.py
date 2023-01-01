@@ -230,6 +230,12 @@ def save_otp(ph, otp):
     app.logger.debug(f'OTP {otp} saved successfully')
 
 
+def authenticate(ph, otp):
+    query = {"PhoneNumber": ph}
+
+    return False
+
+
 def add_to_blacklist(phonenumber):
     query = {"Document": "BLACKLIST"}
     new_value = {"$push": {"Keywords": phonenumber}}

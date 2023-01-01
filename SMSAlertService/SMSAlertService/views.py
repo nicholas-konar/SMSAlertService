@@ -140,25 +140,31 @@ def send():
     return redirect(url_for('authenticate'))
 
 
+@app.route('/resend', methods=['POST'])
+def resend():
+    ph = session['phonenumber']
+    notification.send_otp(ph)
+    return render_template('authenticate.html', sent=True)
+
+
 @app.route('/authenticate', methods=['GET', 'POST'])
 def authenticate():
     if request.method == 'GET':
         return render_template('authenticate.html')
     if request.method == 'POST':
         ph = session['phonenumber']
-        otp = request.form.get('OTP')
-        authenticated = mongo.authenticate(otp, ph)
+        otp = request.form.get('otp')
+        authenticated = mongo.authenticate(ph, otp)
         if authenticated:
-
             return redirect(url_for('reset-password'))
         else:
             message = "Incorrect OTP."
-            return render_template('authenticate.html')
+            return render_template('authenticate.html', message=message)
 
 
 @app.route('/process-pw-reset', methods=['POST'])
 def process_pw_reset():
-    ph = session.get('PhoneNumber')
+    ph = session.get('phonenumber')
     pw = request.form.get('Password')
     status = mongo.reset_password(ph, pw)
     if status is True:
