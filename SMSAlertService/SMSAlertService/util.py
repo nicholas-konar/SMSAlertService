@@ -1,7 +1,7 @@
 import secrets
 import string
 
-from SMSAlertService import app
+from SMSAlertService import app, mongo
 
 
 def generate_otp():
@@ -10,6 +10,14 @@ def generate_otp():
                    for i in range(length))
     app.logger.info(f"Generated OTP '{code}'")
     return code
+
+
+def authenticate(ph, otp):
+    user = mongo.get_user_by_phonenumber(ph)
+    if otp == user['OTP']:
+        return True
+    else:
+        return False
 
 
 def generate_code(prefix):
