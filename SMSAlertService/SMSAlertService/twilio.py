@@ -39,7 +39,7 @@ def build_alert_body(link, keywords):
 
 
 def build_otp_body(otp):
-    return f'SMS Alert Service: Your one time password is {otp}.\nwww.smsalertservice.com'
+    return f'Your verification code is {otp}.\nwww.smsalertservice.com'
 
 
 def format_keywords(keywords):
