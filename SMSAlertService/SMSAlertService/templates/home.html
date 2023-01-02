@@ -7,59 +7,60 @@
     <link href="static/style.css" rel="stylesheet">
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-colors-win.css">
+    <link href="https://www.w3schools.com/w3css/4/w3.css" rel="stylesheet">
+    <link href="https://www.w3schools.com/lib/w3-colors-win.css" rel="stylesheet">
     <meta charset="utf-8">
 </head>
 <div class="container">
     <div class="alert">
         <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-        <strong>Warning: </strong>This service gives you an unfair advantage over other buyers. Using it for profit is discouraged.
+        <strong>Warning: </strong>This service gives you an unfair advantage over other buyers. Using it for profit is
+        discouraged.
     </div>
     <div class="flex-container">
-        <div class="box-area slim sponsor2">
+        <div class="box-area slim sponsor">
             <div class="flex-item">
                 <p><strong>Sponsor 1</strong></p>
-                <p><a href="https://www.example.com">example.com</a></p>
+                <p><u><a href="https://www.example.com">example.com</a></u></p>
                 <p>Patches and slaps</p>
             </div>
         </div>
-        <div class="box-area slim sponsor2">
+        <div class="box-area slim sponsor">
             <div class="flex-item">
                 <p><strong>Sponsor 2</strong></p>
                 <p><a href="https://www.example.com">example.com</a></p>
                 <p>Modified KAC Gear</p>
             </div>
         </div>
-        <div class="box-area slim sponsor2">
+        <div class="box-area slim sponsor">
             <div class="flex-item">
                 <p><strong>Sponsor 3</strong></p>
                 <p><a href="https://www.example.com">example.com</a></p>
                 <p>3D Printed accessories</p>
             </div>
         </div>
-        <div class="box-area slim sponsor2">
+        <div class="box-area slim sponsor">
             <div class="flex-item">
                 <p><strong>Sponsor 4</strong></p>
                 <p><a href="https://www.example.com">example.com</a></p>
                 <p>Short description</p>
             </div>
         </div>
-        <div class="box-area slim sponsor2">
+        <div class="box-area slim sponsor">
             <div class="flex-item">
                 <p><strong>Sponsor 4</strong></p>
                 <p><a href="https://www.example.com">example.com</a></p>
                 <p>Short description</p>
             </div>
         </div>
-        <div class="box-area slim sponsor2">
+        <div class="box-area slim sponsor">
             <div class="flex-item">
                 <p><strong>Sponsor 4</strong></p>
                 <p><a href="https://www.example.com">example.com</a></p>
                 <p>Short description</p>
             </div>
         </div>
-        <div class="box-area slim sponsor2">
+        <div class="box-area slim sponsor">
             <div class="flex-item">
                 <p><strong>Sponsor 5</strong></p>
                 <p><a href="https://www.example.com">example.com</a></p>
@@ -67,22 +68,29 @@
             </div>
         </div>
     </div>
+    <div class="box-area billboard">
+        <h3>Welcome to the SMS Alert Service</h3>
+        <h3><i class="fa fa-envelope fa-2x"></i></h3></div>
 
     <div class="main">
         <div class="box-area">
-            <h5>What is the SMS Alert Service?</h5> <br/>
-            <p>The SMS Alert Service scans online marketplaces, and alerts you (via SMS) the instant an item you want is posted
+            <h5><strong>What is the SMS Alert Service?</strong></h5>
+            <br/>
+            <p>The SMS Alert Service scans online marketplaces, and alerts you (via SMS) the instant an item you want is
+                posted
                 for sale.<br/><br/>Check the <strong>Supported Markets</strong> tab to the right to see which ones we
                 cover.</p>
         </div>
         <div class="box-area">
-            <h5>How do I use it?</h5> <br/>
+            <h5><strong>How do I use it?</strong></h5>
+            <br/>
             <p>Once you've signed up, just add keywords to your profile and buy some alerts. That's it!
                 When someone makes a new post in a Supported Market that contains one or more of those keywords, we'll
                 text you a link to the post, so you don't miss out.</p>
         </div>
         <div class="box-area">
-            <h5>Tips</h5>
+            <h5><strong>Tips</strong></h5>
+            <br/>
             <p>Computers take everything you say very literally, so be sure to structure your keywords
                 in a way that's not too general, but not too narrow either. Here's some tips and tricks to get the most
                 out of the service.</p>
@@ -111,12 +119,22 @@
     </div>
     <div class="sidebar">
         <div class="box-area">
-            <form action="/login" method="get" class="form-group">
+            <p><strong>Menu</strong></p>
+            {% if username %}
+            <form action="/profile" class="form-group" method="get">
+                <button class="btn btn-primary container" type="submit">Profile</button>
+            </form>
+            <form action="/signup" method="get">
+                <button class="btn btn-primary container" type="submit">logged in</button>
+            </form>
+            {% else %}
+            <form action="/login" class="form-group" method="get">
                 <button class="btn btn-primary container" type="submit">Login</button>
             </form>
             <form action="/signup" method="get">
                 <button class="btn btn-primary container" type="submit">Sign Up</button>
             </form>
+            {% endif %}
         </div>
         <div class="box-area word-wrap">
             <p><strong>Supported Markets</strong></p>

@@ -17,30 +17,30 @@
     </div>
     <div class="main">
         <div class="box-area">
-            <form action="/update-username" method="POST">
+            <form action="/update-username" method="POST" class="mini-form">
                 <h5><label for="NewUsername">Update Username</label></h5>
                 <input aria-describedby="usernameHelp" class="form-control input" id="NewUsername" name="newusername"
                        placeholder="New Username">
-                <button class="button" type="submit">Submit</button>
+                <button class="button btn-primary" type="submit">Submit</button>
             </form>
             <br/>
-            <form action="/update-phone-number" method="POST">
+            <form action="/update-phone-number" method="POST" class="mini-form">
                 <h5><label for="NewNumber">Update Phone Number</label></h5>
                 <input aria-describedby="phoneHelp" class="form-control input" id="NewNumber" name="newnumber"
                        pattern="[0-9]{10}" placeholder="New Number" type="tel">
-                <button class="button" type="submit">Submit</button>
+                <button class="button btn-primary" type="submit">Submit</button>
             </form>
         </div>
     </div>
     <div class="sidebar">
         <div class="box-area">
-            <p><strong>Current Username:</strong></p>
+            <p><strong>Username:</strong></p>
             <p>"{{ username }}"</p>
         </div>
     </div>
     <div class="sidebar">
         <div class="box-area">
-            <p><strong>Current Phone:</strong></p>
+            <p><strong>Phone:</strong></p>
             <p>{{ current_phone }}</p>
         </div>
     </div>
