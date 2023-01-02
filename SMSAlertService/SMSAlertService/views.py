@@ -15,13 +15,13 @@ def home():
         return render_template('home.html', username=username)
 
 
-@app.route("/contact")
-def contact():
+@app.route("/support")
+def support():
     if "username" not in session:
-        return render_template('contact.html')
+        return render_template('support.html')
     else:
         username = session["username"]
-        return render_template('contact.html', username=username)
+        return render_template('support.html', username=username)
 
 
 @app.route("/login", methods=["POST", "GET"])
