@@ -17,6 +17,8 @@ def distribute():
                     message = twilio.send_alert(user['Username'], user['PhoneNumber'], post.url, matching_keywords)
                     mongo.update_user_msg_data(user['Username'], message)
                     messages_sent += 1
+                if int(user['Units']) >= 3:
+                    twilio.warn(user['PhoneNumber'], int(user['Units']))
     response = {
         "NewPost": post,
         "MessagesSent": messages_sent

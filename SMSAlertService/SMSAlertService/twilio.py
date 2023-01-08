@@ -32,6 +32,18 @@ def send_otp(destination, otp):
     return message
 
 
+def warn(destination, units):
+    client = Client(account_sid, auth_token)
+    body = f'Warning: You only have {units} alerts left. Reload at www.smsalertservice.com/profile'
+    message = client.messages.create(
+        body=body,
+        messaging_service_sid=messaging_service_sid,
+        to=destination
+    )
+    app.logger.debug(f'OTP sent to {destination} with SID: {message.sid}')
+    return message
+
+
 def build_alert_body(link, keywords):
     formatted_keywords = format_keywords(keywords)
     subreddit = os.environ['REDDIT_SUBREDDIT']
