@@ -12,13 +12,13 @@ subreddit_name = os.environ['REDDIT_SUBREDDIT']
 subreddit = reddit.subreddit(subreddit_name)
 
 
-def has_new_post():
+def new_post():
     post = get_latest_post()
     last_post_id = mongo.get_last_post_id()
     if post.id != last_post_id:
         app.logger.info('New PostId: ' + post.id)
         mongo.save_post_id(post)
-        return True
+        return post
     else:
         app.logger.info('No new posts yet.')
         return False
