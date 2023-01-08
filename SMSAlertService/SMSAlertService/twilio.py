@@ -1,7 +1,5 @@
 import os
-
 from twilio.rest import Client
-
 from SMSAlertService import app
 
 twilio_number = os.environ['TWILIO_NUMBER']
@@ -31,19 +29,6 @@ def send_otp(destination, otp):
         to=destination
     )
     app.logger.info(f'OTP sent to {destination} with SID: {message.sid}')
-    return message
-
-
-def warn(destination, units):
-    app.logger.debug(f'ABOUT TO SEND WARNING TO {destination}')
-    client = Client(account_sid, auth_token)
-    body = f'Heads up: You have {units} alert(s) left. Reload at www.smsalertservice.com/profile'
-    message = client.messages.create(
-        body=body,
-        messaging_service_sid=messaging_service_sid,
-        to=destination
-    )
-    app.logger.info(f'Low unit warning sent to {destination} with SID: {message.sid}')
     return message
 
 
