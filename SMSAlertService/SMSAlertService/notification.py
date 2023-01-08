@@ -14,7 +14,7 @@ def distribute():
                 if keyword.lower() in str(post.title).lower() or keyword in str(post.selftext).lower():
                     app.logger.debug(f'Keyword match detected for user {user["Username"]}: "{keyword}"')
                     matching_keywords.append(keyword + ', ')
-            if matching_keywords and not mongo.blacklisted(user):
+            if matching_keywords and int(user['Units']) > 0 and not mongo.blacklisted(user):
                 message = twilio.send_alert(user['Username'], user['PhoneNumber'], post.url, matching_keywords)
                 mongo.update_user_msg_data(user['Username'], message)
                 messages_sent += 1
