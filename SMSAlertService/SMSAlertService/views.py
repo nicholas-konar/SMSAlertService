@@ -67,9 +67,13 @@ def signup():
         username = request.form.get("username")
         phonenumber = request.form.get("phonenumber")
         password = request.form.get("password")
-        username_found = mongo.username_taken(username)
-        if username_found:
+        username_taken = mongo.username_taken(username)
+        phonenumber_taken = mongo.phonenumber_taken(phonenumber)
+        if username_taken:
             message = 'Username taken.'
+            return render_template('signup.html', message=message)
+        if phonenumber_taken:
+            message = 'This phone number is already in use. If you need to reset your password, go to the login page.'
             return render_template('signup.html', message=message)
         else:
             mongo.create_user(username, password, phonenumber)

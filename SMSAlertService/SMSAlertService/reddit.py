@@ -14,7 +14,9 @@ subreddit = reddit.subreddit(subreddit_name)
 
 def new_post():
     post = get_latest_post()
+    app.logger.debug(f'LATEST POST TITLE IN NEW_POST IS: {post.title}')
     last_post_id = mongo.get_last_post_id()
+    app.logger.debug(f'PREVIOUS POST IS: {last_post_id}')
     if post.id != last_post_id:
         app.logger.info('New PostId: ' + post.id)
         mongo.save_post_id(post)
