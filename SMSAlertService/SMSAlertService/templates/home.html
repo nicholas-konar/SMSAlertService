@@ -94,7 +94,7 @@
             <p>Computers take everything you say very literally, so be sure to structure your keywords
                 in a way that's not too general, but not too narrow either. Here's some tips and tricks to get the most
                 out of the service.</p>
-            <div class="inner-container">
+            <div class="mini-container">
                 <ul>
                     <li>There is no limit on how many keywords you can use.</li>
                     <li>Using broad terms like "magazine" in your keywords might waste alerts on things you don't need
@@ -122,17 +122,17 @@
             <p><strong>Menu</strong></p>
             {% if username %}
             <form action="/profile" class="form-group" method="get">
-                <button class="btn btn-primary container" type="submit">Profile</button>
+                <button class="btn btn-primary mini-container" type="submit">Profile</button>
             </form>
-            <form action="/signup" method="get">
-                <button class="btn btn-primary container" type="submit">logged in</button>
+            <form action="/support" method="get">
+                <button class="btn btn-primary mini-container" type="submit">Support</button>
             </form>
             {% else %}
             <form action="/login" class="form-group" method="get">
-                <button class="btn btn-primary container" type="submit">Login</button>
+                <button class="btn btn-primary mini-container" type="submit">Login</button>
             </form>
             <form action="/signup" method="get">
-                <button class="btn btn-primary container" type="submit">Sign Up</button>
+                <button class="btn btn-primary mini-container" type="submit">Sign Up</button>
             </form>
             {% endif %}
         </div>
