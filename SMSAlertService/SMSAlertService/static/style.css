@@ -46,7 +46,14 @@
 
 .container {
   width: 100% !important;
+  min-height: 65vh;
 }
+
+.mini-container {
+  width: 100% !important;
+  position: center;
+}
+
 
 .flex-container {
   display: flex;
@@ -96,12 +103,6 @@
   border-width: 1px !important;
   ox-shadow: 0 2px 4px 0 black !important;
   border-color: #34A853 !important;
-}
-
-.inner-container {
-  width: 90% !important;
-  margin-left: 5%;
-  position: center;
 }
 
 .billboard {
@@ -333,7 +334,19 @@ body {
   background-size: cover;
 }
 
-.stripe1 {
-  background: #ff1d58 !important;
-  padding: 1em;
+.imaginary-line {
+  margin: 0% !important;
+  max-height: 0vh;
+  width: 100% !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.footer {
+  margin-top: 50px !important;
+  min-height: 25vh;
+  width: 100% !important;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
 }
