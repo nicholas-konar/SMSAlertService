@@ -13,6 +13,9 @@
     <div class="box-area billboard">
         <h3>Welcome to the SMS Alert Service<br/><i class="fa fa-envelope fa-2x"></i></h3>
     </div>
+    {% if message %}
+    <p class="alert">{{ message }}</p>
+    {% endif %}
     <div class="box-area">
         <h4>Sign Up</h4>
         <form action="/signup" class="mini-form" method="POST">
@@ -28,7 +31,7 @@
                        type="tel">
                 <label for="InputPassword">Password</label>
                 <input id="InputPassword" name="password" type="password">
-                <button class="button" type="submit">Submit</button>
+                <button class="button btn-primary" type="submit">Submit</button>
             </div>
         </form>
     </div>

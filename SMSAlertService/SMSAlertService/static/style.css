@@ -254,9 +254,17 @@ li {
   border-radius: 10px;
 }
 
+.success {
+  padding: 20px;
+  background-color: #34A853; /* Green */
+  color: white;
+  margin-bottom: 0.5em;
+  border-radius: 10px;
+}
+
 .info {
   padding: 20px;
-  background-color: #007bff; /* blue */
+  background-color: #007bff; /* Blue */
   color: white;
   margin-bottom: .5em;
   border-radius: 10px;

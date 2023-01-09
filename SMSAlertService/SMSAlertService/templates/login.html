@@ -13,6 +13,9 @@
     <div class="box-area billboard">
         <h3>Welcome to the SMS Alert Service<br/><i class="fa fa-envelope fa-2x"></i></h3>
     </div>
+    {% if message %}
+    <p class="alert">{{ message }} If you need help, please contact <strong>support@smsalertservice.com</strong></p>
+    {% endif %}
     <div class="box-area">
         <h4>Log In</h4>
         <form action="" class="mini-form" method="post">
@@ -25,7 +28,7 @@
             </div>
         </form>
         <form action="/account-recovery" class="mini-form" method="get">
-            <input type="submit" value="Reset Password" class="button btn-danger"/>
+            <input class="button btn-danger" type="submit" value="Reset Password"/>
         </form>
     </div>
 </div>
