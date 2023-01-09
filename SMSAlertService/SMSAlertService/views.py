@@ -26,12 +26,10 @@ def support():
 
 @app.route("/login", methods=["POST", "GET"])
 def login():
-    message = 'Please login to your account'
     if "username" in session:
         return redirect(url_for("profile"))
-
     if request.method == "POST":
-        username = request.form.get("username")
+        username = request.form.get("username").upper()
         pw_input = request.form.get("password")
         user = mongo.get_user_by_username(username)
         if user:
@@ -44,12 +42,12 @@ def login():
                     return redirect(url_for('admin'))
                 return redirect(url_for('profile'))
             else:
-                message = 'Wrong password'
+                message = 'Incorrect password.'
                 return render_template('login.html', message=message)
         else:
-            message = 'The username "' + username + '" was not found in our records.'
-            return render_template('index.html', message=message)
-    return render_template('login.html', message=message)
+            message = 'User not found.'
+            return render_template('login.html', message=message)
+    return render_template('login.html')
 
 
 @app.route("/logout", methods=["POST", "GET"])
@@ -64,7 +62,7 @@ def signup():
     if "username" in session:
         return redirect(url_for("profile"))
     if request.method == "POST":
-        username = request.form.get("username")
+        username = request.form.get("username").upper()
         phonenumber = request.form.get("phonenumber")
         password = request.form.get("password")
         username_taken = mongo.username_taken(username)
@@ -185,20 +183,21 @@ def promo_code():
 def update_username():
     if "username" not in session:
         return redirect(url_for("index"))
-    else:
-        current_phone = session.get('phonenumber')
-        old_username = session.get('username')
-        new_username = request.form.get('newusername')
+    current_phone = session.get('phonenumber')
+    old_username = session.get('username')
+    if request.method == 'GET':
+        return render_template('edit-info.html', username=old_username,
+                               current_phone=current_phone)
+    elif request.method == 'POST':
+        new_username = request.form.get('newusername').upper()
         username_taken = mongo.username_taken(new_username)
         if username_taken:
-            message = 'Sorry, that username is taken.'
-            return render_template('edit-info.html', message=message, username=old_username,
+            return render_template('edit-info.html', failed=True, username=old_username,
                                    current_phone=current_phone)
         else:
             mongo.update_username(old_username, new_username)
             session["username"] = new_username
-            message = 'Username has been updated to ' + new_username
-            return render_template('edit-info.html', message=message, username=new_username,
+            return render_template('edit-info.html', success=True, username=new_username,
                                    current_phone=current_phone)
 
 
