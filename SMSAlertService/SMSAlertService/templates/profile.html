@@ -8,7 +8,6 @@
 <head>
     <meta content="width=device-width, initial-scale=1" name="viewport">
 </head>
-<body>
 <div class="container">
     <div class="box-area billboard">
         <h3>Welcome, {{ username }}!</h3>
@@ -145,13 +144,14 @@
                            placeholder="" required="required" type="text">
                     <small class="form-text text-muted" id="newKeywordHelp">When a new post contains a keyword, we'll
                         send you an alert!</small><br/>
-                    <button class="btn btn-primary container" type="submit">Add Keyword</button>
+                    <button class="btn btn-primary mini-container" type="submit">Add Keyword</button>
                 </div>
             </form>
             <div>
                 <a href="/delete-all-keywords">
-                    <button class="btn btn-danger container">Delete All Keywords</button>
+                    <button class="btn btn-danger mini-container">Delete All Keywords</button>
                 </a>
+                <p style="color: grey;">Individual keyword delete is in development. For now, you'll have to delete all keywords.</p>
             </div>
         </div>
     </div>
@@ -184,13 +184,13 @@
                     <input aria-describedby="keywordHelp" class="form-control input" id="promo-code"
                            name="promo-code"
                            placeholder="" required="required" type="text">
-                    <button class="button btn btn-primary container" type="submit">Redeem</button>
+                    <button class="button btn btn-primary mini-container" type="submit">Redeem</button>
                 </div>
             </form>
         </div>
     </div>
 
 </div>
-</body>
+
 </html>
 {% endblock %}

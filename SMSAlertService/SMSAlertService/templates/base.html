@@ -11,7 +11,8 @@
 </head>
 <div class="base">
     <nav class="navbar navbar-light justify-content-center">
-        <a class="navbar-brand" href="/" style="color: black;"><h3><i class="fa fa-envelope"></i> The SMS Alert Service</h3></a>
+        <a class="navbar-brand" href="/" style="color: black;"><h3><i class="fa fa-envelope"></i> The SMS Alert Service
+        </h3></a>
 
         <ul class="nav">
             {% if not username %}
@@ -66,3 +67,27 @@
 {% block content %}{% endblock %}
 </html>
 
+<div class="imaginary-line"></div>
+<footer class="footer">
+    <div class="footer-flex-container">
+        <div class="footer-flex-item">
+            <a href="/">Home</a>
+        </div>
+        <div class="footer-flex-item">
+            <a href="/profile">Profile</a>
+        </div>
+        <div class="footer-flex-item">
+            <a href="/support">Support</a>
+        </div>
+        <div class="footer-flex-item">
+            <a href="/privacy">Privacy</a>
+        </div>
+    </div>
+    <!-- PayPal Logo -->
+    <a href="https://www.paypal.com/webapps/mpp/paypal-popup"
+       onclick="javascript:window.open('https://www.paypal.com/webapps/mpp/paypal-popup','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;"
+       title="How PayPal Works"><img
+            alt="PayPal Acceptance Mark" border="0"
+            src="https://www.paypalobjects.com/webstatic/mktg/logo/AM_mc_vs_dc_ae.jpg"></a></td>
+    <p style="color: grey; margin: 0% !important;">&copy; 2023 SMS Alert Service<br/> All Rights Reserved.</p><br/>
+</footer>
