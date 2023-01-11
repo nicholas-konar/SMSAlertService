@@ -37,8 +37,8 @@ def login():
             if checkpw(pw_input.encode('utf-8'), password):
                 session["username"] = user['Username']
                 session["phonenumber"] = user['PhoneNumber']
-                if user['Username'] == "Admin":
-                    session['admin'] = True
+                if user['Username'] == "ADMIN":
+                    session['ADMIN'] = True
                     return redirect(url_for('admin'))
                 return redirect(url_for('profile'))
             else:
@@ -84,7 +84,7 @@ def signup():
 # -------------------------------- PROFILE --------------------------------
 @app.route('/admin')
 def admin():
-    if "admin" in session:
+    if session["ADMIN"]:
         users = mongo.get_users()
         total_users = len(users)
         total_units_sent = util.calculate_total_units_sent(users)
