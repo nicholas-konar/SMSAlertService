@@ -18,7 +18,7 @@
  .sidebar {
    width: 29%;
    float: right;
-   margin-left: .5em;
+   margin-left: 1%;
  }
 }
 
@@ -62,14 +62,8 @@
   align-content: stretch;
 }
 
-@media (max-width: 800px) {
-  .flex-item {
-    flex: 10% !important;
-  }
-}
-
 .flex-item {
-  flex-grow: 1;
+  flex: 25%;
 }
 
 .box-margin {
@@ -82,7 +76,6 @@
   padding: 1em !important;
   background: #FBBC05 !important;
   border-color: #FBBC05 !important;
-
 }
 
 .slim {
@@ -343,10 +336,48 @@ body {
 }
 
 .footer {
+  padding: 2em;
+  padding-bottom: 0% !important;
   margin-top: 50px !important;
-  min-height: 25vh;
+  min-height: 20vh;
   width: 100% !important;
   background-color: white;
   display: flex;
   flex-direction: column;
+  align-content: stretch;
+  text-align: center;
 }
+
+.footer-flex-container {
+  margin: 0% !important;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.footer-flex-item {
+  flex: 25% !important;
+  width: 25%;
+  text-align: center;
+}
+
+@media (max-width: 800px) {
+  .footer-flex-item {
+    flex: 100% !important;
+  }
+}
+
+.payment-flex-container {
+  margin: 0% !important;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.payment-flex-item {
+  margin: 1em;
+  flex: 25% !important;
+  width: 25%;
+}
+
