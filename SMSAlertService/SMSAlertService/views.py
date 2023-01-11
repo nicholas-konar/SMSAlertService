@@ -24,6 +24,15 @@ def support():
         return render_template('support.html', username=username)
 
 
+@app.route("/privacy")
+def privacy():
+    if "username" not in session:
+        return render_template('privacy.html')
+    else:
+        username = session["username"]
+        return render_template('privacy.html', username=username)
+
+
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if "username" in session:

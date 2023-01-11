@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block title %}SMS Alert Service{% endblock %}
+
+{% block content %}
+<html>
+<head>
+    <link href="static/style.css" rel="stylesheet">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+</head>
+
+<div class="container">
+    <div class="box-area billboard">
+        <h3>Privacy Policy<br/><i class="fa fa-envelope fa-2x"></i></h3>
+    </div>
+    <div class="box-area">
+        <h5>We take privacy seriously.</h5>
+        <br/>
+        <p>Choosing between convenient services and your privacy? Not a chance.
+            The SMS Alert Service made all design choices with respect to your operational security.</p>
+        <ul style="padding-left: 4em;">
+            <li>We do not collect device fingerprints, IP addresses, names, addresses, or emails.</li>
+            <li>We ask for the least amount of information required to operate the service.</li>
+            <li>Your data is stored securely on a <a href="https://www.mongodb.com/cloud/trust">MongoDB Cloud Database.</a></li>
+            <li>We do not handle your money directly, all payments are managed by <a href="https://www.paypal.com/us/home">PayPal.</a></li>
+            <li>We do not sell or share our user's information for any reason.</li>
+            <li>We do not cooperate with law enforcement without a warrant.</li>
+        </ul>
+        <p>If you have any additional questions, please contact us at
+        <br><strong>support@smsalertservice.com</strong></p>
+    </div>
+</div>
+{% endblock %}
