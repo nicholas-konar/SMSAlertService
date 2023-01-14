@@ -350,6 +350,8 @@ body {
 
 .footer-flex-container {
   margin: 0% !important;
+  padding-left: 20%;
+  padding-right: 20%;
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
