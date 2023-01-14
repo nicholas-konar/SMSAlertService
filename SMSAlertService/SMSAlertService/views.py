@@ -322,7 +322,7 @@ def notify():
 def generate_codes():
     # /generate-codes?reward=10&batch_size=5&distributor=Chad&prefix=nk
     # http://127.0.0.1:5000/generate-codes?reward=10&batch_size=1&distributor=Chad&prefix=nk
-    if 'admin' in session:
+    if session["ADMIN"]:
         reward = request.form.get('reward')
         quantity = request.form.get('quantity')
         distributor = request.form.get('distributor')
