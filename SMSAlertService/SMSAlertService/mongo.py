@@ -36,7 +36,7 @@ def create_user(username, password, phonenumber):
         'PhoneNumber': phonenumber,
         'OTP': None,
         'TotalRevenue': 0,
-        'Units': 0,
+        'Units': 5,
         'UnitsSent': 0,
         'UnitsPurchased': 0,
         'TwilioRecords': [],
