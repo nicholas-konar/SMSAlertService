@@ -15,7 +15,7 @@
         <h3><i class="fa fa-envelope fa-2x"></i></h3></div>
     <div class="info">
         <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-        <strong>Notice: </strong>Your username here must match your username on Reddit. If you need to change it,
+        <strong>Notice: </strong>Your username here should match your username on Reddit. If you need to change it,
         <a class="info-link" href="edit-info"><u>click here.</u></a>
     </div>
 
@@ -26,11 +26,10 @@
                     <div style="margin-bottom: 1.25rem;">
                         <h5>Buy SMS Alerts here:</h5><br/>
                         <select id="item-options">
+                            <option>Select Quantity</option>
                             <option price="5" value="10 Alerts">10 Alerts - 5.00 USD</option>
                             <option price="10" value="25 Alerts">25 Alerts - 10.00 USD</option>
                             <option price="25" value="100 Alerts">100 Alerts - 25.00 USD</option>
-                            <option price="35" value="250 Alerts">250 Alerts - 35.00 USD</option>
-                            <option price="50" value="500 Alerts">500 Alerts - 50.00 USD</option>
                         </select>
                         <select id="quantitySelect" style="visibility: hidden"></select>
                     </div>
@@ -162,6 +161,17 @@
             <h3>{{ message_count }}</h3>
         </div>
         <div class="box-area">
+            <form action="/promo-code" method="POST">
+                <div class="form-group">
+                    <label for="promo-code"><strong>Promo Code:</strong></label>
+                    <input aria-describedby="keywordHelp" class="form-control input" id="promo-code"
+                           name="promo-code"
+                           placeholder="" required="required" type="text">
+                    <button class="button btn btn-primary mini-container" type="submit">Redeem</button>
+                </div>
+            </form>
+        </div>
+        <div class="box-area">
             <p><strong>Active Keywords:</strong></p>
             <table id="keywords"></table>
             <script>
@@ -176,17 +186,6 @@
             }
 
             </script>
-        </div>
-        <div class="box-area">
-            <form action="/promo-code" method="POST">
-                <div class="form-group">
-                    <label for="promo-code"><strong>Promo Code:</strong></label>
-                    <input aria-describedby="keywordHelp" class="form-control input" id="promo-code"
-                           name="promo-code"
-                           placeholder="" required="required" type="text">
-                    <button class="button btn btn-primary mini-container" type="submit">Redeem</button>
-                </div>
-            </form>
         </div>
     </div>
 
