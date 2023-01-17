@@ -90,11 +90,8 @@
         <div class="box-area">
             <p><strong>Menu</strong></p>
             {% if username %}
-            <form action="/profile" class="form-group" method="get">
+            <form action="/profile" method="get">
                 <button class="btn btn-primary mini-container" type="submit">Profile</button>
-            </form>
-            <form action="/support" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Support</button>
             </form>
             {% else %}
             <form action="/signup" class="form-group" method="get">
