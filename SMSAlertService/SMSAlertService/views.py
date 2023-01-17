@@ -232,12 +232,18 @@ def add_keyword():
         username = session.get('username')
         keyword = request.form.get('newkeyword')
         mongo.add_keyword(username, keyword)
-        phonenumber = mongo.get_phonenumber(username)
-        message_count = mongo.get_message_count(username)
-        message = f'"{keyword}" has been added to keywords!'
-        keywords = mongo.get_keywords(username)
-        return redirect(url_for('profile', message=message, username=username, current_phone=phonenumber,
-                                keywords=keywords, message_count=message_count))
+        return redirect(url_for('profile'))
+
+
+@app.route("/delete-keyword", methods=['GET', 'POST'])
+def delete_keyword():
+    if "username" not in session:
+        return redirect(url_for("login"))
+    else:
+        username = session.get('username')
+        keyword = request.form.get('keyword')
+        mongo.delete_keyword(username, keyword)
+        return redirect(url_for('profile'))
 
 
 @app.route("/delete-all-keywords", methods=['GET', 'POST'])
