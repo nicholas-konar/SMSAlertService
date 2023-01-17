@@ -48,48 +48,39 @@
         <div class="box-area">
             <h5><strong>What is the SMS Alert Service?</strong></h5>
             <br/>
-            <p>The SMS Alert Service scans online marketplaces, and alerts you (via SMS) the instant an item you want is
-                posted for sale.<br/><br/>Check the <strong>Supported Markets</strong> tab to the right to see which
-                ones we
-                cover.</p>
+            <p>The SMS Alert Service watches <a class="link" href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a>
+                and alerts you (via SMS) the instant an item you want is
+                posted for sale. <br/><br/>You tell the service which items you want by adding keywords in your
+                <a class="link" href="/profile">profile</a> page.<br/><br/>If you're hunting a specific item, the SMS Alert Service is the weapon of choice.</p>
         </div>
         <div class="box-area">
             <h5><strong>How do I use it?</strong></h5>
             <br/>
-            <p>New accounts are given 5 alerts to try the service for free. Once you've <a class="link" href="/signup">signed
+            <p>Once you've <a class="link" href="/signup">signed
                 up</a>, simply add keywords on your <a class="link" href="/profile">profile</a> page to
-                begin receiving alerts.
+                begin receiving alerts. The next time a new post is made that contains one of your keywords, we
+                immediately send you an SMS Alert!
                 <br/><br/>
-                If you love the service, you can purchase more alerts on your
-                <a class="link" href="/profile">profile</a> page, or shop with our <strong>Sponsors</strong> to
-                get <strong>Promo Codes!</strong>
-                <br/><br/>
-                If you're hunting a specific item, the SMS Alert Service is the weapon of choice.</p>
+                New accounts begin with 5 free alerts. If you love the service, you can purchase more alerts from your
+                <a class="link" href="/profile">profile</a> page.</p>
         </div>
         <div class="box-area">
             <h5><strong>Tips</strong></h5>
             <br/>
-            <p>Computers can only do <i>exactly</i> what you tell them to do, and do not account for human logic on
-                their own. You are guessing which words or phrases
-                a seller might use in their post.<br/><br/>Here's some tips and tricks to get the most
-                out of the service.</p>
+            <p>Here's some tips and tricks to get the most out of the service.</p>
             <div class="mini-container">
                 <ul>
+                    <li>Ask yourself, <i>"What words or phrases would a seller use in their post?"</i></li>
+                    <li>The best strategy is to add a series of keywords for each item you want. For example, if you
+                        need some Glock mags, use keywords:
+                        <strong>"Glock mag", "Glock magazine", "G19 mag", "G19 magazine",</strong> and so on.
+                        (Press Enter after each phrase in quotations)
+                    </li>
                     <li>Keywords are not case-sensitive.</li>
                     <li>There is no limit on how many keywords you can use.</li>
                     <li>The service automatically accounts for the plural form of your keywords.</li>
-                    <li>You'll receive a maximum of one SMS Alert per post, regardless of how many of your keywords we
+                    <li>You'll receive a max of one SMS Alert per post, regardless of how many of your keywords we
                         found in that post - so use as many as you need to!
-                    </li>
-                    <li>Avoid very broad terms like <strong>"magazine"</strong> so you don't waste alerts on things
-                        you don't want.
-                    </li>
-                    <li>If you used <strong>"Glock magazine"</strong> as your <i>only</i> keyword, you wouldn't
-                        get notified if the seller's post says <strong>"Glock mag"</strong>
-                    </li>
-                    <li>The best strategy is to add <i>a series of</i> keywords for the same item. For example:
-                        <strong>"Glock mag", "Glock magazine", "G19 mag", "G19 magazine",</strong> and so on.
-                        (Press Enter after each phrase in the quotations)
                     </li>
                 </ul>
             </div>
@@ -106,17 +97,26 @@
                 <button class="btn btn-primary mini-container" type="submit">Support</button>
             </form>
             {% else %}
-            <form action="/login" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Login</button>
-            </form>
-            <form action="/signup" method="get">
+            <form action="/signup" class="form-group" method="get">
                 <button class="btn btn-primary mini-container" type="submit">Sign Up</button>
+            </form>
+            <form action="/login" class="form-group" method="get">
+                <button class="btn btn-primary mini-container" type="submit">Log in</button>
             </form>
             {% endif %}
         </div>
         <div class="box-area word-wrap">
             <p><strong>Supported Markets</strong></p>
-            <p><a href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a></p>
+            <p><a class="link" href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a></p>
+        </div>
+        <div class="box-area">
+            <p><strong>Info</strong></p>
+            <form action="/support" class="form-group" method="get">
+                <button class="btn btn-primary mini-container" type="submit">Support</button>
+            </form>
+            <form action="/privacy" method="get">
+                <button class="btn btn-primary mini-container" type="submit">Privacy</button>
+            </form>
         </div>
     </div>
 </div>

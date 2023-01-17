@@ -20,6 +20,23 @@
     </div>
 
     <div class="main">
+        <div class="box-area">
+            <form action="/add-keyword" method="POST">
+                <div class="form-group">
+                    <h5><label for="NewKeyword">Add Keywords:</label></h5>
+                    <input aria-describedby="keywordHelp" class="form-control input" id="NewKeyword" name="newkeyword"
+                           placeholder="" required="required" type="text">
+                    <small class="form-text text-muted" id="newKeywordHelp">When a new post contains a keyword, we'll
+                        send you an alert!</small><br/>
+                    <button class="btn btn-primary mini-container" type="submit">Add Keyword</button>
+                </div>
+            </form>
+            <div>
+                <a href="/delete-all-keywords">
+                    <button class="btn btn-danger mini-container">Delete All Keywords</button>
+                </a>
+             </div>
+        </div>
         <div class="box-area" id="smart-button-container">
             <div>
                 <div style="text-align: center;">
@@ -135,40 +152,12 @@
 
             </script>
         </div>
-        <div class="box-area">
-            <form action="/add-keyword" method="POST">
-                <div class="form-group">
-                    <h5><label for="NewKeyword">Add Keywords:</label></h5>
-                    <input aria-describedby="keywordHelp" class="form-control input" id="NewKeyword" name="newkeyword"
-                           placeholder="" required="required" type="text">
-                    <small class="form-text text-muted" id="newKeywordHelp">When a new post contains a keyword, we'll
-                        send you an alert!</small><br/>
-                    <button class="btn btn-primary mini-container" type="submit">Add Keyword</button>
-                </div>
-            </form>
-            <div>
-                <a href="/delete-all-keywords">
-                    <button class="btn btn-danger mini-container">Delete All Keywords</button>
-                </a>
-             </div>
-        </div>
     </div>
 
     <div class="sidebar">
         <div class="box-area">
             <p><strong>SMS Alerts:</strong></p>
             <h3>{{ message_count }}</h3>
-        </div>
-        <div class="box-area">
-            <form action="/promo-code" method="POST">
-                <div class="form-group">
-                    <label for="promo-code"><strong>Promo Code:</strong></label>
-                    <input aria-describedby="keywordHelp" class="form-control input" id="promo-code"
-                           name="promo-code"
-                           placeholder="" required="required" type="text">
-                    <button class="button btn btn-primary mini-container" type="submit">Redeem</button>
-                </div>
-            </form>
         </div>
         <div class="box-area">
             <p><strong>Active Keywords:</strong></p>
@@ -188,6 +177,17 @@
             const rows = document.getElementById("keywords");
 
             </script>
+        </div>
+        <div class="box-area">
+            <form action="/promo-code" method="POST">
+                <div class="form-group">
+                    <label for="promo-code"><strong>Promo Code:</strong></label>
+                    <input aria-describedby="keywordHelp" class="form-control input" id="promo-code"
+                           name="promo-code"
+                           placeholder="" required="required" type="text">
+                    <button class="button btn btn-primary mini-container" type="submit">Redeem</button>
+                </div>
+            </form>
         </div>
     </div>
 
