@@ -174,15 +174,18 @@
             <p><strong>Active Keywords:</strong></p>
             <table id="keywords"></table>
             <script>
-            let keywordvar = "";
+            let table = "";
             keywords = {{ keywords|tojson }};
-            keywords.forEach(myFunction);
+            keywords.forEach(addKeywordToTable);
+            document.getElementById("keywords").innerHTML = table;
 
-            document.getElementById("keywords").innerHTML = keywordvar;
-
-            function myFunction(keyword, index) {
-              keywordvar += "<tr><td>" + keyword + "</td></tr>";
+            function addKeywordToTable(keyword) {
+              table += "<tr><td id='" + keyword + "'>" + keyword + "</td></tr>";
             }
+
+            let btn = document.createElement("button");
+            btn.innerHTML = "delete";
+            const rows = document.getElementById("keywords");
 
             </script>
         </div>
