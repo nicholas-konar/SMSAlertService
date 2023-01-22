@@ -36,7 +36,7 @@ def privacy():
 @app.route("/tips")
 def tips():
     if "username" not in session:
-        return render_template('privacy.html')
+        return render_template('tips.html')
     else:
         username = session["username"]
         return render_template('tips.html', username=username)
