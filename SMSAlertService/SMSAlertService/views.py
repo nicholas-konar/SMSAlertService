@@ -235,14 +235,15 @@ def add_keyword():
         return redirect(url_for('profile'))
 
 
-@app.route("/delete-keyword", methods=['GET', 'POST'])
+@app.route("/delete-keyword", methods=['POST'])
 def delete_keyword():
     if "username" not in session:
         return redirect(url_for("login"))
     else:
         username = session.get('username')
-        keyword = request.form.get('keyword')
-        mongo.delete_keyword(username, keyword)
+        keyword = request.values.get('keyword')
+        app.logger.debug(f'MOCK DELETE KEYWORD {keyword} for user {username}')
+        #mongo.delete_keyword(username, keyword)
         return redirect(url_for('profile'))
 
 
