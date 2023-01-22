@@ -222,7 +222,9 @@ h5 {
   margin-bottom: 0% !important;
 }
 
-tr:nth-child(even){background-color: #dddddd;}
+tr:nth-child(even){
+  background-image: linear-gradient(to right, lightgray, white);
+}
 
 ul {
   padding-left: 5%;
@@ -360,8 +362,8 @@ body {
 }
 
 .footer-flex-item {
-  flex: 25% !important;
-  width: 25%;
+  flex: 20% !important;
+  width: 20%;
   text-align: center;
 }
 
