@@ -169,7 +169,7 @@
             document.getElementById("keywords").innerHTML = table;
 
             function addKeywordToTable(keyword) {
-              table += "<tr><td style='display: inline-block; text-align:justify;'>" + keyword + "</td><td style='text-align: right;'><form action='/delete-keyword?keyword=" + keyword + "' method='post'><button class='btn btn-danger' style='font-size:10px; padding: 5px !important;'>X</button></form></td></tr>";
+              table += "<tr><td style='display: inline-block; text-align:justify;'>" + keyword + "</td><td style='text-align: right;'><form action='/delete-keyword?keyword=" + keyword + "' method='post'><button class='btn btn-danger' style='padding: 1px 10% 1px 10%;'><i class='fa fa-trash'></i></button></form></td></tr>";
             }
 
             </script>
