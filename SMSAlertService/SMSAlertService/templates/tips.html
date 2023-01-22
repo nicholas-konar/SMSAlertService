@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block title %}SMS Alert Service{% endblock %}
+
+{% block content %}
+<html>
+<head>
+    <link href="static/style.css" rel="stylesheet">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+</head>
+
+<div class="container">
+    <div class="box-area billboard">
+        <h3>Support<br/><i class="fa fa-envelope fa-2x"></i></h3>
+    </div>
+    <div class="info">
+        If you ever need help, contact us at <strong>support@smsalertservice.com</strong>
+    </div>
+    <div class="box-area">
+        <h5>Here's some tips and tricks to get the most out of the service</h5>
+        <br/>
+        <div class="mini-container">
+            <ul>
+                <li>Ask yourself, <i>"What words or phrases would a seller use in their post?"</i></li>
+                <li>The best strategy is to add a series of keywords for each item you want. For example, if you
+                    need some Glock mags, use keywords:
+                    <strong>"Glock mag", "Glock magazine", "G19 mag", "G19 magazine",</strong> and so on.
+                    (Press Enter after each phrase in quotations)
+                </li>
+                <li>Keywords are not case-sensitive.</li>
+                <li>There is no limit on how many keywords you can use.</li>
+                <li>The service automatically accounts for the plural form of your keywords.</li>
+                <li>You'll receive a max of one SMS Alert per post, regardless of how many of your keywords we
+                    found in that post - so use as many as you need to!
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
