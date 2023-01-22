@@ -16,7 +16,7 @@
     <div class="info">
         <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
         <strong>Notice: </strong>Your username here should match your username on Reddit. If you need to change it,
-        <a class="info-link" href="edit-info"><u>click here.</u></a>
+        <a class="info-link" href="edit-info"><u>click here</u>.</a>
     </div>
 
     <div class="main">
@@ -24,7 +24,7 @@
             <form action="/add-keyword" method="POST">
                 <div class="form-group">
                     <h5><label for="NewKeyword">Add Keywords:</label></h5>
-                    <input aria-describedby="keywordHelp" class="form-control input" id="NewKeyword" name="newkeyword"
+                    <input class="form-control input" id="NewKeyword" name="newkeyword"
                            placeholder="" required="required" type="text">
                     <small class="form-text text-muted" id="newKeywordHelp">When a new post contains a keyword, we'll
                         send you an alert!</small><br/>
@@ -169,14 +169,11 @@
             document.getElementById("keywords").innerHTML = table;
 
             function addKeywordToTable(keyword) {
-              table += "<tr><td id='" + keyword + "'>" + keyword + "</td></tr>";
+              table += "<tr><td style='display: inline-block; text-align:justify;'>" + keyword + "</td><td style='text-align: right;'><form action='/delete-keyword?keyword=" + keyword + "' method='post'><button class='btn btn-danger' style='padding: 1px 10% 1px 10%;'><i class='fa fa-trash'></i></button></form></td></tr>";
             }
 
-            let btn = document.createElement("button");
-            btn.innerHTML = "delete";
-            const rows = document.getElementById("keywords");
-
             </script>
+
         </div>
         <div class="box-area">
             <form action="/promo-code" method="POST">

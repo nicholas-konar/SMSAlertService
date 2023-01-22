@@ -258,10 +258,19 @@ def get_keywords(username):
 
 
 def add_keyword(username, keyword):
+    keywords = get_keywords(username)
+    if keyword not in keywords:
+        query = {"Username": username}
+        value = {"$push": {"Keywords": keyword}}
+        user_records.update_one(query, value)
+        app.logger.debug(f'User {username} added keyword {keyword}')
+
+
+def delete_keyword(username, keyword):
     query = {"Username": username}
-    new_value = {"$push": {"Keywords": keyword}}
-    user_records.update_one(query, new_value)
-    app.logger.debug('Added new keyword "' + keyword + '"to User "' + username + '"')
+    value = {"$pull": {"Keywords": keyword}}
+    user_records.update_one(query, value)
+    app.logger.debug(f'User {username} deleted keyword {keyword}')
 
 
 def delete_all_keywords(username):

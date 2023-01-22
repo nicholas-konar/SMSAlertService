@@ -222,10 +222,7 @@ h5 {
   margin-bottom: 0% !important;
 }
 
-tr {
-  border-top: solid;
-  border-width: 1px;
-}
+tr:nth-child(even){background-color: #dddddd;}
 
 ul {
   padding-left: 5%;
