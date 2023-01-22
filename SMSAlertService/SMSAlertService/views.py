@@ -242,8 +242,7 @@ def delete_keyword():
     else:
         username = session.get('username')
         keyword = request.values.get('keyword')
-        app.logger.debug(f'MOCK DELETE KEYWORD {keyword} for user {username}')
-        #mongo.delete_keyword(username, keyword)
+        mongo.delete_keyword(username, keyword)
         return redirect(url_for('profile'))
 
 
