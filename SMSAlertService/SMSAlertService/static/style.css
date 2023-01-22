@@ -223,7 +223,7 @@ h5 {
 }
 
 tr:nth-child(even){
-  background-image: linear-gradient(to right, lightgray, white);
+  background-color: lightgray;
 }
 
 ul {
