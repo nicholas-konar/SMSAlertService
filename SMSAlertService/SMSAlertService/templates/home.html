@@ -51,26 +51,46 @@
             <p>The SMS Alert Service watches <a class="link" href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a>
                 and alerts you (via SMS) the instant an item you want is
                 posted for sale. <br/><br/>You tell the service which items you want by adding keywords in your
-                <a class="link" href="/profile">profile</a> page.<br/><br/>If you're hunting a specific item, the SMS Alert Service is the weapon of choice.</p>
+                <a class="link" href="/profile">profile</a> page.<br/><br/>If you're hunting a specific item, the SMS
+                Alert Service is the weapon of choice.</p>
         </div>
         <div class="box-area">
             <h5><strong>How do I use it?</strong></h5>
+            <br/>
+            <a href="/instructions" class="link">Click here to read the tutorial</a>
+            <br/>
             <br/>
             <p>Once you've <a class="link" href="/signup">signed
                 up</a>, simply add keywords on your <a class="link" href="/profile">profile</a> page to
                 begin receiving alerts. The next time a new post is made that contains one of your keywords, we
                 immediately send you an SMS Alert!
                 <br/><br/>
-                New accounts begin with 5 free alerts. If you love the service, you can purchase more alerts from your
+                New accounts begin with 5 free alerts. If you love the service, consider purchasing more alerts from your
                 <a class="link" href="/profile">profile</a> page.</p>
         </div>
     </div>
     <div class="sidebar">
+        <div class="box-area word-wrap">
+            <p><strong>Supported Markets</strong></p>
+            <p><a class="link" href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a></p>
+        </div>
         <div class="box-area">
             <p><strong>Menu</strong></p>
             {% if username %}
-            <form action="/profile" method="get">
+            <form action="/profile" class="form-group" method="get">
                 <button class="btn btn-primary mini-container" type="submit">Profile</button>
+            </form>
+            <form action="/edit-info" class="form-group" method="get">
+                <button class="btn btn-primary mini-container" type="submit">Edit Info</button>
+            </form>
+            <form action="/instructions" class="form-group" method="get">
+                <button class="btn btn-primary mini-container" type="submit">Instructions</button>
+            </form>
+            <form action="/support" class="form-group" method="get">
+                <button class="btn btn-primary mini-container" type="submit">Support</button>
+            </form>
+            <form action="/privacy" method="get">
+                <button class="btn btn-primary mini-container" type="submit">Privacy</button>
             </form>
             {% else %}
             <form action="/signup" class="form-group" method="get">
@@ -79,20 +99,17 @@
             <form action="/login" class="form-group" method="get">
                 <button class="btn btn-primary mini-container" type="submit">Log in</button>
             </form>
-            {% endif %}
-        </div>
-        <div class="box-area word-wrap">
-            <p><strong>Supported Markets</strong></p>
-            <p><a class="link" href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a></p>
-        </div>
-        <div class="box-area">
-            <p><strong>Info</strong></p>
+            <form action="/instructions" method="get">
+                <button class="btn btn-primary mini-container" type="submit">Instructions</button>
+            </form>
             <form action="/support" class="form-group" method="get">
                 <button class="btn btn-primary mini-container" type="submit">Support</button>
             </form>
             <form action="/privacy" method="get">
                 <button class="btn btn-primary mini-container" type="submit">Privacy</button>
             </form>
+
+            {% endif %}
         </div>
     </div>
 </div>
