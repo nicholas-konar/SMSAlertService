@@ -21,16 +21,17 @@
         <form action="/signup" class="mini-form" method="POST">
             <div>
                 <label for="Username">Reddit Username</label>
-                <input id="Username" name="username">
+                <input class="form-control input" id="Username" name="username">
                 <label for="InputPhoneNumber">Phone Number</label>
-                <input id="InputPhoneNumber"
+                <input class="form-control input"
+                       id="InputPhoneNumber"
                        name="phonenumber"
                        pattern="[0-9]{10}"
                        placeholder="No spaces or dashes"
                        required="required"
                        type="tel">
                 <label for="InputPassword">Password</label>
-                <input id="InputPassword" name="password" type="password">
+                <input class="form-control input" id="InputPassword" name="password" type="password">
                 <button class="button btn-primary" type="submit">Create Account</button>
             </div>
         </form>

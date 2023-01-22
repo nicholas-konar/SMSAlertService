@@ -5,11 +5,11 @@ def distribute():
     messages_sent = 0
     post = reddit.new_post()
     if post:
-        if 'wts' in post.title.lower():
+        if '[wts]' in post.title.lower():
             users = mongo.get_users()
             for user in users:
                 matching_keywords = []
-                for keyword in user['Keywords']:
+                for keyword in user['Keywords']: # todo: split post content on space, parse words
                     if keyword.lower() in str(post.title).lower() \
                             or keyword.lower() in str(post.selftext).lower() \
                             or keyword.lower() + 's' in str(post.title).lower() \
