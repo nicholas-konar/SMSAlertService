@@ -33,6 +33,15 @@ def privacy():
         return render_template('privacy.html', username=username)
 
 
+@app.route("/tips")
+def tips():
+    if "username" not in session:
+        return render_template('privacy.html')
+    else:
+        username = session["username"]
+        return render_template('tips.html', username=username)
+
+
 @app.route("/login", methods=["POST", "GET"])
 def login():
     if "username" in session:
@@ -294,14 +303,6 @@ def sms_reply():
         resp.message(
             'I can respond to the following commands: \n"Reset password <newpassword>" \n"What\'s my username?"')
         return str(resp)
-
-
-# -------------------------------- REDDIT WEBHOOKS --------------------------------
-@app.route("/reddit-webhook", methods=['POST'])
-def reddit_webhook():
-    app.logger.debug('Reddit webhook POST request: ' + str(request.get_json()))
-    notification.distribute()
-    return jsonify({"status": True})
 
 
 # -------------------------------- COMMANDS --------------------------------
