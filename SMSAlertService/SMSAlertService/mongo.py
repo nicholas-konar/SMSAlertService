@@ -75,7 +75,7 @@ def process_transaction(username, units_purchased, amount):
     }
 
     user_records.update_one(query, new_value)
-    app.logger.debug(f'{username} just purchased {units_purchased} units')
+    app.logger.info(f'{username} just purchased {units_purchased} units')
 
 
 def redeem(username, code):
@@ -100,24 +100,24 @@ def redeem(username, code):
     }
 
     user_records.update_one(query, new_value)
-    app.logger.debug(f'{username} just redeemed {reward} units')
+    app.logger.info(f'{username} just redeemed {reward} units')
 
 
 def process_promo_code(username, promo_code):
     try:
         code = get_code(promo_code)
-        app.logger.debug(f'Checking the following for active element: {code["Active"]}')
+        app.logger.info(f'Checking the following for active element: {code["Active"]}')
         if code['Active']:
             redeem(username, code)
             deactivate_code(code, username)
             app.logger.info(f'Processed promo code {promo_code}')
             return code
         else:
-            app.logger.debug(
+            app.logger.info(
                 f'Failed to process promo code {promo_code} for user {username} because it is deactivated.')
             return False
     except TypeError as e:
-        app.logger.debug(f'Failed to process promo code {promo_code} for user {username} because it is invalid. {e}')
+        app.logger.info(f'Failed to process promo code {promo_code} for user {username} because it is invalid. {e}')
         return False
 
 
@@ -211,12 +211,12 @@ def update_user_msg_data(username, message):
     }
 
     user_records.update_one(query, new_value)
-    app.logger.debug(f'Unit count reduced by 1 for user {username}')
+    app.logger.info(f'Unit count reduced by 1 for user {username}')
 
 
 def reset_password(ph, pw):
     #phonenumber = phonenumber[2:]  # trims the +1 off the ph. number
-    app.logger.debug('full phone = ' + ph)
+    app.logger.info('full phone = ' + ph)
     hashed_pw = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
     query = {"PhoneNumber": ph}
     value = {"$set": {"Password": hashed_pw}}
@@ -227,14 +227,14 @@ def save_otp(ph, otp):
     query = {"PhoneNumber": ph}
     value = {"$set": {"OTP": otp}}
     user_records.update_one(query, value)
-    app.logger.debug(f'OTP {otp} saved successfully')
+    app.logger.info(f'OTP {otp} saved successfully')
 
 
 def add_to_blacklist(phonenumber):
     query = {"Document": "BLACKLIST"}
     new_value = {"$push": {"Keywords": phonenumber}}
     app_records.update_one(query, new_value)
-    app.logger.debug('Added ' + phonenumber + 'to blacklist')
+    app.logger.info('Added ' + phonenumber + 'to blacklist')
 
 
 def get_blacklist():
@@ -247,7 +247,7 @@ def blacklisted(user):
     app.logger.info('Checking blacklist for ' + user['PhoneNumber'])
     for number in blacklist:
         if user['PhoneNumber'] == number:
-            app.logger.debug(f'Blacklisted number detected for user {user["Username"]}: {user["PhoneNumber"]}')
+            app.logger.info(f'Blacklisted number detected for user {user["Username"]}: {user["PhoneNumber"]}')
             return True
     return False
 
@@ -263,21 +263,21 @@ def add_keyword(username, keyword):
         query = {"Username": username}
         value = {"$push": {"Keywords": keyword}}
         user_records.update_one(query, value)
-        app.logger.debug(f'User {username} added keyword {keyword}')
+        app.logger.info(f'User {username} added keyword {keyword}')
 
 
 def delete_keyword(username, keyword):
     query = {"Username": username}
     value = {"$pull": {"Keywords": keyword}}
     user_records.update_one(query, value)
-    app.logger.debug(f'User {username} deleted keyword {keyword}')
+    app.logger.info(f'User {username} deleted keyword {keyword}')
 
 
 def delete_all_keywords(username):
     query = {"Username": username}
     new_value = {"$set": {"Keywords": []}}
     user_records.update_one(query, new_value)
-    app.logger.debug(f'Deleted all keywords in DB for user {username}')
+    app.logger.info(f'Deleted all keywords in DB for user {username}')
 
 
 def get_phonenumber(username):
@@ -289,14 +289,14 @@ def update_phonenumber(username, phonenumber):
     query = {"Username": username}
     new_value = {"$set": {"PhoneNumber": phonenumber}}
     user_records.update_one(query, new_value)
-    app.logger.debug('User ' + username + ' updated PhoneNumber to ' + phonenumber)
+    app.logger.info('User ' + username + ' updated PhoneNumber to ' + phonenumber)
 
 
 def update_username(old_username, new_username):
     query = {"Username": old_username}
     new_value = {"$set": {"Username": new_username}}
     user_records.update_one(query, new_value)
-    app.logger.debug('User ' + old_username + ' changed username to ' + new_username)
+    app.logger.info('User ' + old_username + ' changed username to ' + new_username)
 
 
 def phonenumber_taken(phonenumber):
@@ -311,7 +311,7 @@ def username_taken(username):
 def get_last_post_id():
     document = app_records.find_one({"Document": "POST_INFO"})
     last_post_id = document["LastPostId"]
-    app.logger.debug('LastPostId: ' + last_post_id)
+    app.logger.info('LastPostId: ' + last_post_id)
     return last_post_id
 
 
@@ -321,4 +321,4 @@ def save_post_id(post):
         "LastPostId": post.id
     }}
     app_records.update_one(query, last_post_id)
-    app.logger.debug('LastPostId is now ' + post.id)
+    app.logger.info('LastPostId is now ' + post.id)
