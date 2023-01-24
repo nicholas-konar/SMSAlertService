@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block title %}SMS Alert Service{% endblock %}
+
+{% block content %}
+<html>
+<head>
+    <link href="static/style.css" rel="stylesheet">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+</head>
+
+<div class="container">
+    <div class="box-area billboard">
+        <h3>Account Recovery<br/><i class="fa fa-envelope fa-2x"></i></h3>
+    </div>
+    <div class="box-area">
+        <h4>Account Verification</h4>
+        <p>Enter your Verification Code below to continue.</p>
+        <form action="/authenticate" class="mini-form" method="post">
+            {% if message %}
+            <p class="alert">{{ message }}</p>
+            {% endif %}
+            {% if sent %}
+            <p class="info">Another code is on the way.</p>
+            {% endif %}
+            <div>
+                <label for="otp">Verification Code:</label>
+                <input class="center"
+                       id="otp"
+                       name="otp"
+                       pattern="[0-9]{6}"
+                       required="required"
+                       type="tel">
+                <button class="button btn-primary" type="submit">Confirm</button>
+            </div>
+        </form>
+            <div>
+                <button class="button btn-success" type="submit">Resend Code</button>
+                <script>
+                    function UpdateStatus(){
+
+                        //make an ajax call and get status value using the same 'id'
+                        var var1= document.getElementById("status").value;
+                        $.ajax({
+
+                                type:"GET",//or POST
+                                url:'http://localhost:7080/ajaxforjson/Testajax',
+                                                   //  (or whatever your url is)
+                                data:{data1:var1},
+                                //can send multipledata like {data1:var1,data2:var2,data3:var3
+                                //can use dataType:'text/html' or 'json' if response type expected
+                                success:function(responsedata){
+                                       // process on data
+                                       alert("got response as "+"'"+responsedata+"'");
+                                }
+                             })
+                    }
+
+                </script>
+            </div>
+
+    </div>
+</div>
+</html>
+{% endblock %}

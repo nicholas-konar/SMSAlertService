@@ -17,6 +17,9 @@
         <h4>Account Verification</h4>
         <p>We need to send you a Verification Code to confirm your account.</p>
         <form action="/send" class="mini-form" method="post">
+            {% if message %}
+            <p class="alert">{{ message }}</p>
+            {% endif %}
             <div>
                 <label for="PhoneNumber">Phone Number:</label>
                 <input class="center"
