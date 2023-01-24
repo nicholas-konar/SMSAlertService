@@ -1,8 +1,9 @@
 from bcrypt import checkpw
 from flask import request, redirect, render_template, session, url_for, jsonify
 from twilio.twiml.messaging_response import MessagingResponse
+from twilio.base.exceptions import TwilioRestException
 
-from SMSAlertService import app, mongo, notification, util
+from SMSAlertService import app, mongo, notification, util, twilio
 
 
 # -------------------------------- ABOUT + LOGIN + LOGOUT + SIGNUP --------------------------------
@@ -80,9 +81,9 @@ def signup():
     if "username" in session:
         return redirect(url_for("profile"))
     if request.method == "POST":
-        username = request.form.get("username").upper()
+        username = request.form.get("username").upper().strip()
         phonenumber = request.form.get("phonenumber")
-        password = request.form.get("password")
+        password = request.form.get("password").strip()
         username_taken = mongo.username_taken(username)
         phonenumber_taken = mongo.phonenumber_taken(phonenumber)
         if username_taken:
@@ -93,10 +94,17 @@ def signup():
             return render_template('signup.html', message=message)
         else:
             mongo.create_user(username, password, phonenumber)
+            notification.send_otp(phonenumber) # for account confirmation
             session["username"] = username
             session["phonenumber"] = phonenumber
-            return redirect(url_for("profile", message=message, username=username, phonenumber=phonenumber))
+            return redirect(url_for('account_confirmation'))
     return render_template('signup.html')
+
+
+@app.route("/account-confirmation", methods=['GET', 'POST'])
+def account_confirmation():
+    if request.method == 'GET':
+        return render_template('account-confirmation.html')
 
 
 # -------------------------------- PROFILE --------------------------------
@@ -148,33 +156,50 @@ def account_recovery():
     return render_template('account-recovery.html')
 
 
-@app.route('/send', methods=['POST'])
-def send():
-    ph = request.form.get('PhoneNumber')
-    session['phonenumber'] = ph
-    notification.send_otp(ph)
-    return redirect(url_for('authenticate'))
+@app.route('/send/<path>', methods=['POST'])
+def send(path):
+    try:
+        ph = request.form.get('PhoneNumber')
+        notification.send_otp(ph)
+        session['phonenumber'] = ph
+        if path == 'account-confirmation': # this doesn't get hit, otp is sent on sign up
+            return redirect(url_for('account-confirmation'))
+        if path == 'account-verification':
+            return render_template('account-verification.html')
+    except TwilioRestException:
+        if path == 'account-confirmation': # this doesn't get hit, otp is sent on sign up
+            return render_template('account-confirmation.html', message='Invalid number.')
+        if path == 'account-verification':
+            return render_template('account-recovery.html', message='There are no accounts associated with that number.')
 
 
-@app.route('/resend', methods=['POST'])
-def resend():
+@app.route('/resend/<path>', methods=['POST'])
+def resend(path):
+    username = session['username']
     ph = session['phonenumber']
+    app.logger.info(f'Resending OTP to {username}')
     notification.send_otp(ph)
-    return render_template('authenticate.html', sent=True)
+    return render_template(f'{path}.html', sent=True)
 
 
-@app.route('/authenticate', methods=['GET', 'POST'])
-def authenticate():
+@app.route('/authenticate/<path>', methods=['POST'])
+def authenticate(path):
     if request.method == 'POST':
         ph = session['phonenumber']
+        user = mongo.get_user_by_phonenumber(ph)
+        username = user['Username']
         otp = request.form.get('otp')
         authenticated = util.authenticate(ph, otp)
-        if authenticated:
+        if authenticated and path == 'account-confirmation':
+            mongo.verify(username)
+            return redirect(url_for('profile'))
+        if authenticated and path == 'account-verification':
+            mongo.verify(username)
             return redirect(url_for('reset_password'))
-        else:
-            message = "Incorrect OTP."
-            return render_template('authenticate.html', message=message)
-    return render_template('authenticate.html')
+        elif not authenticated:
+            message = "Invalid code."
+            return render_template(f'{path}.html', message=message)
+    return render_template(f'{path}.html')
 
 
 @app.route('/reset-password', methods=['GET', 'POST'])
@@ -239,7 +264,7 @@ def add_keyword():
         return redirect(url_for("login"))
     else:
         username = session.get('username')
-        keyword = request.form.get('newkeyword')
+        keyword = request.form.get('newkeyword').strip()
         mongo.add_keyword(username, keyword)
         return redirect(url_for('profile'))
 

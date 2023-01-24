@@ -15,23 +15,31 @@
     </div>
     <div class="box-area">
         <h4>Account Verification</h4>
-        <p>We need to send you a Verification Code to confirm your account.</p>
-        <form action="/send/account-verification" class="mini-form" method="post">
+        <p>Enter your Verification Code below to continue.</p>
+        <form action="/authenticate/account-verification" class="mini-form" method="post">
             {% if message %}
             <p class="alert">{{ message }}</p>
             {% endif %}
+            {% if sent %}
+            <p class="info">Another code is on the way.</p>
+            {% endif %}
             <div>
-                <label for="PhoneNumber">Phone Number:</label>
+                <label for="otp">Verification Code:</label>
                 <input class="center"
-                       id="PhoneNumber"
-                       name="PhoneNumber"
-                       pattern="[0-9]{10}"
-                       placeholder="No spaces or dashes"
+                       id="otp"
+                       name="otp"
+                       pattern="[0-9]{6}"
                        required="required"
                        type="tel">
-                <button class="button btn-success" type="submit">Send Code</button>
+                <button class="button btn-primary" type="submit">Confirm</button>
             </div>
         </form>
+        <form action="/resend/account-verification" class="mini-form" method="post">
+            <div>
+                <button class="button btn-success" type="submit">Resend Code</button>
+            </div>
+        </form>
+
     </div>
 </div>
 </html>

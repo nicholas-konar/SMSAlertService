@@ -11,12 +11,12 @@
 
 <div class="container">
     <div class="box-area billboard">
-        <h3>Account Recovery<br/><i class="fa fa-envelope fa-2x"></i></h3>
+        <h3>Account Confirmation<br/><i class="fa fa-envelope fa-2x"></i></h3>
     </div>
     <div class="box-area">
-        <h4>Account Verification</h4>
-        <p>Enter your Verification Code below to continue.</p>
-        <form action="/authenticate" class="mini-form" method="post">
+        <h4>Phone Number Verification</h4>
+        <p>We just sent you a Verification Code.<br/>Please enter it below to continue.</p>
+        <form action="/authenticate/account-confirmation" class="mini-form" method="post">
             {% if message %}
             <p class="alert">{{ message }}</p>
             {% endif %}
@@ -34,12 +34,16 @@
                 <button class="button btn-primary" type="submit">Confirm</button>
             </div>
         </form>
-        <form action="/resend" class="mini-form" method="post">
+        <form action="/resend/account-confirmation" class="mini-form" method="post">
             <div>
                 <button class="button btn-success" type="submit">Resend Code</button>
             </div>
         </form>
-
+        <form action="/reset-phonenumber" class="mini-form" method="get">
+            <div>
+                <button class="button btn-danger" type="submit">Edit Phone Number</button>
+            </div>
+        </form>
     </div>
 </div>
 </html>

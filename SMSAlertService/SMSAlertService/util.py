@@ -15,8 +15,10 @@ def generate_otp():
 def authenticate(ph, otp):
     user = mongo.get_user_by_phonenumber(ph)
     if otp == user['OTP']:
+        app.logger.info(f'User {user["Username"]} authenticated OTP sent to {ph}')
         return True
     else:
+        app.logger.info(f'User {user["Username"]} failed to authenticate OTP sent to {ph}')
         return False
 
 
