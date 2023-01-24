@@ -97,13 +97,24 @@ def signup():
             notification.send_otp(phonenumber)
             session["username"] = username
             session["phonenumber"] = phonenumber
-            return redirect(url_for("profile", message=message, username=username, phonenumber=phonenumber))
+            return redirect(url_for('account_confirmation'))
     return render_template('signup.html')
 
 
-@app.route("/account-confirmation")
+@app.route("/account-confirmation", methods=['GET', 'POST'])
 def account_confirmation():
-    ph = session["phonenumber"]
+    if request.method == 'GET':
+        return render_template('account-confirmation.html')
+    elif request.method == 'POST':
+        username = session['username']
+        ph = session['phonenumber']
+        otp = request.form.get('otp')
+        authenticated = util.authenticate(ph, otp)
+        if authenticated:
+            app.logger.info(f'User {username} confirmed access to phone number.')
+            return redirect(url_for('profile'))
+        else:
+            return render_template('account-confirmation.html')
 
 
 # -------------------------------- PROFILE --------------------------------
@@ -155,36 +166,39 @@ def account_recovery():
     return render_template('account-recovery.html')
 
 
-@app.route('/send', methods=['POST'])
-def send():
+@app.route('/send/<path>', methods=['POST'])
+def send(path):
     try:
         ph = request.form.get('PhoneNumber')
         notification.send_otp(ph)
         session['phonenumber'] = ph
-        return redirect(url_for('authenticate'))
+        return redirect(url_for(f'{path}'))
     except TwilioRestException:
         return render_template('account-recovery.html', message='There are no accounts associated with that number.')
 
 
-@app.route('/resend', methods=['POST'])
-def resend():
+@app.route('/resend/<path>', methods=['POST'])
+def resend(path):
     ph = session['phonenumber']
     notification.send_otp(ph)
-    return render_template('authenticate.html', sent=True)
+    return render_template(f'{path}.html', sent=True)
 
 
-@app.route('/authenticate', methods=['GET', 'POST'])
-def authenticate():
+@app.route('/authenticate/<path>', methods=['GET', 'POST'])
+def authenticate(path):
     if request.method == 'POST':
         ph = session['phonenumber']
         otp = request.form.get('otp')
         authenticated = util.authenticate(ph, otp)
-        if authenticated:
-            return redirect(url_for('reset_password')) #todo make this reuseable
-        else:
+        if authenticated and path == 'account-confirmation':
+            return redirect(url_for('profile'))
+        if authenticated and path == 'account-verification':
+            return redirect(url_for('reset_password'))
+        elif not authenticated:
             message = "Invalid code."
-            return render_template('authenticate.html', message=message)
-    return render_template('authenticate.html')
+            return render_template(f'{path}.html', message=message)
+    else:
+        return render_template(f'{path}.html')
 
 
 @app.route('/reset-password', methods=['GET', 'POST'])

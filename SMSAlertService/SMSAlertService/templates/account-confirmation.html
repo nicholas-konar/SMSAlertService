@@ -11,12 +11,12 @@
 
 <div class="container">
     <div class="box-area billboard">
-        <h3>Account Recovery<br/><i class="fa fa-envelope fa-2x"></i></h3>
+        <h3>Account Confirmation<br/><i class="fa fa-envelope fa-2x"></i></h3>
     </div>
     <div class="box-area">
-        <h4>Account Verification</h4>
-        <p>Enter your Verification Code below to continue.</p>
-        <form action="/authenticate" class="mini-form" method="post">
+        <h4>Phone Number Verification</h4>
+        <p>We just sent you a Verification Code.<br/>Please enter it below to continue.</p>
+        <form action="/authenticate/account-confirmation" class="mini-form" method="post">
             {% if message %}
             <p class="alert">{{ message }}</p>
             {% endif %}
@@ -34,31 +34,11 @@
                 <button class="button btn-primary" type="submit">Confirm</button>
             </div>
         </form>
+        <form action="/resend/account-confirmation" class="mini-form" method="post">
             <div>
                 <button class="button btn-success" type="submit">Resend Code</button>
-                <script>
-                    function UpdateStatus(){
-
-                        //make an ajax call and get status value using the same 'id'
-                        var var1= document.getElementById("status").value;
-                        $.ajax({
-
-                                type:"GET",//or POST
-                                url:'http://localhost:7080/ajaxforjson/Testajax',
-                                                   //  (or whatever your url is)
-                                data:{data1:var1},
-                                //can send multipledata like {data1:var1,data2:var2,data3:var3
-                                //can use dataType:'text/html' or 'json' if response type expected
-                                success:function(responsedata){
-                                       // process on data
-                                       alert("got response as "+"'"+responsedata+"'");
-                                }
-                             })
-                    }
-
-                </script>
             </div>
-
+        </form>
     </div>
 </div>
 </html>
