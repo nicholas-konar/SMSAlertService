@@ -249,7 +249,7 @@ def add_keyword():
         return redirect(url_for("login"))
     else:
         username = session.get('username')
-        keyword = request.form.get('newkeyword')
+        keyword = request.form.get('newkeyword').strip()
         mongo.add_keyword(username, keyword)
         return redirect(url_for('profile'))
 
