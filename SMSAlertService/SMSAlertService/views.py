@@ -186,12 +186,15 @@ def resend(path):
 def authenticate(path):
     if request.method == 'POST':
         ph = session['phonenumber']
+        user = mongo.get_user_by_phonenumber(ph)
+        username = user['Username']
         otp = request.form.get('otp')
         authenticated = util.authenticate(ph, otp)
         if authenticated and path == 'account-confirmation':
-            # todo: mongo.verify(username)
+            mongo.verify(username)
             return redirect(url_for('profile'))
         if authenticated and path == 'account-verification':
+            mongo.verify(username)
             return redirect(url_for('reset_password'))
         elif not authenticated:
             message = "Invalid code."
