@@ -16,7 +16,7 @@
     <div class="box-area">
         <h4>Account Verification</h4>
         <p>Enter your Verification Code below to continue.</p>
-        <form action="/authenticate" class="mini-form" method="post">
+        <form action="/authenticate/account-verification" class="mini-form" method="post">
             {% if message %}
             <p class="alert">{{ message }}</p>
             {% endif %}
@@ -34,7 +34,7 @@
                 <button class="button btn-primary" type="submit">Confirm</button>
             </div>
         </form>
-        <form action="/resend" class="mini-form" method="post">
+        <form action="/resend/account-verification" class="mini-form" method="post">
             <div>
                 <button class="button btn-success" type="submit">Resend Code</button>
             </div>
