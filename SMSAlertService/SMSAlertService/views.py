@@ -1,8 +1,9 @@
 from bcrypt import checkpw
 from flask import request, redirect, render_template, session, url_for, jsonify
 from twilio.twiml.messaging_response import MessagingResponse
+from twilio.base.exceptions import TwilioRestException
 
-from SMSAlertService import app, mongo, notification, util
+from SMSAlertService import app, mongo, notification, util, twilio
 
 
 # -------------------------------- ABOUT + LOGIN + LOGOUT + SIGNUP --------------------------------
@@ -93,10 +94,16 @@ def signup():
             return render_template('signup.html', message=message)
         else:
             mongo.create_user(username, password, phonenumber)
+            notification.send_otp(phonenumber)
             session["username"] = username
             session["phonenumber"] = phonenumber
             return redirect(url_for("profile", message=message, username=username, phonenumber=phonenumber))
     return render_template('signup.html')
+
+
+@app.route("/account-confirmation")
+def account_confirmation():
+    ph = session["phonenumber"]
 
 
 # -------------------------------- PROFILE --------------------------------
@@ -150,10 +157,13 @@ def account_recovery():
 
 @app.route('/send', methods=['POST'])
 def send():
-    ph = request.form.get('PhoneNumber')
-    session['phonenumber'] = ph
-    notification.send_otp(ph)
-    return redirect(url_for('authenticate'))
+    try:
+        ph = request.form.get('PhoneNumber')
+        notification.send_otp(ph)
+        session['phonenumber'] = ph
+        return redirect(url_for('authenticate'))
+    except TwilioRestException:
+        return render_template('account-recovery.html', message='There are no accounts associated with that number.')
 
 
 @app.route('/resend', methods=['POST'])
@@ -170,9 +180,9 @@ def authenticate():
         otp = request.form.get('otp')
         authenticated = util.authenticate(ph, otp)
         if authenticated:
-            return redirect(url_for('reset_password'))
+            return redirect(url_for('reset_password')) #todo make this reuseable
         else:
-            message = "Incorrect OTP."
+            message = "Invalid code."
             return render_template('authenticate.html', message=message)
     return render_template('authenticate.html')
 

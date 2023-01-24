@@ -75,7 +75,7 @@ def process_transaction(username, units_purchased, amount):
     }
 
     user_records.update_one(query, new_value)
-    app.logger.info(f'{username} just purchased {units_purchased} units')
+    app.logger.info(f'{username} purchased {units_purchased} units.')
 
 
 def redeem(username, code):
@@ -100,17 +100,16 @@ def redeem(username, code):
     }
 
     user_records.update_one(query, new_value)
-    app.logger.info(f'{username} just redeemed {reward} units')
+    app.logger.info(f'{username} redeemed code {code} for {reward} units.')
 
 
 def process_promo_code(username, promo_code):
     try:
         code = get_code(promo_code)
-        app.logger.info(f'Checking the following for active element: {code["Active"]}')
         if code['Active']:
             redeem(username, code)
             deactivate_code(code, username)
-            app.logger.info(f'Processed promo code {promo_code}')
+            app.logger.info(f'Processing complete for promo code {promo_code}')
             return code
         else:
             app.logger.info(
