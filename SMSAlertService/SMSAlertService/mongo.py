@@ -1,3 +1,4 @@
+import math
 import os
 import secrets
 import string
@@ -34,6 +35,7 @@ def create_user(username, password, phonenumber):
         'Password': hashed_pw,
         'Username': username,
         'PhoneNumber': phonenumber,
+        'Verified': False,
         'OTP': None,
         'TotalRevenue': 0,
         'Units': 5,
@@ -48,6 +50,22 @@ def create_user(username, password, phonenumber):
     app.logger.info(f"Created new user '{username}'")
 
 
+def verify(username):
+    if not is_verified(username):
+        query = {"Username": username}
+        value = {"$set": {"Verified": True}}
+        user_records.update_one(query, value)
+        app.logger.info(f'User {username}\'s account has been verified.')
+
+
+def is_verified(username):
+    user = get_user_by_username(username)
+    try:
+        return user['Verified']
+    except KeyError:
+        return False
+
+
 def process_transaction(username, units_purchased, amount):
     timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
 
@@ -56,7 +74,7 @@ def process_transaction(username, units_purchased, amount):
 
     user = get_user_by_username(username)
     updated_units_purchased = user['UnitsPurchased'] + int(units_purchased)
-    updated_total_revenue = user["TotalRevenue"] + float(amount)
+    updated_total_revenue = user["TotalRevenue"] + math.floor(float(amount))
 
     query = {"Username": username}
     new_value = {
@@ -214,7 +232,6 @@ def update_user_msg_data(username, message):
 
 
 def reset_password(ph, pw):
-    #phonenumber = phonenumber[2:]  # trims the +1 off the ph. number
     app.logger.info('full phone = ' + ph)
     hashed_pw = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
     query = {"PhoneNumber": ph}
