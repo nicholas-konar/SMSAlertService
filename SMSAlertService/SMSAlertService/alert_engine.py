@@ -1,7 +1,7 @@
 from SMSAlertService import app, mongo, reddit, twilio, util
 
 
-def distribute():
+def run():
     messages_sent = 0
     post = reddit.new_post()
     if post:
@@ -9,12 +9,8 @@ def distribute():
             users = mongo.get_users()
             for user in users:
                 matching_keywords = []
-                for keyword in user['Keywords']: # todo: split post content on space, parse words
-                    if keyword.lower() in str(post.title).lower() \
-                            or keyword.lower() in str(post.selftext).lower() \
-                            or keyword.lower() + 's' in str(post.title).lower() \
-                            or keyword.lower() + 's' in str(post.selftext).lower():
-                        app.logger.info(f'Keyword match detected for user {user["Username"]}: "{keyword}"')
+                for keyword in user['Keywords']:
+                    if util.keyword_match(user, keyword, post):
                         matching_keywords.append(keyword + ', ')
                 if matching_keywords and int(user['Units']) > 0 and not mongo.blacklisted(user):
                     message = twilio.send_alert(user['Username'], user['PhoneNumber'], post.url,

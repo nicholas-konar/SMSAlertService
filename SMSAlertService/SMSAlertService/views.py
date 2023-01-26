@@ -3,7 +3,7 @@ from flask import request, redirect, render_template, session, url_for, jsonify
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.base.exceptions import TwilioRestException
 
-from SMSAlertService import app, mongo, notification, util, twilio
+from SMSAlertService import app, mongo, alert_engine, util, twilio
 
 
 # -------------------------------- ABOUT + LOGIN + LOGOUT + SIGNUP --------------------------------
@@ -94,7 +94,7 @@ def signup():
             return render_template('signup.html', message=message)
         else:
             mongo.create_user(username, password, phonenumber)
-            notification.send_otp(phonenumber) # for account confirmation
+            alert_engine.send_otp(phonenumber) # for account confirmation
             session["username"] = username
             session["phonenumber"] = phonenumber
             return redirect(url_for('account_confirmation'))
@@ -160,7 +160,7 @@ def account_recovery():
 def send(path):
     try:
         ph = request.form.get('PhoneNumber')
-        notification.send_otp(ph)
+        alert_engine.send_otp(ph)
         session['phonenumber'] = ph
         if path == 'account-confirmation': # this doesn't get hit, otp is sent on sign up
             return redirect(url_for('account-confirmation'))
@@ -178,7 +178,7 @@ def resend(path):
     username = session['username']
     ph = session['phonenumber']
     app.logger.info(f'Resending OTP to {username}')
-    notification.send_otp(ph)
+    alert_engine.send_otp(ph)
     return render_template(f'{path}.html', sent=True)
 
 
@@ -346,7 +346,7 @@ def process_sale():
 
 @app.route("/notify", methods=['GET'])
 def notify():
-    resp = notification.distribute()
+    resp = alert_engine.run()
     return resp
 
 

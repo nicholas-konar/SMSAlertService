@@ -4,6 +4,17 @@ import string
 from SMSAlertService import app, mongo
 
 
+def keyword_match(user, keyword, post):
+    if keyword.lower() in str(post.title).lower() \
+            or keyword.lower() in str(post.selftext).lower() \
+            or keyword.lower() + 's' in str(post.title).lower() \
+            or keyword.lower() + 's' in str(post.selftext).lower():
+        app.logger.info(f'Keyword match detected for user {user["Username"]}: "{keyword}"')
+        return True
+    else:
+        return False
+
+
 def generate_otp():
     length = 6
     code = ''.join(secrets.choice(string.digits)
