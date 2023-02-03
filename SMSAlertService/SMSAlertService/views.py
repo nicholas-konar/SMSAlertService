@@ -77,7 +77,6 @@ def logout():
 
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
-    message = 'Thank you for using the SMS Alert Service'
     if "username" in session:
         return redirect(url_for("profile"))
     if request.method == "POST":
@@ -162,13 +161,9 @@ def send(path):
         ph = request.form.get('PhoneNumber')
         alert_engine.send_otp(ph)
         session['phonenumber'] = ph
-        if path == 'account-confirmation': # this doesn't get hit, otp is sent on sign up
-            return redirect(url_for('account-confirmation'))
         if path == 'account-verification':
             return render_template('account-verification.html')
     except TwilioRestException:
-        if path == 'account-confirmation': # this doesn't get hit, otp is sent on sign up
-            return render_template('account-confirmation.html', message='Invalid number.')
         if path == 'account-verification':
             return render_template('account-recovery.html', message='There are no accounts associated with that number.')
 
@@ -293,41 +288,6 @@ def delete_all_keywords():
         app.logger.info(f'{username} cleared all keywords.')
         return redirect(url_for('profile', message=message,
                                 username=username, current_phone=phonenumber, message_count=message_count))
-
-
-# -------------------------------- TWILLIO WEBHOOKS --------------------------------
-@app.route("/sms", methods=['GET', 'POST'])
-def sms_reply():
-    req = request.values
-    body = req['Body']
-    from_number = req['From']
-
-    app.logger.debug('the body is as follows: ' + str(body))
-    app.logger.debug('the from number is as follows: ' + str(from_number))
-
-    if body.lower().startswith('reset password'):
-        app.logger.debug('Password reset requested for ' + from_number)
-        body = body.lower()
-        password = body.split(' ')[2]
-        mongo.reset_password(from_number, password)
-        resp = MessagingResponse()
-        resp.message("Your password has been reset. Thank you for using the GAFS Alert Service!")
-        return str(resp)
-
-    if body.lower().startswith("what's my username"):
-        app.logger.debug('Username reminder requested for ' + from_number)
-        # reply with username
-        username = mongo.get_username_by_phonenumber(from_number)
-        resp = MessagingResponse()
-        resp.message(
-            'The username associated with this number is ' + username + '. Thank you for using the GAFS Alert Service!')
-        return str(resp)
-
-    else:
-        resp = MessagingResponse()
-        resp.message(
-            'I can respond to the following commands: \n"Reset password <newpassword>" \n"What\'s my username?"')
-        return str(resp)
 
 
 # -------------------------------- COMMANDS --------------------------------
