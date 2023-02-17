@@ -8,9 +8,9 @@ auth_token = os.environ['TWILIO_AUTH_TOKEN']
 messaging_service_sid = os.environ['TWILIO_MESSAGING_SERVICE_SID']
 
 
-def send_alert(username, destination, link, keywords, units):
+def send_alert(username, destination, link, keywords, units_left):
     client = Client(account_sid, auth_token)
-    body = build_alert_body(link, keywords, units)
+    body = build_alert_body(link, keywords, units_left)
     message = client.messages.create(
         body=body,
         messaging_service_sid=messaging_service_sid,
@@ -20,14 +20,14 @@ def send_alert(username, destination, link, keywords, units):
     return message
 
 
-def build_alert_body(link, keywords, units):
+def build_alert_body(link, keywords, units_left):
     formatted_keywords = util.format_keywords(keywords)
     subreddit = os.environ['REDDIT_SUBREDDIT']
-    if units == 0:
+    if units_left == 0:
         return f'You\'re out of alerts! Reload at www.smsalertservice.com/profile' \
                f'\n\nA post on {subreddit} matched the following keywords: {formatted_keywords}\n{link}'
-    elif units < 5:
-        return f'Heads up: You only have {units} alert(s) left! Reload at www.smsalertservice.com/profile\n\n' \
+    elif units_left < 5:
+        return f'Heads up: You only have {units_left} alert(s) left! Reload at www.smsalertservice.com/profile\n\n' \
                f'A post on {subreddit} matched the following keywords: {formatted_keywords}\n{link}'
     else:
         return f'www.smsalertservice.com\n\nA post on {subreddit} matched the following keywords: {formatted_keywords}\n{link}'
