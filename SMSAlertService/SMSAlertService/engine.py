@@ -1,8 +1,7 @@
-from SMSAlertService import app, mongo, reddit, twilio, util
+from SMSAlertService import mongo, reddit, twilio, util
 
 
 def run():
-    messages_sent = 0
     post = reddit.new_post()
     if post:
         if '[wts]' in post.title.lower():
@@ -13,15 +12,16 @@ def run():
                     if util.keyword_match(user, keyword, post):
                         matching_keywords.append(keyword + ', ')
                 if matching_keywords and int(user['Units']) > 0 and not mongo.blacklisted(user):
-                    message = twilio.send_alert(user['Username'], user['PhoneNumber'], post.url,
-                                                matching_keywords, int(user['Units'] - 1))
-                    mongo.update_user_msg_data(user['Username'], message)
-                    messages_sent += 1
-    response = {
-        "NewPost": str(post),
-        "MessagesSent": messages_sent
-    }
-    return response
+                    send_alert(user, post.url, matching_keywords,)
+
+
+def send_alert(user, url, keywords):
+    message = twilio.send_alert(user['Username'],
+                                user['PhoneNumber'],
+                                url,
+                                keywords,
+                                int(user['Units'] - 1))
+    mongo.update_user_msg_data(user['Username'], message)
 
 
 def send_otp(ph):
