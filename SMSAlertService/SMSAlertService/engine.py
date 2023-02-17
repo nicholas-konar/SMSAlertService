@@ -10,9 +10,9 @@ def run():
                 matching_keywords = []
                 for keyword in user['Keywords']:
                     if util.keyword_match(user, keyword, post):
-                        matching_keywords.append(keyword + ', ')
+                        matching_keywords.append(keyword)
                 if matching_keywords and int(user['Units']) > 0 and not mongo.blacklisted(user):
-                    send_alert(user, post.url, matching_keywords,)
+                    send_alert(user, post.url, matching_keywords)
 
 
 def send_alert(user, url, keywords):
