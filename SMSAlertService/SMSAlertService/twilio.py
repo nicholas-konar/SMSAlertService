@@ -1,6 +1,6 @@
 import os
 from twilio.rest import Client
-from SMSAlertService import app
+from SMSAlertService import app, util
 
 twilio_number = os.environ['TWILIO_NUMBER']
 account_sid = os.environ['TWILIO_ACCOUNT_SID']
@@ -20,6 +20,19 @@ def send_alert(username, destination, link, keywords, units):
     return message
 
 
+def build_alert_body(link, keywords, units):
+    formatted_keywords = util.format_keywords(keywords)
+    subreddit = os.environ['REDDIT_SUBREDDIT']
+    if units == 0:
+        return f'You\'re out of alerts! Reload at www.smsalertservice.com/profile' \
+               f'\n\nA post on {subreddit} matched the following keywords: {formatted_keywords}\n{link}'
+    elif units < 5:
+        return f'Heads up: You only have {units} alert(s) left! Reload at www.smsalertservice.com/profile\n\n' \
+               f'A post on {subreddit} matched the following keywords: {formatted_keywords}\n{link}'
+    else:
+        return f'www.smsalertservice.com\n\nA post on {subreddit} matched the following keywords: {formatted_keywords}\n{link}'
+
+
 def send_otp(destination, otp):
     client = Client(account_sid, auth_token)
     body = build_otp_body(otp)
@@ -32,25 +45,7 @@ def send_otp(destination, otp):
     return message
 
 
-def build_alert_body(link, keywords, units):
-    formatted_keywords = format_keywords(keywords)
-    subreddit = os.environ['REDDIT_SUBREDDIT']
-    if units == 0:
-        return f'You\'re out of alerts! Reload at www.smsalertservice.com/profile' \
-               f'\n\nA post on {subreddit} matched the following keywords: {formatted_keywords}\n{link}'
-    elif units < 5:
-        return f'Heads up: You only have {units} alert(s) left! Reload at www.smsalertservice.com/profile\n\n' \
-               f'A post on {subreddit} matched the following keywords: {formatted_keywords}\n{link}'
-    else:
-        return f'www.smsalertservice.com\n\nA post on {subreddit} matched the following keywords: {formatted_keywords}\n{link}'
-
-
 def build_otp_body(otp):
     return f'Your verification code is {otp}.\nwww.smsalertservice.com'
 
 
-def format_keywords(keywords):
-    formatted_keywords = ''
-    for keyword in keywords:
-        formatted_keywords += ' ' + keyword
-    return formatted_keywords

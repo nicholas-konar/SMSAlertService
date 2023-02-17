@@ -89,3 +89,10 @@ def calculate_total_codes_redeemed(users):
         codes_redeemed = user['PromoCodeRecords']
         total_codes_redeemed += len(codes_redeemed)
     return total_codes_redeemed
+
+
+def format_keywords(keywords):
+    formatted_keywords = ''
+    for keyword in keywords:
+        formatted_keywords += ' ' + keyword
+    return formatted_keywords
