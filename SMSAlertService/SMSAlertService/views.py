@@ -127,7 +127,7 @@ def account_confirmation():
 @app.route('/admin')
 def admin():
     if session["ADMIN"]:
-        users = mongo.get_users()
+        users = mongo.get_user_data()
         total_users = len(users)
         total_units_sent = util.calculate_total_units_sent(users)
         total_units_sold = util.calculate_total_units_sold(users)
