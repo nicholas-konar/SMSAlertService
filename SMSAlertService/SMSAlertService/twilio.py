@@ -10,25 +10,21 @@ messaging_service_sid = os.environ['TWILIO_MESSAGING_SERVICE_SID']
 
 def send_alert(alert):
     client = Client(account_sid, auth_token)
-    message = client.messages.create(
+    alert.twilio_data = client.messages.create(
         body=alert.body,
         messaging_service_sid=messaging_service_sid,
         to=alert.destination
     )
-    app.logger.info(f'Message sent to {alert.owner} at: {alert.destination} with SID: {message.sid}')
-    return message
+    app.logger.info(f'Message sent to {alert.owner} at: {alert.destination} with SID: {alert.twilio_data.sid}')
 
 
 def send_otp(otp):
     client = Client(account_sid, auth_token)
-    message = client.messages.create(
+    otp.twilio_data = client.messages.create(
         body=otp.body,
         messaging_service_sid=messaging_service_sid,
         to=otp.destination
     )
-    app.logger.info(f'OTP sent to {otp.destination} with SID: {message.sid}')
-    return message
+    app.logger.info(f'OTP sent to {otp.destination} with SID: {otp.twilio_data.sid}')
 
 
-def build_otp_body(otp):
-    return f'Your verification code is {otp}.\nwww.smsalertservice.com'
