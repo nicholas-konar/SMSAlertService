@@ -10,18 +10,22 @@ from SMSAlertService import app, mongo, engine, util, twilio
 @app.route("/", methods=["POST", "GET"])
 def home():
     if "username" not in session:
+        app.logger.info(f'Home accessed by unknown user')
         return render_template('home.html')
     else:
         username = session["username"]
+        app.logger.info(f'Home accessed by {username}')
         return render_template('home.html', username=username)
 
 
 @app.route("/support")
 def support():
     if "username" not in session:
+        app.logger.info(f'Support page accessed by unknown user')
         return render_template('support.html')
     else:
         username = session["username"]
+        app.logger.info(f'Support page accessed by {username}')
         return render_template('support.html', username=username)
 
 
@@ -37,9 +41,11 @@ def privacy():
 @app.route("/instructions")
 def instructions():
     if "username" not in session:
+        app.logger.info(f'Instructions accessed by unknown user')
         return render_template('instructions.html')
     else:
         username = session["username"]
+        app.logger.info(f'Instructions accessed by {username}')
         return render_template('instructions.html', username=username)
 
 
@@ -48,7 +54,7 @@ def login():
     if "username" in session:
         return redirect(url_for("profile"))
     if request.method == "POST":
-        username = request.form.get("username").upper()
+        username = request.form.get("username").upper().strip()
         pw_input = request.form.get("password")
         user = mongo.get_user_by_username(username)
         if user:
@@ -58,20 +64,26 @@ def login():
                 session["phonenumber"] = user['PhoneNumber']
                 if user['Username'] == "ADMIN":
                     session['ADMIN'] = True
+                    app.logger.info(f'***ADMIN USER {username}*** logging in')
                     return redirect(url_for('admin'))
+                app.logger.info(f'User {username} logged in successfully')
                 return redirect(url_for('profile'))
             else:
                 message = 'Incorrect password.'
+                app.logger.info(f'Failed log in attempt: Incorrect password entered by {username}')
                 return render_template('login.html', message=message)
         else:
             message = 'User not found.'
+            app.logger.info(f'Failed log in attempt: User {username} not found')
             return render_template('login.html', message=message)
     return render_template('login.html')
 
 
 @app.route("/logout", methods=["POST", "GET"])
 def logout():
+    username = session["username"]
     session.clear()
+    app.logger.info(f'User {username} logged out')
     return redirect(url_for("login"))
 
 
@@ -87,22 +99,27 @@ def signup():
         phonenumber_taken = mongo.phonenumber_taken(phonenumber)
         if username_taken:
             message = 'Username taken.'
+            app.logger.info(f'Failed sign up attempt: Username {username} already in use')
             return render_template('signup.html', message=message)
         if phonenumber_taken:
             message = 'This phone number is already in use. If you need to reset your password, go to the login page.'
+            app.logger.info(f'Failed sign up attempt: Phone number {phonenumber} already in use')
             return render_template('signup.html', message=message)
         else:
             mongo.create_user(username, password, phonenumber)
             engine.send_otp(phonenumber) # for account confirmation
             session["username"] = username
             session["phonenumber"] = phonenumber
+            app.logger.info(f'User {username} signed up successfully')
             return redirect(url_for('account_confirmation'))
+    app.logger.info(f'Sign up page accessed by unknown user')
     return render_template('signup.html')
 
 
 @app.route("/account-confirmation", methods=['GET', 'POST'])
 def account_confirmation():
     if request.method == 'GET':
+        app.logger.info('Rendering account confirmation page')
         return render_template('account-confirmation.html')
 
 
@@ -121,6 +138,7 @@ def admin():
         total_codes = util.calculate_issued_codes(codes)
         active_codes = util.calculate_total_active_codes(codes)
 
+        app.logger.info(f'ACCESSED ADMIN PAGE')
         return render_template('admin.html', username=True, total_users=total_users, total_codes=total_codes,
                                active_codes=active_codes, total_revenue=total_revenue,
                                total_units_sent=total_units_sent, total_units_sold=total_units_sold,
@@ -139,6 +157,7 @@ def profile():
         user = mongo.get_user_by_username(username)
         message_count = user['Units']
         keywords = user['Keywords']
+        app.logger.info(f'User {username} accessed their profile')
         return render_template('profile.html', message_count=message_count,
                                keywords=keywords, username=username, current_phone=current_phone)
 
@@ -147,24 +166,27 @@ def profile():
 def edit_info():
     username = session["username"]
     current_phone = session['phonenumber']
+    app.logger.info(f'Edit info accessed by user {username}')
     return render_template('edit-info.html', username=username, current_phone=current_phone)
 
 
 @app.route('/account-recovery')
 def account_recovery():
+    app.logger.info(f'Account recovery accessed by unknown user')
     return render_template('account-recovery.html')
 
 
 @app.route('/send/<path>', methods=['POST'])
 def send(path):
+    ph = request.form.get('PhoneNumber')
     try:
-        ph = request.form.get('PhoneNumber')
         engine.send_otp(ph)
         session['phonenumber'] = ph
         if path == 'account-verification':
             return render_template('account-verification.html')
     except TwilioRestException:
         if path == 'account-verification':
+            app.logger.info(f'Failed OTP delivery attempt: TwilioRestException for phone number {ph}')
             return render_template('account-recovery.html', message='There are no accounts associated with that number.')
 
 
@@ -172,7 +194,7 @@ def send(path):
 def resend(path):
     username = session['username']
     ph = session['phonenumber']
-    app.logger.info(f'Resending OTP to {username}')
+    app.logger.info(f'Attempting resend for {username}')
     engine.send_otp(ph)
     return render_template(f'{path}.html', sent=True)
 
@@ -203,8 +225,9 @@ def reset_password():
         return render_template('reset-password.html')
     if request.method == 'POST':
         ph = session['phonenumber']
+        username = mongo.get_user_by_phonenumber(ph)
         pw = request.form.get('password')
-        mongo.reset_password(ph, pw)
+        mongo.reset_password(username, pw)
         return redirect(url_for('login'))
 
 
@@ -285,7 +308,6 @@ def delete_all_keywords():
         mongo.delete_all_keywords(username)
         message = 'All Keywords have been cleared.'
         message_count = mongo.get_message_count(username)
-        app.logger.info(f'{username} cleared all keywords.')
         return redirect(url_for('profile', message=message,
                                 username=username, current_phone=phonenumber, message_count=message_count))
 
@@ -297,6 +319,7 @@ def process_sale():
     status = request.args.get('status')
     units = request.args.get('units')
     amount = request.args.get('amount')
+    app.logger.info(f'Processing sale of {units} units to user {username} for ${amount} - status: {status}')
     if status == "COMPLETED":
         mongo.process_transaction(username, units, amount)
         return redirect(url_for("profile"))

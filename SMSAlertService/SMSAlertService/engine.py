@@ -28,3 +28,4 @@ def send_otp(ph):
     otp = util.generate_otp()
     mongo.save_otp(ph, otp)
     twilio.send_otp(ph, otp)
+
