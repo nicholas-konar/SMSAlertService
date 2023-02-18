@@ -8,7 +8,7 @@ class Alert:
     keywords = []
     units_left = ''
     body = ''
-    twilio_data = None
+    twilio = None
 
     def __init__(self, user, url, subreddit):
         self.owner = user.username

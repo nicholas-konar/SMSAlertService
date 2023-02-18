@@ -2,17 +2,17 @@ from SMSAlertService import util, mongo
 
 
 class Otp:
-    otp = ''
+    value = ''
     owner = ''
     destination = ''
     body = ''
-    twilio_data = None
+    twilio = None
 
     def __init__(self, destination):
         user = mongo.get_user_by_phonenumber(destination)
-        self.otp = util.generate_otp()
+        self.value = util.generate_otp()
         self.owner = user['Username']
         self.destination = destination
-        self.body = f'Your verification code is {self.otp}.\n\n' \
+        self.body = f'Your verification code is {self.value}.\n\n' \
                     f'If you need help, please contact support@smsalertservice.com'
 
