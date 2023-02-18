@@ -10,16 +10,15 @@ subreddit = os.environ['REDDIT_SUBREDDIT']
 def run():
     post = reddit.new_post()
     if post:
+        user_data_set = mongo.get_user_data()
+        users = util.generate_users(user_data_set)
         alerts = []
-        users = mongo.get_users()
+
         for user in users:
-            matching_keywords = []
-            for keyword in user['Keywords']:
-                if util.keyword_match(user, keyword, post):
-                    matching_keywords.append(keyword)
-            if matching_keywords and int(user['Units']) > 0 and not mongo.blacklisted(user):
-                alert = Alert(user, post.url, matching_keywords, subreddit)
+            if user.requires_alert_for(post):
+                alert = Alert(user, post.url, subreddit)
                 alerts.append(alert)
+
         process_alerts(alerts)
 
 

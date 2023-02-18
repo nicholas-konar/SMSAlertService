@@ -191,12 +191,12 @@ def get_user_by_phonenumber(ph):
     return user_records.find_one({"PhoneNumber": ph})
 
 
-def get_users():
-    users = []
+def get_user_data():
+    user_data = []
     records = user_records.find()
     for user in records:
-        users.append(user)
-    return users
+        user_data.append(user)
+    return user_data
 
 
 def get_message_count(username):
