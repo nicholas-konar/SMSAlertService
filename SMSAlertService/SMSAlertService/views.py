@@ -64,9 +64,9 @@ def login():
                 session["phonenumber"] = user['PhoneNumber']
                 if user['Username'] == "ADMIN":
                     session['ADMIN'] = True
-                    app.logger.info(f'***ADMIN USER {username}*** logging in')
+                    app.logger.info(f'User {username} logged in')
                     return redirect(url_for('admin'))
-                app.logger.info(f'User {username} logged in successfully')
+                app.logger.info(f'User {username} logged in')
                 return redirect(url_for('profile'))
             else:
                 message = 'Incorrect password.'
@@ -127,6 +127,7 @@ def account_confirmation():
 @app.route('/admin')
 def admin():
     if session["ADMIN"]:
+        username = session["username"]
         users = mongo.get_user_data()
         total_users = len(users)
         total_units_sent = util.calculate_total_units_sent(users)
@@ -138,7 +139,7 @@ def admin():
         total_codes = util.calculate_issued_codes(codes)
         active_codes = util.calculate_total_active_codes(codes)
 
-        app.logger.info(f'ACCESSED ADMIN PAGE')
+        app.logger.info(f'***ADMIN PAGE ACCESSED BY {username}')
         return render_template('admin.html', username=True, total_users=total_users, total_codes=total_codes,
                                active_codes=active_codes, total_revenue=total_revenue,
                                total_units_sent=total_units_sent, total_units_sold=total_units_sold,
