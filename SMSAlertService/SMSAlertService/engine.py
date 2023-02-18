@@ -2,6 +2,7 @@ import os
 
 from SMSAlertService import mongo, reddit, twilio, util
 from SMSAlertService.alert import Alert
+from SMSAlertService.otp import Otp
 
 subreddit = os.environ['REDDIT_SUBREDDIT']
 
@@ -24,11 +25,11 @@ def run():
 
 def process_alerts(alerts):
     for alert in alerts:
-        alert.twilio_data = twilio.send_alert(alert)
+        twilio.send_alert(alert)
         mongo.save_alert_data(alert)
 
 
 def process_otp(ph):
-    otp = util.generate_otp()
-    twilio.send_otp(ph, otp)
-    mongo.save_otp_data(ph, otp)
+    otp = Otp(ph)
+    twilio.send_otp(otp)
+    mongo.save_otp_data(otp)
