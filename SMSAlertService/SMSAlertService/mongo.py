@@ -204,13 +204,13 @@ def get_message_count(username):
     return user["Units"]
 
 
-def update_user_msg_data(username, message):
+def save_alert_data(alert):
     timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
-    user = get_user_by_username(username)
+    user = get_user_by_username(alert.owner)
     updated_msg_count = user["Units"] - 1
     updated_sent_count = user["UnitsSent"] + 1
 
-    query = {"Username": username}
+    query = {"Username": alert.owner}
     new_value = {
         "$set": {
             "Units": updated_msg_count,
@@ -219,16 +219,17 @@ def update_user_msg_data(username, message):
         "$push": {
             "TwilioRecords": {
                 "Date": timestamp,
-                "Status": message.status,
-                "MessageSID": message.sid,
-                "Body": message.body,
-                "ErrorMessage": message.error_message
+                "Type": "Alert",
+                "Body": alert.twilio.body,
+                "Status": alert.twilio.status,
+                "ErrorMessage": alert.twilio.error_message,
+                "SID": alert.twilio.sid
             }
         }
     }
 
     user_records.update_one(query, new_value)
-    app.logger.info(f'Unit count reduced by 1 for user {username}')
+    app.logger.info(f'Twilio data saved for user {alert.owner}')
 
 
 def reset_password(username, pw):
@@ -239,11 +240,34 @@ def reset_password(username, pw):
     app.logger.info(f'New password saved for user {username}')
 
 
-def save_otp(ph, otp):
-    query = {"PhoneNumber": ph}
-    value = {"$set": {"OTP": otp}}
+def save_otp_data(otp):
+
+    timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
+    user = get_user_by_username(otp.owner)
+    updated_msg_count = user["Units"] - 1
+    updated_sent_count = user["UnitsSent"] + 1
+
+    query = {"Username": otp.owner}
+    value = {
+        "$set": {
+            "OTP": otp.value,
+            "Units": updated_msg_count,
+            "UnitsSent": updated_sent_count
+        },
+        "$push": {
+            "TwilioRecords": {
+                "Date": timestamp,
+                "Type": "OTP",
+                "Body": otp.twilio.body,
+                "Status": otp.twilio.status,
+                "ErrorMessage": otp.twilio.error_message,
+                "SID": otp.twilio.sid
+            }
+        }
+    }
+
     user_records.update_one(query, value)
-    app.logger.info(f'OTP {otp} saved successfully')
+    app.logger.info(f'OTP {otp.value} saved successfully')
 
 
 def add_to_blacklist(phonenumber):
