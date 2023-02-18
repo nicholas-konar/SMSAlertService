@@ -47,7 +47,7 @@ def create_user(username, password, phonenumber):
         'Keywords': []
     }
     user_records.insert_one(user_data)
-    app.logger.info(f"Created new user '{username}'")
+    app.logger.info(f"Created user {username} in database")
 
 
 def verify(username):
@@ -55,7 +55,7 @@ def verify(username):
         query = {"Username": username}
         value = {"$set": {"Verified": True}}
         user_records.update_one(query, value)
-        app.logger.info(f'User {username}\'s account has been verified.')
+        app.logger.info(f'User {username}\'s phonenumber has been verified.')
 
 
 def is_verified(username):
@@ -93,7 +93,7 @@ def process_transaction(username, units_purchased, amount):
     }
 
     user_records.update_one(query, new_value)
-    app.logger.info(f'{username} purchased {units_purchased} units.')
+    app.logger.info(f'Purchase complete')
 
 
 def redeem(username, code):
@@ -118,7 +118,7 @@ def redeem(username, code):
     }
 
     user_records.update_one(query, new_value)
-    app.logger.info(f'{username} redeemed code {code} for {reward} units.')
+    app.logger.info(f'{username} redeemed code {code} for {reward} units')
 
 
 def process_promo_code(username, promo_code):
@@ -131,10 +131,10 @@ def process_promo_code(username, promo_code):
             return code
         else:
             app.logger.info(
-                f'Failed to process promo code {promo_code} for user {username} because it is deactivated.')
+                f'Failure to process promo code {promo_code} for user {username}: Code not active')
             return False
     except TypeError as e:
-        app.logger.info(f'Failed to process promo code {promo_code} for user {username} because it is invalid. {e}')
+        app.logger.info(f'Failure to process promo code {promo_code} for user {username}: Invalid code \n{e}')
         return False
 
 
@@ -231,12 +231,12 @@ def update_user_msg_data(username, message):
     app.logger.info(f'Unit count reduced by 1 for user {username}')
 
 
-def reset_password(ph, pw):
-    app.logger.info('full phone = ' + ph)
+def reset_password(username, pw):
     hashed_pw = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
-    query = {"PhoneNumber": ph}
+    query = {"Username": username}
     value = {"$set": {"Password": hashed_pw}}
     user_records.update_one(query, value)
+    app.logger.info(f'New password saved for user {username}')
 
 
 def save_otp(ph, otp):
@@ -293,7 +293,7 @@ def delete_all_keywords(username):
     query = {"Username": username}
     new_value = {"$set": {"Keywords": []}}
     user_records.update_one(query, new_value)
-    app.logger.info(f'Deleted all keywords in DB for user {username}')
+    app.logger.info(f'User {username} deleted all keywords')
 
 
 def get_phonenumber(username):
