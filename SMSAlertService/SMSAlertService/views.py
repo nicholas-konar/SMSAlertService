@@ -107,7 +107,7 @@ def signup():
             return render_template('signup.html', message=message)
         else:
             mongo.create_user(username, password, phonenumber)
-            engine.send_otp(phonenumber) # for account confirmation
+            engine.process_otp(phonenumber) # for account confirmation
             session["username"] = username
             session["phonenumber"] = phonenumber
             app.logger.info(f'User {username} signed up successfully')
@@ -180,7 +180,7 @@ def account_recovery():
 def send(path):
     ph = request.form.get('PhoneNumber')
     try:
-        engine.send_otp(ph)
+        engine.process_otp(ph)
         session['phonenumber'] = ph
         if path == 'account-verification':
             return render_template('account-verification.html')
@@ -195,7 +195,7 @@ def resend(path):
     username = session['username']
     ph = session['phonenumber']
     app.logger.info(f'Attempting resend for {username}')
-    engine.send_otp(ph)
+    engine.process_otp(ph)
     return render_template(f'{path}.html', sent=True)
 
 

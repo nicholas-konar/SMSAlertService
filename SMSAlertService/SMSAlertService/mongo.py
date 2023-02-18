@@ -337,4 +337,4 @@ def save_post_id(post):
         "LastPostId": post.id
     }}
     app_records.update_one(query, last_post_id)
-    app.logger.info('LastPostId is now ' + post.id)
+    app.logger.info(f'Saved post {post.id}')
