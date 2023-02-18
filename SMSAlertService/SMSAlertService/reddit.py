@@ -16,7 +16,7 @@ def new_post():
     post = get_latest_post()
     last_post_id = mongo.get_last_post_id()
     if post.id != last_post_id:
-        app.logger.info('New Post: ' + post.id)
+        app.logger.info('New Reddit Post: ' + post.id)
         mongo.save_post_id(post)
         return post
     else:
