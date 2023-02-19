@@ -2,14 +2,7 @@ import secrets
 import string
 
 from SMSAlertService import app, mongo
-
-
-def generate_otp():
-    length = 6
-    code = ''.join(secrets.choice(string.digits)
-                   for i in range(length))
-    app.logger.info(f"Generated OTP '{code}'")
-    return code
+from SMSAlertService.user import User
 
 
 def authenticate(ph, otp):
@@ -20,6 +13,31 @@ def authenticate(ph, otp):
     else:
         app.logger.info(f'User {user["Username"]} failed to authenticate OTP sent to {ph}')
         return False
+
+
+def detect_keyword(keyword, post):
+    if keyword.lower() in str(post.title).lower() \
+            or keyword.lower() in str(post.selftext).lower() \
+            or keyword.lower() + 's' in str(post.title).lower() \
+            or keyword.lower() + 's' in str(post.selftext).lower():
+        return True
+    else:
+        return False
+
+
+def generate_users(user_data_set):
+    users = []
+    for user_data in user_data_set:
+        user = User(user_data)
+        users.append(user)
+    return users
+
+
+def generate_otp():
+    length = 6
+    code = ''.join(secrets.choice(string.digits) for i in range(length))
+    app.logger.info(f"Generated OTP '{code}'")
+    return code
 
 
 def generate_code(prefix):
@@ -78,3 +96,10 @@ def calculate_total_codes_redeemed(users):
         codes_redeemed = user['PromoCodeRecords']
         total_codes_redeemed += len(codes_redeemed)
     return total_codes_redeemed
+
+
+def format_keywords(keywords):
+    formatted_keywords = ''
+    for keyword in keywords:
+        formatted_keywords += ' ' + keyword
+    return formatted_keywords

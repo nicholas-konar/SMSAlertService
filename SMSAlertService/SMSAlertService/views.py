@@ -3,25 +3,29 @@ from flask import request, redirect, render_template, session, url_for, jsonify
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.base.exceptions import TwilioRestException
 
-from SMSAlertService import app, mongo, notification, util, twilio
+from SMSAlertService import app, mongo, engine, util, twilio
 
 
 # -------------------------------- ABOUT + LOGIN + LOGOUT + SIGNUP --------------------------------
 @app.route("/", methods=["POST", "GET"])
 def home():
     if "username" not in session:
+        app.logger.info(f'Home accessed by unknown user')
         return render_template('home.html')
     else:
         username = session["username"]
+        app.logger.info(f'Home accessed by {username}')
         return render_template('home.html', username=username)
 
 
 @app.route("/support")
 def support():
     if "username" not in session:
+        app.logger.info(f'Support page accessed by unknown user')
         return render_template('support.html')
     else:
         username = session["username"]
+        app.logger.info(f'Support page accessed by {username}')
         return render_template('support.html', username=username)
 
 
@@ -37,9 +41,11 @@ def privacy():
 @app.route("/instructions")
 def instructions():
     if "username" not in session:
+        app.logger.info(f'Instructions accessed by unknown user')
         return render_template('instructions.html')
     else:
         username = session["username"]
+        app.logger.info(f'Instructions accessed by {username}')
         return render_template('instructions.html', username=username)
 
 
@@ -48,7 +54,7 @@ def login():
     if "username" in session:
         return redirect(url_for("profile"))
     if request.method == "POST":
-        username = request.form.get("username").upper()
+        username = request.form.get("username").upper().strip()
         pw_input = request.form.get("password")
         user = mongo.get_user_by_username(username)
         if user:
@@ -58,52 +64,77 @@ def login():
                 session["phonenumber"] = user['PhoneNumber']
                 if user['Username'] == "ADMIN":
                     session['ADMIN'] = True
+                    app.logger.info(f'User {username} logged in')
                     return redirect(url_for('admin'))
+                app.logger.info(f'User {username} logged in')
                 return redirect(url_for('profile'))
             else:
                 message = 'Incorrect password.'
+                app.logger.info(f'Failed log in attempt: Incorrect password entered by {username}')
                 return render_template('login.html', message=message)
         else:
             message = 'User not found.'
+            app.logger.info(f'Failed log in attempt: User {username} not found')
             return render_template('login.html', message=message)
     return render_template('login.html')
 
 
 @app.route("/logout", methods=["POST", "GET"])
 def logout():
+    username = session["username"]
     session.clear()
+    app.logger.info(f'User {username} logged out')
     return redirect(url_for("login"))
 
 
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
-    message = 'Thank you for using the SMS Alert Service'
     if "username" in session:
         return redirect(url_for("profile"))
+
     if request.method == "POST":
         username = request.form.get("username").upper().strip()
         phonenumber = request.form.get("phonenumber")
         password = request.form.get("password").strip()
+
         username_taken = mongo.username_taken(username)
         phonenumber_taken = mongo.phonenumber_taken(phonenumber)
+
         if username_taken:
             message = 'Username taken.'
+            app.logger.info(f'Failed sign up attempt: Username {username} already in use')
             return render_template('signup.html', message=message)
+
         if phonenumber_taken:
             message = 'This phone number is already in use. If you need to reset your password, go to the login page.'
+            app.logger.info(f'Failed sign up attempt: Phone number {phonenumber} already in use')
             return render_template('signup.html', message=message)
+
         else:
-            mongo.create_user(username, password, phonenumber)
-            notification.send_otp(phonenumber) # for account confirmation
-            session["username"] = username
-            session["phonenumber"] = phonenumber
-            return redirect(url_for('account_confirmation'))
+            try:
+                mongo.create_user(username, password, phonenumber)
+                engine.process_otp(phonenumber)  # for account confirmation
+                session["username"] = username
+                session["phonenumber"] = phonenumber
+                app.logger.info(f'User {username} signed up successfully')
+                return redirect(url_for('account_confirmation'))
+
+            except TwilioRestException:
+                # Todo: refine the failed confirmation process
+                message = 'We are unable to reach this phone number. ' \
+                          'Please send your phone number and username to support@smsalertservice.com and we\'ll fix it promptly.'
+                app.logger.info(f'Failed phone number confirmation: TwilioRestException thrown by phone number {phonenumber}')
+                # Todo: build account-confirmation-retry.html
+                return render_template('profile.html', message=message)
+
+    app.logger.info(f'Sign up page accessed by unknown user')
     return render_template('signup.html')
 
 
 @app.route("/account-confirmation", methods=['GET', 'POST'])
 def account_confirmation():
     if request.method == 'GET':
+        app.logger.info('Rendering account confirmation page')
         return render_template('account-confirmation.html')
 
 
@@ -111,7 +142,8 @@ def account_confirmation():
 @app.route('/admin')
 def admin():
     if session["ADMIN"]:
-        users = mongo.get_users()
+        username = session["username"]
+        users = mongo.get_user_data()
         total_users = len(users)
         total_units_sent = util.calculate_total_units_sent(users)
         total_units_sold = util.calculate_total_units_sold(users)
@@ -122,6 +154,7 @@ def admin():
         total_codes = util.calculate_issued_codes(codes)
         active_codes = util.calculate_total_active_codes(codes)
 
+        app.logger.info(f'***ADMIN PAGE ACCESSED BY {username}')
         return render_template('admin.html', username=True, total_users=total_users, total_codes=total_codes,
                                active_codes=active_codes, total_revenue=total_revenue,
                                total_units_sent=total_units_sent, total_units_sold=total_units_sold,
@@ -140,6 +173,7 @@ def profile():
         user = mongo.get_user_by_username(username)
         message_count = user['Units']
         keywords = user['Keywords']
+        app.logger.info(f'User {username} accessed their profile')
         return render_template('profile.html', message_count=message_count,
                                keywords=keywords, username=username, current_phone=current_phone)
 
@@ -148,28 +182,27 @@ def profile():
 def edit_info():
     username = session["username"]
     current_phone = session['phonenumber']
+    app.logger.info(f'Edit info accessed by user {username}')
     return render_template('edit-info.html', username=username, current_phone=current_phone)
 
 
 @app.route('/account-recovery')
 def account_recovery():
+    app.logger.info(f'Account recovery accessed by unknown user')
     return render_template('account-recovery.html')
 
 
 @app.route('/send/<path>', methods=['POST'])
 def send(path):
+    ph = request.form.get('PhoneNumber')
     try:
-        ph = request.form.get('PhoneNumber')
-        notification.send_otp(ph)
+        engine.process_otp(ph)
         session['phonenumber'] = ph
-        if path == 'account-confirmation': # this doesn't get hit, otp is sent on sign up
-            return redirect(url_for('account-confirmation'))
         if path == 'account-verification':
             return render_template('account-verification.html')
     except TwilioRestException:
-        if path == 'account-confirmation': # this doesn't get hit, otp is sent on sign up
-            return render_template('account-confirmation.html', message='Invalid number.')
         if path == 'account-verification':
+            app.logger.info(f'Failed OTP delivery attempt: TwilioRestException for phone number {ph}')
             return render_template('account-recovery.html', message='There are no accounts associated with that number.')
 
 
@@ -177,8 +210,8 @@ def send(path):
 def resend(path):
     username = session['username']
     ph = session['phonenumber']
-    app.logger.info(f'Resending OTP to {username}')
-    notification.send_otp(ph)
+    app.logger.info(f'Attempting resend for {username}')
+    engine.process_otp(ph)
     return render_template(f'{path}.html', sent=True)
 
 
@@ -208,8 +241,9 @@ def reset_password():
         return render_template('reset-password.html')
     if request.method == 'POST':
         ph = session['phonenumber']
+        username = mongo.get_user_by_phonenumber(ph)
         pw = request.form.get('password')
-        mongo.reset_password(ph, pw)
+        mongo.reset_password(username, pw)
         return redirect(url_for('login'))
 
 
@@ -290,44 +324,8 @@ def delete_all_keywords():
         mongo.delete_all_keywords(username)
         message = 'All Keywords have been cleared.'
         message_count = mongo.get_message_count(username)
-        app.logger.info(f'{username} cleared all keywords.')
         return redirect(url_for('profile', message=message,
                                 username=username, current_phone=phonenumber, message_count=message_count))
-
-
-# -------------------------------- TWILLIO WEBHOOKS --------------------------------
-@app.route("/sms", methods=['GET', 'POST'])
-def sms_reply():
-    req = request.values
-    body = req['Body']
-    from_number = req['From']
-
-    app.logger.debug('the body is as follows: ' + str(body))
-    app.logger.debug('the from number is as follows: ' + str(from_number))
-
-    if body.lower().startswith('reset password'):
-        app.logger.debug('Password reset requested for ' + from_number)
-        body = body.lower()
-        password = body.split(' ')[2]
-        mongo.reset_password(from_number, password)
-        resp = MessagingResponse()
-        resp.message("Your password has been reset. Thank you for using the GAFS Alert Service!")
-        return str(resp)
-
-    if body.lower().startswith("what's my username"):
-        app.logger.debug('Username reminder requested for ' + from_number)
-        # reply with username
-        username = mongo.get_username_by_phonenumber(from_number)
-        resp = MessagingResponse()
-        resp.message(
-            'The username associated with this number is ' + username + '. Thank you for using the GAFS Alert Service!')
-        return str(resp)
-
-    else:
-        resp = MessagingResponse()
-        resp.message(
-            'I can respond to the following commands: \n"Reset password <newpassword>" \n"What\'s my username?"')
-        return str(resp)
 
 
 # -------------------------------- COMMANDS --------------------------------
@@ -337,6 +335,7 @@ def process_sale():
     status = request.args.get('status')
     units = request.args.get('units')
     amount = request.args.get('amount')
+    app.logger.info(f'Processing sale of {units} units to user {username} for ${amount} - status: {status}')
     if status == "COMPLETED":
         mongo.process_transaction(username, units, amount)
         return redirect(url_for("profile"))
@@ -346,7 +345,7 @@ def process_sale():
 
 @app.route("/notify", methods=['GET'])
 def notify():
-    resp = notification.distribute()
+    resp = engine.run()
     return resp
 
 
