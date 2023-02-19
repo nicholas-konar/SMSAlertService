@@ -50,6 +50,11 @@ def create_user(username, password, phonenumber):
     app.logger.info(f"Created user {username} in database")
 
 
+def drop_user(username):
+    query = {"Username": username}
+    user_records.delete_one(query)
+
+
 def verify(username):
     if not is_verified(username):
         query = {"Username": username}
