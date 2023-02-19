@@ -91,27 +91,42 @@ def logout():
 def signup():
     if "username" in session:
         return redirect(url_for("profile"))
+
     if request.method == "POST":
         username = request.form.get("username").upper().strip()
         phonenumber = request.form.get("phonenumber")
         password = request.form.get("password").strip()
+
         username_taken = mongo.username_taken(username)
         phonenumber_taken = mongo.phonenumber_taken(phonenumber)
+
         if username_taken:
             message = 'Username taken.'
             app.logger.info(f'Failed sign up attempt: Username {username} already in use')
             return render_template('signup.html', message=message)
+
         if phonenumber_taken:
             message = 'This phone number is already in use. If you need to reset your password, go to the login page.'
             app.logger.info(f'Failed sign up attempt: Phone number {phonenumber} already in use')
             return render_template('signup.html', message=message)
+
         else:
-            mongo.create_user(username, password, phonenumber)
-            engine.process_otp(phonenumber) # for account confirmation
-            session["username"] = username
-            session["phonenumber"] = phonenumber
-            app.logger.info(f'User {username} signed up successfully')
-            return redirect(url_for('account_confirmation'))
+            try:
+                mongo.create_user(username, password, phonenumber)
+                engine.process_otp(phonenumber)  # for account confirmation
+                session["username"] = username
+                session["phonenumber"] = phonenumber
+                app.logger.info(f'User {username} signed up successfully')
+                return redirect(url_for('account_confirmation'))
+
+            except TwilioRestException:
+                # Todo: refine the failed confirmation process
+                message = 'We are unable to reach this phone number. ' \
+                          'Please send your phone number and username to support@smsalertservice.com and we\'ll fix it promptly.'
+                app.logger.info(f'Failed phone number confirmation: TwilioRestException thrown by phone number {phonenumber}')
+                # Todo: build account-confirmation-retry.html
+                return render_template('profile.html', message=message)
+
     app.logger.info(f'Sign up page accessed by unknown user')
     return render_template('signup.html')
 

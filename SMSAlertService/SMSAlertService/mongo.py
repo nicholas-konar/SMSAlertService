@@ -20,7 +20,7 @@ from SMSAlertService import app, util
 url = os.environ['MONGO_URL_PROD']
 client = pymongo.MongoClient(url, tls=True)
 
-db_name = os.environ['MONGO_DB_PROD']
+db_name = os.environ['MONGO_DB_NAME']
 db = client.get_database(db_name)
 user_records = db.user_data
 app_records = db.app_data
@@ -241,7 +241,6 @@ def reset_password(username, pw):
 
 
 def save_otp_data(otp):
-
     timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
     user = get_user_by_username(otp.owner)
     updated_msg_count = user["Units"] - 1
