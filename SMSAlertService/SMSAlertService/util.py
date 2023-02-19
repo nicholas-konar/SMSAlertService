@@ -35,8 +35,7 @@ def generate_users(user_data_set):
 
 def generate_otp():
     length = 6
-    code = ''.join(secrets.choice(string.digits)
-                   for i in range(length))
+    code = ''.join(secrets.choice(string.digits) for i in range(length))
     app.logger.info(f"Generated OTP '{code}'")
     return code
 
