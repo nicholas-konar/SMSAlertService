@@ -16,8 +16,8 @@ def new_post():
     post = get_latest_post()
     last_post_id = mongo.get_last_post_id()
     if post.id != last_post_id and '[wts]' in post.title.lower():
-        app.logger.info('New Reddit Post: ' + post.id)
         mongo.save_post_id(post)
+        app.logger.info('New Reddit Post: ' + post.id)
         return post
     else:
         return False
