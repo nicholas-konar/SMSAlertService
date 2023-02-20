@@ -38,7 +38,7 @@ def create_user(username, password, phonenumber):
         'Verified': False,
         'OTP': None,
         'TotalRevenue': 0,
-        'Units': 10,
+        'Units': 0,
         'UnitsSent': 0,
         'UnitsPurchased': 0,
         'TwilioRecords': [],
@@ -62,7 +62,7 @@ def verify(username):
         query = {"Username": username}
         value = {"$set": {"Verified": True}}
         user_records.update_one(query, value)
-        app.logger.info(f'User {username}\'s phonenumber has been verified.')
+        app.logger.info(f'User {username}\'s phone number has been verified.')
 
 
 def is_verified(username):
@@ -100,7 +100,7 @@ def process_transaction(username, units_purchased, amount):
     }
 
     user_records.update_one(query, new_value)
-    app.logger.info(f'Purchase complete')
+    app.logger.info(f'Purchase completed by {username}')
 
 
 def redeem(username, code):

@@ -49,44 +49,6 @@ def instructions():
         return render_template('instructions.html', username=username)
 
 
-@app.route("/login", methods=["POST", "GET"])
-def login():
-    if "username" in session:
-        return redirect(url_for("profile"))
-    if request.method == "POST":
-        username = request.form.get("username").upper().strip()
-        pw_input = request.form.get("password")
-        user = mongo.get_user_by_username(username)
-        if user:
-            password = user['Password']
-            if checkpw(pw_input.encode('utf-8'), password):
-                session["username"] = user['Username']
-                session["phonenumber"] = user['PhoneNumber']
-                if user['Username'] == "ADMIN":
-                    session['ADMIN'] = True
-                    app.logger.info(f'User {username} logged in')
-                    return redirect(url_for('admin'))
-                app.logger.info(f'User {username} logged in')
-                return redirect(url_for('profile'))
-            else:
-                message = 'Incorrect password.'
-                app.logger.info(f'Failed log in attempt: Incorrect password entered by {username}')
-                return render_template('login.html', message=message)
-        else:
-            message = 'User not found.'
-            app.logger.info(f'Failed log in attempt: User {username} not found')
-            return render_template('login.html', message=message)
-    return render_template('login.html')
-
-
-@app.route("/logout", methods=["POST", "GET"])
-def logout():
-    username = session["username"]
-    session.clear()
-    app.logger.info(f'User {username} logged out')
-    return redirect(url_for("login"))
-
-
 @app.route("/signup", methods=['GET', 'POST'])
 def signup():
     if "username" in session:
@@ -134,6 +96,50 @@ def account_confirmation():
     if request.method == 'GET':
         app.logger.info('Rendering account confirmation page')
         return render_template('account-confirmation.html')
+
+
+@app.route("/login", methods=["POST", "GET"])
+def login():
+    if "username" in session:
+        return redirect(url_for("profile"))
+    if request.method == "POST":
+        username = request.form.get("username").upper().strip()
+        pw_input = request.form.get("password")
+        user = mongo.get_user_by_username(username)
+        if user:
+            password = user['Password']
+            if checkpw(pw_input.encode('utf-8'), password):
+                session["username"] = user['Username']
+                session["phonenumber"] = user['PhoneNumber']
+                if user['Username'] == "ADMIN":
+                    session['ADMIN'] = True
+                    app.logger.info(f'User {username} logged in')
+                    return redirect(url_for('admin'))
+                else:
+                    if mongo.is_verified(username):
+                        app.logger.info(f'User {username} logged in')
+                        return redirect(url_for('profile'))
+                    else:
+                        engine.process_otp(user['PhoneNumber'])
+                        app.logger.info(f'Unverified user {username} logging in. Redirecting to Account Confirmation page.')
+                        return redirect(url_for('account_confirmation'))
+            else:
+                message = 'Incorrect password.'
+                app.logger.info(f'Failed log in attempt: Incorrect password entered by {username}')
+                return render_template('login.html', message=message)
+        else:
+            message = 'User not found.'
+            app.logger.info(f'Failed log in attempt: User {username} not found')
+            return render_template('login.html', message=message)
+    return render_template('login.html')
+
+
+@app.route("/logout", methods=["POST", "GET"])
+def logout():
+    username = session["username"]
+    session.clear()
+    app.logger.info(f'User {username} logged out')
+    return redirect(url_for("login"))
 
 
 # -------------------------------- PROFILE --------------------------------
