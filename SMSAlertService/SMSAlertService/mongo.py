@@ -51,8 +51,10 @@ def create_user(username, password, phonenumber):
 
 
 def drop_user(username):
+    app.logger.debug(f'preparing to drop user {username}')
     query = {"Username": username}
     user_records.delete_one(query)
+    app.logger.debug(f'Dropped user {username}')
 
 
 def verify(username):
