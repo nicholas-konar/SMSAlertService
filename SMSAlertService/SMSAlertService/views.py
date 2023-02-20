@@ -1,12 +1,13 @@
 from bcrypt import checkpw
 from flask import request, redirect, render_template, session, url_for, jsonify
-from twilio.twiml.messaging_response import MessagingResponse
 from twilio.base.exceptions import TwilioRestException
+from SMSAlertService import app, mongo, engine, util
+from SMSAlertService.dao import DAO
 
-from SMSAlertService import app, mongo, engine, util, twilio
-
-
+dao = DAO()
 # -------------------------------- ABOUT + LOGIN + LOGOUT + SIGNUP --------------------------------
+
+
 @app.route("/", methods=["POST", "GET"])
 def home():
     if "username" not in session:
@@ -74,8 +75,8 @@ def signup():
 
         else:
             try:
-                mongo.create_user(username, password, phonenumber)
-                engine.process_otp(phonenumber)
+                user = dao.create_user(username, password, phonenumber)
+                engine.process_otp(user)
                 session["username"] = username
                 session["phonenumber"] = phonenumber
                 app.logger.info(f'User {username} signed up successfully')
@@ -105,27 +106,26 @@ def login():
     if request.method == "POST":
         username = request.form.get("username").upper().strip()
         pw_input = request.form.get("password")
-        user = mongo.get_user_by_username(username)
+        user = dao.get_user_by_username(username)
         if user:
-            password = user['Password']
-            if checkpw(pw_input.encode('utf-8'), password):
-                session["username"] = user['Username']
-                session["phonenumber"] = user['PhoneNumber']
-                if user['Username'] == "ADMIN":
+            if checkpw(pw_input.encode('utf-8'), user.password):
+                session["username"] = user.username
+                session["phonenumber"] = user.phonenumber
+                if user.username == "ADMIN":
                     session['ADMIN'] = True
-                    app.logger.info(f'User {username} logged in')
+                    app.logger.info(f'User {user.username} logged in')
                     return redirect(url_for('admin'))
                 else:
-                    if mongo.is_verified(username):
-                        app.logger.info(f'User {username} logged in')
+                    if mongo.is_verified(user.username):
+                        app.logger.info(f'User {user.username} logged in')
                         return redirect(url_for('profile'))
                     else:
-                        engine.process_otp(user['PhoneNumber'])
-                        app.logger.info(f'Unverified user {username} logging in. Redirecting to Account Confirmation page.')
+                        engine.process_otp(user)
+                        app.logger.info(f'Unverified user {user.username} logging in. Redirecting to Account Confirmation page.')
                         return redirect(url_for('account_confirmation'))
             else:
                 message = 'Incorrect password.'
-                app.logger.info(f'Failed log in attempt: Incorrect password entered by {username}')
+                app.logger.info(f'Failed log in attempt: Incorrect password entered by {user.username}')
                 return render_template('login.html', message=message)
         else:
             message = 'User not found.'
@@ -199,8 +199,9 @@ def account_recovery():
 @app.route('/send/<path>', methods=['POST'])
 def send(path):
     ph = request.form.get('PhoneNumber')
+    user = dao.get_user_by_phonenumber(ph)
     try:
-        engine.process_otp(ph)
+        engine.process_otp(user)
         session['phonenumber'] = ph
         if path == 'account-verification':
             return render_template('account-verification.html')
@@ -213,9 +214,9 @@ def send(path):
 @app.route('/resend/<path>', methods=['POST'])
 def resend(path):
     username = session['username']
-    ph = session['phonenumber']
+    user = dao.get_user_by_username(username)
     app.logger.info(f'Attempting resend for {username}')
-    engine.process_otp(ph)
+    engine.process_otp(user)
     return render_template(f'{path}.html', sent=True)
 
 
@@ -223,15 +224,14 @@ def resend(path):
 def authenticate(path):
     if request.method == 'POST':
         ph = session['phonenumber']
-        user = mongo.get_user_by_phonenumber(ph)
-        username = user['Username']
+        user = dao.get_user_by_phonenumber(ph)
         otp = request.form.get('otp')
         authenticated = util.authenticate(ph, otp)
         if authenticated and path == 'account-confirmation':
-            mongo.verify(username)
+            mongo.verify(user.username)
             return redirect(url_for('profile'))
         if authenticated and path == 'account-verification':
-            mongo.verify(username)
+            mongo.verify(user.username)
             return redirect(url_for('reset_password'))
         elif not authenticated:
             message = "Invalid code."
