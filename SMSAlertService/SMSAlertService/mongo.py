@@ -17,7 +17,7 @@ from SMSAlertService import app, util
 # export SSL_CERT_FILE=$(python3 -c "import certifi; print(certifi.where())")
 
 
-url = os.environ['MONGO_URL_PROD']
+url = os.environ['MONGO_URL']
 client = pymongo.MongoClient(url, tls=True)
 
 db_name = os.environ['MONGO_DB_NAME']
