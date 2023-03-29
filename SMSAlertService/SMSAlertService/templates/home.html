@@ -17,33 +17,79 @@
         <strong>Warning: </strong>This service gives you an unfair advantage over other buyers. Using it for profit is
         discouraged.
     </div>
-    <div class="flex-container" style="display: none;">
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <p><strong>Sponsor 1</strong></p>
-                <p><a href="https://www.example.com">example.com</a></p>
-                <p>Short Description</p>
-            </div>
-        </div>
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <p><strong>Sponsor 2</strong></p>
-                <p><a href="https://www.example.com">example.com</a></p>
-                <p>Short Description</p>
-            </div>
-        </div>
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <p><strong>Sponsor 3</strong></p>
-                <p><a href="https://www.example.com">example.com</a></p>
-                <p>Short Description</p>
-            </div>
-        </div>
-    </div>
     <div class="box-area billboard">
         <h3>Welcome to the SMS Alert Service</h3>
-        <h3><i class="fa fa-envelope fa-2x"></i></h3></div>
+        <h3><i class="fa fa-envelope fa-2x"></i></h3>
+    </div>
+    <div class="flex-container">
+        {% if username %}
+        <div class="flex-item">
+            <div class="box-area slim sponsor">
+                <form action="/instructions" class="form-group" method="get">
+                    <button class="btn btn-primary mini-container" type="submit">Instructions</button>
+                </form>
+            </div>
+        </div>
+        <div class="flex-item">
+            <div class="box-area slim sponsor">
+                <form action="/support" class="form-group" method="get">
+                    <button class="btn btn-primary mini-container" type="submit">Support</button>
+                </form>
+            </div>
+        </div>
+        <div class="flex-item">
+            <div class="box-area slim sponsor">
+                <form action="/privacy" class="form-group" method="get">
+                    <button class="btn btn-primary mini-container" type="submit">Privacy</button>
+                </form>
+            </div>
+        </div>
+        <div class="flex-item">
+            <div class="box-area slim sponsor">
+                <form action="/profile" class="form-group" method="get">
+                    <button class="btn btn-primary mini-container" type="submit">Profile</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="flex-item">
+            <div class="box-area slim sponsor">
+                <form action="/instructions" class="form-group" method="get">
+                    <button class="btn btn-primary mini-container" type="submit">Instructions</button>
+                </form>
+            </div>
+        </div>
+        <div class="flex-item">
+            <div class="box-area slim sponsor">
+                <form action="/support" class="form-group" method="get">
+                    <button class="btn btn-primary mini-container" type="submit">Support</button>
+                </form>
+            </div>
+        </div>
+        <div class="flex-item">
+            <div class="box-area slim sponsor">
+                <form action="/privacy" class="form-group" method="get">
+                    <button class="btn btn-primary mini-container" type="submit">Privacy</button>
+                </form>
+            </div>
+        </div>
+        <div class="flex-item">
+            <div class="box-area slim sponsor">
+                <form action="/signup" class="form-group" method="get">
+                    <button class="btn btn-primary mini-container" type="submit">Sign Up</button>
+                </form>
+            </div>
+        </div>
+        <div class="flex-item">
+            <div class="box-area slim sponsor">
+                <form action="/login" class="form-group" method="get">
+                    <button class="btn btn-primary mini-container" type="submit">Log in</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
 
+    </div>
     <div class="main">
         <div class="box-area">
             <h5><strong>What is the SMS Alert Service?</strong></h5>
@@ -76,11 +122,15 @@
             <h5><strong>Why SMS Alert Service?</strong></h5>
             <br/>
             <p>The SMS Alert Service is purpose-built just for the GAFS community.
-                We know there are free Reddit extensions on the market. However, we found that they were all too slow, too
-                unreliable, and not ideal for a place like GAFS. This service is tailored to the specific needs of GAFS members, and is <strong>designed to save you money.</strong>
-            <br/><br/>Minutes matter in this environment. That's why the SMS Alert Service is built to be fast, reliable, and easy to use.
-            You'll get notified via SMS within <strong>~5 seconds</strong> of the post hitting Reddit.<br/><br/>
-            <i>Never miss a deal again on <a class="link" href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a></i></p>
+                We know there are free Reddit extensions on the market. However, we found that they were all too slow,
+                too
+                unreliable, and not ideal for a place like GAFS. This service is tailored to the specific needs of GAFS
+                members, and is <strong>designed to save you money.</strong>
+                <br/><br/>Minutes matter in this environment. That's why the SMS Alert Service is built to be fast,
+                reliable, and easy to use.
+                You'll get notified via SMS within <strong>~5 seconds</strong> of the post hitting Reddit.<br/><br/>
+                <i>Never miss a deal again on <a class="link" href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a></i>
+            </p>
         </div>
     </div>
     <div class="sidebar">
@@ -90,40 +140,6 @@
         </div>
         <div class="box-area">
             <p><strong>Menu</strong></p>
-            {% if username %}
-            <form action="/profile" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Profile</button>
-            </form>
-            <form action="/edit-info" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Edit Info</button>
-            </form>
-            <form action="/instructions" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Instructions</button>
-            </form>
-            <form action="/support" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Support</button>
-            </form>
-            <form action="/privacy" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Privacy</button>
-            </form>
-            {% else %}
-            <form action="/signup" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Sign Up</button>
-            </form>
-            <form action="/login" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Log in</button>
-            </form>
-            <form action="/instructions" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Instructions</button>
-            </form>
-            <form action="/support" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Support</button>
-            </form>
-            <form action="/privacy" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Privacy</button>
-            </form>
-
-            {% endif %}
         </div>
     </div>
 </div>
