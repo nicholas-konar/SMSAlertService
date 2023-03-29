@@ -2,9 +2,12 @@ import os
 
 from SMSAlertService import mongo, reddit, twilio, util
 from SMSAlertService.alert import Alert
+from SMSAlertService.dao import DAO
 from SMSAlertService.otp import Otp
 
 subreddit = os.environ['REDDIT_SUBREDDIT']
+
+dao = DAO()
 
 
 def run():
@@ -28,7 +31,10 @@ def process_alerts(alerts):
         mongo.save_alert_data(alert)
 
 
-def process_otp(ph):
-    otp = Otp(ph)
-    twilio.send_otp(otp)
-    mongo.save_otp_data(otp)
+def process_otp(user):
+    if user.otps_sent < 5:
+        otp = Otp(user.phonenumber)
+        twilio.send_otp(otp)
+        dao.save_otp_data(user, otp)
+    else:
+        mongo.block(user)

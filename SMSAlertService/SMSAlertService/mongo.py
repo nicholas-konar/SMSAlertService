@@ -17,7 +17,7 @@ from SMSAlertService import app, util
 # export SSL_CERT_FILE=$(python3 -c "import certifi; print(certifi.where())")
 
 
-url = os.environ['MONGO_URL_PROD']
+url = os.environ['MONGO_URL']
 client = pymongo.MongoClient(url, tls=True)
 
 db_name = os.environ['MONGO_DB_NAME']
@@ -36,11 +36,13 @@ def create_user(username, password, phonenumber):
         'Username': username,
         'PhoneNumber': phonenumber,
         'Verified': False,
-        'OTP': None,
+        'Blocked': False,
         'TotalRevenue': 0,
-        'Units': 10,
+        'Units': 0,
         'UnitsSent': 0,
         'UnitsPurchased': 0,
+        'OTP': None,
+        'OTPsSent': 0,
         'TwilioRecords': [],
         'SalesRecords': [],
         'PromoCodeRecords': [],
@@ -51,8 +53,10 @@ def create_user(username, password, phonenumber):
 
 
 def drop_user(username):
+    app.logger.debug(f'preparing to drop user {username}')
     query = {"Username": username}
     user_records.delete_one(query)
+    app.logger.debug(f'Dropped user {username}')
 
 
 def verify(username):
@@ -60,7 +64,7 @@ def verify(username):
         query = {"Username": username}
         value = {"$set": {"Verified": True}}
         user_records.update_one(query, value)
-        app.logger.info(f'User {username}\'s phonenumber has been verified.')
+        app.logger.info(f'User {username}\'s phone number has been verified.')
 
 
 def is_verified(username):
@@ -98,7 +102,7 @@ def process_transaction(username, units_purchased, amount):
     }
 
     user_records.update_one(query, new_value)
-    app.logger.info(f'Purchase complete')
+    app.logger.info(f'Purchase completed by {username}')
 
 
 def redeem(username, code):
@@ -173,7 +177,7 @@ def create_promo_codes(reward, quantity, distributor, prefix):
             'DeactivationDate': ""
         }
         promo_code_records.insert_one(promo_code_data)
-        app.logger.info(f"Created Promo Code '{code}' ({i+1} of {quantity})")
+        app.logger.info(f"Created Promo Code '{code}' ({i + 1} of {quantity})")
 
 
 def get_code(promo_code):
@@ -245,18 +249,13 @@ def reset_password(username, pw):
     app.logger.info(f'New password saved for user {username}')
 
 
-def save_otp_data(otp):
+def save_otp_data(user, otp):
     timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
-    user = get_user_by_username(otp.owner)
-    updated_msg_count = user["Units"] - 1
-    updated_sent_count = user["UnitsSent"] + 1
-
-    query = {"Username": otp.owner}
+    query = {"Username": user.username}
     value = {
         "$set": {
             "OTP": otp.value,
-            "Units": updated_msg_count,
-            "UnitsSent": updated_sent_count
+            "OTPsSent": user.otps_sent
         },
         "$push": {
             "TwilioRecords": {
@@ -269,7 +268,6 @@ def save_otp_data(otp):
             }
         }
     }
-
     user_records.update_one(query, value)
     app.logger.info(f'OTP {otp.value} saved successfully')
 
@@ -294,6 +292,13 @@ def blacklisted(user):
             app.logger.info(f'Blacklisted number detected for user {user["Username"]}: {user["PhoneNumber"]}')
             return True
     return False
+
+
+def block(user):
+    query = {"Username": user.username}
+    value = {"$set": {"Blocked": True}}
+    user_records.update_one(query, value)
+    app.logger.info(f'Account blocked for user {user.username}')
 
 
 def get_keywords(username):
@@ -366,3 +371,11 @@ def save_post_id(post):
     }}
     app_records.update_one(query, last_post_id)
     app.logger.info(f'Saved post {post.id}')
+
+# def add_field_to_all_users():
+#     app.logger.info(f'adding field to all users')
+#     users = get_user_data()
+#     for user in users:
+#         query = {"Username": user["Username"]}
+#         value = {"$set": {"Blocked": False}}
+#         user_records.update_one(query, value)
