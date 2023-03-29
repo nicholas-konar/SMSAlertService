@@ -63,7 +63,7 @@
 }
 
 .flex-item {
-  flex: 25%;
+  flex: 30%;
 }
 
 .box-margin {
@@ -92,7 +92,7 @@
   color: white !important;
   backdrop-filter: blur(25px);
   /* filter: blur(5px); */
-  background: #34A853 !important;
+  background: #007bff !important;
   border-width: 1px !important;
   ox-shadow: 0 2px 4px 0 black !important;
   border-color: #34A853 !important;
