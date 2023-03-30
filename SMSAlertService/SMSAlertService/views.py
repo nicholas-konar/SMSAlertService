@@ -199,23 +199,34 @@ def account_recovery():
 @app.route('/send/<path>', methods=['POST'])
 def send(path):
     ph = request.form.get('PhoneNumber')
-    user = dao.get_user_by_phonenumber(ph)
     try:
-        engine.process_otp(user)
-        session['phonenumber'] = ph
+        user = dao.get_user_by_phonenumber(ph)
+        session['phonenumber'] = user.phonenumber
+        if not user.blocked:
+            engine.process_otp(user)
+        else:
+            app.logger.info(f'Failed to find user with phone number {ph} for account recovery.')
+            return render_template('account-recovery.html',
+                                   message='Your account has been locked. Please contact support@smsalertservice.com for assistance.')
         if path == 'account-verification':
             return render_template('account-verification.html')
+    except TypeError:
+        if path == 'account-verification':
+            app.logger.info(f'Failed to find user with phone number {ph} for account recovery.')
+            return render_template('account-recovery.html',
+                                   message='We were unable to deliver your code. Please contact support@smsalertservice.com for assistance.')
     except TwilioRestException:
         if path == 'account-verification':
             app.logger.info(f'Failed OTP delivery attempt: TwilioRestException for phone number {ph}')
-            return render_template('account-recovery.html', message='There are no accounts associated with that number.')
+            return render_template('account-recovery.html',
+                                   message='We were unable to deliver your code. Please contact support@smsalertservice.com for assistance.')
 
 
 @app.route('/resend/<path>', methods=['POST'])
 def resend(path):
-    username = session['username']
-    user = dao.get_user_by_username(username)
-    app.logger.info(f'Attempting resend for {username}')
+    phonenumber = session['phonenumber']
+    user = dao.get_user_by_phonenumber(phonenumber)
+    app.logger.info(f'Attempting resend for {user.username}')
     engine.process_otp(user)
     return render_template(f'{path}.html', sent=True)
 
