@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 {% block title %}SMS Alert Service{% endblock %}
 {% block content %}
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <link href="static/style.css" rel="stylesheet">
     <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -17,40 +17,35 @@
         <strong>Warning: </strong>This service gives you an unfair advantage over other buyers. Using it for profit is
         discouraged.
     </div>
-    <div class="flex-container" style="display: none;">
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <p><strong>Sponsor 1</strong></p>
-                <p><a href="https://www.example.com">example.com</a></p>
-                <p>Short Description</p>
-            </div>
-        </div>
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <p><strong>Sponsor 2</strong></p>
-                <p><a href="https://www.example.com">example.com</a></p>
-                <p>Short Description</p>
-            </div>
-        </div>
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <p><strong>Sponsor 3</strong></p>
-                <p><a href="https://www.example.com">example.com</a></p>
-                <p>Short Description</p>
-            </div>
-        </div>
-    </div>
     <div class="box-area billboard">
         <h3>Welcome to the SMS Alert Service</h3>
-        <h3><i class="fa fa-envelope fa-2x"></i></h3></div>
+        <h3><i class="fa fa-envelope fa-2x"></i></h3>
+    </div>
+    <div class="flex-container">
+        {% if username %}
+        <button onclick="getPage('instructions')" class="flex-item menu-btn menu-btn-first btn-primary" type="submit">Instructions</button>
+        <button onclick="getPage('support')" class="flex-item menu-btn btn-primary" type="submit">Support</button>
+        <button onclick="getPage('profile')" class="flex-item menu-btn btn-primary" type="submit">Profile</button>
+        {% else %}
+        <button onclick="getPage('instructions')" class="flex-item menu-btn menu-btn-first btn-primary" type="submit">Instructions</button>
+        <button onclick="getPage('support')" class="flex-item menu-btn btn-primary" type="submit">Support</button>
+        <button onclick="getPage('signup')" class="flex-item menu-btn btn-primary" type="submit">Sign Up</button>
+        <button onclick="getPage('login')" class="flex-item menu-btn btn-primary" type="submit">Log in</button>
+        {% endif %}
+        <script>
+            function getPage(page) {
+              window.location.href = "/" + page;
+            }
+        </script>
 
-    <div class="main">
+    </div>
+    <div>
         <div class="box-area">
             <h5><strong>What is the SMS Alert Service?</strong></h5>
             <br/>
             <p>The SMS Alert Service continuously scans <a class="link"
                                                            href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a>
-                and alerts you (via SMS) the <i>instant</i> an item you want is
+                and alerts you (via SMS) the instant an item you want is
                 posted for sale. <br/><br/>You tell the service which items you want by adding keywords in your
                 <a class="link" href="/profile">profile</a> page.<br/><br/>If you're hunting a specific item, the SMS
                 Alert Service is the weapon of choice.</p><br/>
@@ -76,54 +71,15 @@
             <h5><strong>Why SMS Alert Service?</strong></h5>
             <br/>
             <p>The SMS Alert Service is purpose-built just for the GAFS community.
-                We know there are free Reddit extensions on the market. However, we found that they were all too slow, too
-                unreliable, and not ideal for a place like GAFS. This service is tailored to the specific needs of GAFS members, and is <strong>designed to save you money.</strong>
-            <br/><br/>Minutes matter in this environment. That's why the SMS Alert Service is built to be fast, reliable, and easy to use.
-            You'll get notified via SMS within <strong>~5 seconds</strong> of the post hitting Reddit.<br/><br/>
-            <i>Never miss a deal again on <a class="link" href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a></i></p>
-        </div>
-    </div>
-    <div class="sidebar">
-        <div class="box-area word-wrap">
-            <p><strong>Supported Markets</strong></p>
-            <p><a class="link" href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a></p>
-        </div>
-        <div class="box-area">
-            <p><strong>Menu</strong></p>
-            {% if username %}
-            <form action="/profile" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Profile</button>
-            </form>
-            <form action="/edit-info" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Edit Info</button>
-            </form>
-            <form action="/instructions" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Instructions</button>
-            </form>
-            <form action="/support" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Support</button>
-            </form>
-            <form action="/privacy" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Privacy</button>
-            </form>
-            {% else %}
-            <form action="/signup" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Sign Up</button>
-            </form>
-            <form action="/login" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Log in</button>
-            </form>
-            <form action="/instructions" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Instructions</button>
-            </form>
-            <form action="/support" class="form-group" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Support</button>
-            </form>
-            <form action="/privacy" method="get">
-                <button class="btn btn-primary mini-container" type="submit">Privacy</button>
-            </form>
-
-            {% endif %}
+                We know there are free Reddit extensions on the market. However, we found that they were all too slow,
+                too
+                unreliable, and not ideal for a place like GAFS. This service is tailored to the specific needs of GAFS
+                members, and is designed to save you money.
+                <br/><br/>SMS Alert Service is built to be fast,
+                reliable, and easy to use.
+                You'll get notified within <strong>~5 seconds</strong> of the post hitting Reddit.<br/><br/>
+                <i>Never miss a deal again on <a class="link" href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a></i>
+            </p>
         </div>
     </div>
 </div>
