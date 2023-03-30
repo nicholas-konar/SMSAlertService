@@ -9,6 +9,7 @@ subreddit = os.environ['REDDIT_SUBREDDIT']
 
 dao = DAO()
 
+# test for merge
 
 def run():
     if post := reddit.new_post():
