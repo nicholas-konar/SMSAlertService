@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 {% block title %}SMS Alert Service{% endblock %}
 {% block content %}
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <link href="static/style.css" rel="stylesheet">
     <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -23,80 +23,29 @@
     </div>
     <div class="flex-container">
         {% if username %}
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <form action="/instructions" class="form-group" method="get">
-                    <button class="btn btn-primary mini-container" type="submit">Instructions</button>
-                </form>
-            </div>
-        </div>
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <form action="/support" class="form-group" method="get">
-                    <button class="btn btn-primary mini-container" type="submit">Support</button>
-                </form>
-            </div>
-        </div>
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <form action="/privacy" class="form-group" method="get">
-                    <button class="btn btn-primary mini-container" type="submit">Privacy</button>
-                </form>
-            </div>
-        </div>
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <form action="/profile" class="form-group" method="get">
-                    <button class="btn btn-primary mini-container" type="submit">Profile</button>
-                </form>
-            </div>
-        </div>
+        <button onclick="getPage('instructions')" class="flex-item sponsor-first btn-primary" type="submit">Instructions</button>
+        <button onclick="getPage('support')" class="flex-item box-area sponsor btn-primary" type="submit">Support</button>
+        <button onclick="getPage('profile')" class="flex-item box-area sponsor btn-primary" type="submit">Profile</button>
         {% else %}
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <form action="/instructions" class="form-group" method="get">
-                    <button class="btn btn-primary mini-container" type="submit">Instructions</button>
-                </form>
-            </div>
-        </div>
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <form action="/support" class="form-group" method="get">
-                    <button class="btn btn-primary mini-container" type="submit">Support</button>
-                </form>
-            </div>
-        </div>
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <form action="/privacy" class="form-group" method="get">
-                    <button class="btn btn-primary mini-container" type="submit">Privacy</button>
-                </form>
-            </div>
-        </div>
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <form action="/signup" class="form-group" method="get">
-                    <button class="btn btn-primary mini-container" type="submit">Sign Up</button>
-                </form>
-            </div>
-        </div>
-        <div class="flex-item">
-            <div class="box-area slim sponsor">
-                <form action="/login" class="form-group" method="get">
-                    <button class="btn btn-primary mini-container" type="submit">Log in</button>
-                </form>
-            </div>
-        </div>
+        <button onclick="getPage('instructions')" class="flex-item sponsor-first btn-primary" type="submit">Instructions</button>
+        <button onclick="getPage('support')" class="flex-item box-area sponsor btn-primary" type="submit">Support</button>
+        <button onclick="getPage('signup')" class="flex-item box-area sponsor btn-primary" type="submit">Sign Up</button>
+        <button onclick="getPage('login')" class="flex-item box-area sponsor btn-primary" type="submit">Log in</button>
         {% endif %}
+        <script>
+            function getPage(page) {
+              window.location.href = "/" + page;
+            }
+        </script>
 
     </div>
-    <div class="main">
+    <div>
         <div class="box-area">
             <h5><strong>What is the SMS Alert Service?</strong></h5>
             <br/>
             <p>The SMS Alert Service continuously scans <a class="link"
                                                            href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a>
-                and alerts you (via SMS) the <i>instant</i> an item you want is
+                and alerts you (via SMS) the instant an item you want is
                 posted for sale. <br/><br/>You tell the service which items you want by adding keywords in your
                 <a class="link" href="/profile">profile</a> page.<br/><br/>If you're hunting a specific item, the SMS
                 Alert Service is the weapon of choice.</p><br/>
@@ -125,21 +74,12 @@
                 We know there are free Reddit extensions on the market. However, we found that they were all too slow,
                 too
                 unreliable, and not ideal for a place like GAFS. This service is tailored to the specific needs of GAFS
-                members, and is <strong>designed to save you money.</strong>
-                <br/><br/>Minutes matter in this environment. That's why the SMS Alert Service is built to be fast,
+                members, and is designed to save you money.
+                <br/><br/>SMS Alert Service is built to be fast,
                 reliable, and easy to use.
-                You'll get notified via SMS within <strong>~5 seconds</strong> of the post hitting Reddit.<br/><br/>
+                You'll get notified within <strong>~5 seconds</strong> of the post hitting Reddit.<br/><br/>
                 <i>Never miss a deal again on <a class="link" href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a></i>
             </p>
-        </div>
-    </div>
-    <div class="sidebar">
-        <div class="box-area word-wrap">
-            <p><strong>Supported Markets</strong></p>
-            <p><a class="link" href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a></p>
-        </div>
-        <div class="box-area">
-            <p><strong>Menu</strong></p>
         </div>
     </div>
 </div>
