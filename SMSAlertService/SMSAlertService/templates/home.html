@@ -23,14 +23,14 @@
     </div>
     <div class="flex-container">
         {% if username %}
-        <button onclick="getPage('instructions')" class="flex-item sponsor-first btn-primary" type="submit">Instructions</button>
-        <button onclick="getPage('support')" class="flex-item box-area sponsor btn-primary" type="submit">Support</button>
-        <button onclick="getPage('profile')" class="flex-item box-area sponsor btn-primary" type="submit">Profile</button>
+        <button onclick="getPage('instructions')" class="flex-item menu-btn menu-btn-first btn-primary" type="submit">Instructions</button>
+        <button onclick="getPage('support')" class="flex-item menu-btn btn-primary" type="submit">Support</button>
+        <button onclick="getPage('profile')" class="flex-item menu-btn btn-primary" type="submit">Profile</button>
         {% else %}
-        <button onclick="getPage('instructions')" class="flex-item sponsor-first btn-primary" type="submit">Instructions</button>
-        <button onclick="getPage('support')" class="flex-item box-area sponsor btn-primary" type="submit">Support</button>
-        <button onclick="getPage('signup')" class="flex-item box-area sponsor btn-primary" type="submit">Sign Up</button>
-        <button onclick="getPage('login')" class="flex-item box-area sponsor btn-primary" type="submit">Log in</button>
+        <button onclick="getPage('instructions')" class="flex-item menu-btn menu-btn-first btn-primary" type="submit">Instructions</button>
+        <button onclick="getPage('support')" class="flex-item menu-btn btn-primary" type="submit">Support</button>
+        <button onclick="getPage('signup')" class="flex-item menu-btn btn-primary" type="submit">Sign Up</button>
+        <button onclick="getPage('login')" class="flex-item menu-btn btn-primary" type="submit">Log in</button>
         {% endif %}
         <script>
             function getPage(page) {
