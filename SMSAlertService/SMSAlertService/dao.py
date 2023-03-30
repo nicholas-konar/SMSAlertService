@@ -9,6 +9,11 @@ class DAO:
         user_data = mongo.get_user_by_username(username)
         return User(user_data)
 
+    def get_all_users(self):
+        user_data = mongo.get_user_data()
+        users = util.generate_users(user_data)
+        return users
+
     def get_user_by_username(self, username):
         user_data = mongo.get_user_by_username(username)
         return User(user_data)

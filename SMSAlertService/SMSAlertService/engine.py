@@ -11,18 +11,19 @@ dao = DAO()
 
 
 def run():
-    post = reddit.new_post()
-    if post:
-        user_data_set = mongo.get_user_data()
-        users = util.generate_users(user_data_set)
-        alerts = []
-
-        for user in users:
-            if user.requires_alert_for(post):
-                alert = Alert(user, post.url, subreddit)
-                alerts.append(alert)
-
+    if post := reddit.new_post():
+        alerts = create_alerts(post) # todo: build alert factory
         process_alerts(alerts)
+
+        
+def create_alerts(post):
+    users = dao.get_all_users()
+    alerts = []
+    for user in users:
+        if user.requires_alert_for(post):
+            alert = Alert(user, post.url, subreddit)
+            alerts.append(alert)
+    return alerts
 
 
 def process_alerts(alerts):
