@@ -360,8 +360,8 @@ def process_sale():
 
 @app.route("/notify", methods=['GET'])
 def notify():
-    resp = engine.run()
-    return resp
+    engine.run()
+    return jsonify({'status': True})
 
 
 @app.route("/generate-codes", methods=['POST'])

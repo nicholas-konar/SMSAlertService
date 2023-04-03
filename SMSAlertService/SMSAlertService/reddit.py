@@ -7,23 +7,25 @@ reddit = praw.Reddit(client_id=os.environ['REDDIT_CLIENT_ID'],
                      user_agent=os.environ['REDDIT_USER_AGENT'],
                      username=os.environ['REDDIT_USERNAME'],
                      password=os.environ['REDDIT_PASSWORD'])
-
-subreddit_name = os.environ['REDDIT_SUBREDDIT']
-subreddit = reddit.subreddit(subreddit_name)
-
-
-def new_post():
-    post = get_latest_post()
-    last_post_id = mongo.get_last_post_id()
-    if post.id != last_post_id and '[wts]' in post.title.lower():
-        mongo.save_post_id(post)
-        app.logger.info('New Reddit Post: ' + post.id)
-        return post
-    else:
-        return False
+subreddits = ['GunAccessoriesForSale']
+# subreddit_name = os.environ['REDDIT_SUBREDDIT']
+# subreddit = reddit.subreddit(subreddit_name)
 
 
-def get_latest_post():
-    for post in subreddit.new(limit=1):
+def get_latest_posts():
+    post_data = mongo.get_post_data()
+    posts = []
+    for subreddit_name in subreddits:
+        post = get_latest_post(subreddit_name)
+        last_known_post_id = post_data[f'{subreddit_name}']['LastPostId']
+        if post.id != last_known_post_id: # todo: relocate WTS filter or make filter class
+            mongo.save_post_id(post)
+            posts.append(post)
+            app.logger.info(f'New post in r/{subreddit_name}: {post.id}')
+    return posts
+
+
+def get_latest_post(subreddit_name):
+    for post in reddit.subreddit(subreddit_name).new(limit=1):
         return post
 

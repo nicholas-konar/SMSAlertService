@@ -357,20 +357,21 @@ def username_taken(username):
 
 
 # -------------------------------- REDDIT POST MANAGEMENT --------------------------------
-def get_last_post_id():
-    document = app_records.find_one({"Document": "POST_INFO"})
-    last_post_id = document["LastPostId"]
-    app.logger.info('LastPostId: ' + last_post_id)
-    return last_post_id
+def get_post_data():
+    document = app_records.find_one({"Document": "REDDIT"})
+    data = document["SubReddits"]
+    return data
 
 
 def save_post_id(post):
-    query = {"Document": "POST_INFO"}
+    query = {"Document": "REDDIT"}
     last_post_id = {"$set": {
-        "LastPostId": post.id
-    }}
+        "SubReddits": {
+            f"{post.subreddit.display_name}": {
+                "LastPostId": post.id
+            }}}}
     app_records.update_one(query, last_post_id)
-    app.logger.info(f'Saved post {post.id}')
+    app.logger.info(f'Saved post id {post.id} from r/{post.subreddit.display_name}')
 
 # def add_field_to_all_users():
 #     app.logger.info(f'adding field to all users')

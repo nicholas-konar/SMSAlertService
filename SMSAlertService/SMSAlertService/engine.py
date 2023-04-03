@@ -3,28 +3,18 @@ import os
 from SMSAlertService import mongo, reddit, twilio, util
 from SMSAlertService.alert import Alert
 from SMSAlertService.dao import DAO
+from SMSAlertService.factories import alert_factory
 from SMSAlertService.otp import Otp
 
 subreddit = os.environ['REDDIT_SUBREDDIT']
 
 dao = DAO()
 
-# test for merge
 
 def run():
-    if post := reddit.new_post():
-        alerts = create_alerts(post) # todo: build alert factory
-        process_alerts(alerts)
-
-        
-def create_alerts(post):
-    users = dao.get_all_users()
-    alerts = []
-    for user in users:
-        if user.requires_alert_for(post):
-            alert = Alert(user, post.url, subreddit)
-            alerts.append(alert)
-    return alerts
+    posts = reddit.get_latest_posts()
+    alerts = alert_factory.get_alerts(posts)
+    process_alerts(alerts)
 
 
 def process_alerts(alerts):
