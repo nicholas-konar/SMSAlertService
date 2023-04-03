@@ -274,7 +274,7 @@ def save_otp_data(user, otp):
 
 def add_to_blacklist(phonenumber):
     query = {"Document": "BLACKLIST"}
-    new_value = {"$push": {"Keywords": phonenumber}}
+    new_value = {"$push": {"Keywords": phonenumber}} # todo: fix typo
     app_records.update_one(query, new_value)
     app.logger.info('Added ' + phonenumber + 'to blacklist')
 
@@ -363,14 +363,13 @@ def get_post_data():
     return data
 
 
-def save_post_id(post): # todo: figure out how to update postid without overwriting the rest of the doc
-    query = {"SubReddits": {
-            f"{post.subreddit.display_name}"
-    }}
+def save_post_id(post):
+    query = {"Document": "REDDIT"}
     last_post_id = {"$set": {
+        f"SubReddits.${post.subreddit.display_name}": {
                 "LastPostId": post.id
-            }}
-    app_records.update_one(query, last_post_id)
+            }}}
+    app_records.update_one(query, last_post_id, upsert=True)
     app.logger.info(f'Saved post id {post.id} from r/{post.subreddit.display_name}')
 
 # def add_field_to_all_users():
