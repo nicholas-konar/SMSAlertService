@@ -4,9 +4,6 @@ from SMSAlertService.dao import DAO
 dao = DAO()
 
 
-# multi sub support:
-# from array of posts, return array of alerts
-
 def get_alerts(posts):
     alerts = []
     for post in posts:

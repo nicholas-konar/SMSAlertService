@@ -363,13 +363,13 @@ def get_post_data():
     return data
 
 
-def save_post_id(post):
-    query = {"Document": "REDDIT"}
+def save_post_id(post): # todo: figure out how to update postid without overwriting the rest of the doc
+    query = {"SubReddits": {
+            f"{post.subreddit.display_name}"
+    }}
     last_post_id = {"$set": {
-        "SubReddits": {
-            f"{post.subreddit.display_name}": {
                 "LastPostId": post.id
-            }}}}
+            }}
     app_records.update_one(query, last_post_id)
     app.logger.info(f'Saved post id {post.id} from r/{post.subreddit.display_name}')
 

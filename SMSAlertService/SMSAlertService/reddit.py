@@ -7,7 +7,7 @@ reddit = praw.Reddit(client_id=os.environ['REDDIT_CLIENT_ID'],
                      user_agent=os.environ['REDDIT_USER_AGENT'],
                      username=os.environ['REDDIT_USERNAME'],
                      password=os.environ['REDDIT_PASSWORD'])
-subreddits = ['GunAccessoriesForSale']
+subreddits = ['GunAccessoriesForSale', 'GearTrade']
 # subreddit_name = os.environ['REDDIT_SUBREDDIT']
 # subreddit = reddit.subreddit(subreddit_name)
 

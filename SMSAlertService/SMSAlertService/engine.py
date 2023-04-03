@@ -1,12 +1,7 @@
-import os
-
-from SMSAlertService import mongo, reddit, twilio, util
-from SMSAlertService.alert import Alert
+from SMSAlertService import mongo, reddit, twilio
 from SMSAlertService.dao import DAO
 from SMSAlertService.factories import alert_factory
 from SMSAlertService.otp import Otp
-
-subreddit = os.environ['REDDIT_SUBREDDIT']
 
 dao = DAO()
 
