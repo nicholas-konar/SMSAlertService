@@ -26,6 +26,12 @@
                     <h5><label for="NewKeyword" style="margin-top: 0%">Add Keywords:</label></h5>
                     <input class="form-control input" id="NewKeyword" name="newkeyword"
                            placeholder="" required="required" type="text">
+                    <input class="" id="GunAccessoriesForSale" name="GunAccessoriesForSale"
+                           placeholder="" required="required" type="checkbox" checked>
+                    <label for="GunAccessoriesForSale">GunAccessoriesForSale</label>
+                    <input class="" id="GearTrade" name="GearTrade"
+                           placeholder="" required="required" type="checkbox" checked>
+                    <label for="GearTrade">GearTrade</label>
                     <small class="form-text text-muted" id="newKeywordHelp">When a new post contains a keyword, we'll
                         send you an alert!</small><br/>
                     <button class="btn btn-primary mini-container" type="submit">Add Keyword</button>
@@ -171,7 +177,7 @@
             document.getElementById("keywords").innerHTML = table;
 
             function addKeywordToTable(keyword) {
-              table += "<tr><td style='display: inline-block; margin: 3%; text-align:justify;'>" + keyword + "</td><td style='text-align: right;'><form action='/delete-keyword?keyword=" + keyword + "' method='post'><button class='btn btn-danger' style='margin-right: 5%; padding: 1px 10% 1px 10%;'><i class='fa fa-trash'></i></button></form></td></tr>";
+              table += "<tr><td style='display: inline-block; margin: 3%; text-align:justify;'>" + keyword["Keyword"] + "</td><td style='text-align: right;'><form action='/delete-keyword?keyword=" + keyword["Keyword"] + "' method='post'><button class='btn btn-danger' style='margin-right: 5%; padding: 1px 10% 1px 10%;'><i class='fa fa-trash'></i></button></form></td></tr>";
             }
 
             </script>

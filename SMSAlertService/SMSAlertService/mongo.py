@@ -306,18 +306,18 @@ def get_keywords(username):
     return user['Keywords']
 
 
-def add_keyword(username, keyword):
+def add_keyword(username, keyword, subreddit):
     keywords = get_keywords(username)
     if keyword not in keywords:
         query = {"Username": username}
-        value = {"$push": {"Keywords": keyword}}
+        value = {"$push": {"Keywords": {"Keyword": keyword, "Subreddits": subreddit}}}
         user_records.update_one(query, value)
         app.logger.info(f'User {username} added keyword {keyword}')
 
 
-def delete_keyword(username, keyword):
+def delete_keyword(username, keyword): # todo: how to identify object to delete?
     query = {"Username": username}
-    value = {"$pull": {"Keywords": keyword}}
+    value = {"$pull": {"Keywords": {"Keyword": keyword}}}
     user_records.update_one(query, value)
     app.logger.info(f'User {username} deleted keyword {keyword}')
 

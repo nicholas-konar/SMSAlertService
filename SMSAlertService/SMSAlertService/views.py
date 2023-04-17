@@ -1,7 +1,7 @@
 from bcrypt import checkpw
 from flask import request, redirect, render_template, session, url_for, jsonify
 from twilio.base.exceptions import TwilioRestException
-from SMSAlertService import app, mongo, engine, util
+from SMSAlertService import app, mongo, engine, util, constants
 from SMSAlertService.dao import DAO
 
 dao = DAO()
@@ -303,18 +303,22 @@ def update_phone_number():
         mongo.update_phonenumber(username, new_number)
         session['phonenumber'] = new_number
         message = 'Phone number updated successfully'
-        return render_template('edit-info.html', message=message, username=username, current_phone=new_number,
-                               )
+        return render_template('edit-info.html', message=message, username=username, current_phone=new_number)
 
 
 @app.route("/add-keyword", methods=['GET', 'POST'])
-def add_keyword():
+def add_keyword(): # todo: add subreddit support in UI
     if "username" not in session:
         return redirect(url_for("login"))
     else:
         username = session.get('username')
         keyword = request.form.get('newkeyword').strip()
-        mongo.add_keyword(username, keyword)
+        subreddits = []
+        if request.form.get(constants.GUNACCESSORIESFORSALE):
+            subreddits.append(constants.GUNACCESSORIESFORSALE)
+        if request.form.get(constants.GEARTRADE):
+            subreddits.append(constants.GEARTRADE)
+        mongo.add_keyword(username, keyword, subreddits)
         return redirect(url_for('profile'))
 
 

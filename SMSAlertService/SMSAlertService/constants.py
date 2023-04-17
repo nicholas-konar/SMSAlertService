@@ -1,0 +1,2 @@
+GUNACCESSORIESFORSALE = 'GunAccessoriesForSale'
+GEARTRADE = 'GearTrade'

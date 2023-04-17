@@ -26,7 +26,7 @@ class User:
         else:
             for keyword in self.keywords:
                 if util.detect_keyword(keyword, post):
-                    self.matching_keywords.append(keyword) # todo: keep track of all keyword matches
+                    self.matching_keywords.append(keyword)
                     app.logger.info(f'Keyword detected in post for user {self.username}: "{keyword}"')
                     return True
                 else:
