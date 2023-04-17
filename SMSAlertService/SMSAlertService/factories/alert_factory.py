@@ -1,10 +1,8 @@
 from SMSAlertService.alert import Alert
 from SMSAlertService.dao import DAO
 
-dao = DAO()
 
-
-def get_alerts(posts):
+def create_alerts(posts):
     alerts = []
     for post in posts:
         batch = create_alert_batch_for_post(post)
@@ -13,6 +11,7 @@ def get_alerts(posts):
 
 
 def create_alert_batch_for_post(post):
+    dao = DAO()
     users = dao.get_all_users()
     batch = []
     for user in users:

@@ -18,7 +18,7 @@ def get_latest_posts():
     for subreddit_name in subreddits:
         post = get_latest_post(subreddit_name)
         last_known_post_id = post_data[f'{subreddit_name}']['LastPostId']
-        if post.id != last_known_post_id: # todo: relocate WTS filter or make filter class
+        if post.id != last_known_post_id and '[WTS]' in post.title.upper(): # todo: relocate WTS filter or make filter class
             mongo.save_post_id(post)
             posts.append(post)
             app.logger.info(f'New post in r/{subreddit_name}: {post.id}')

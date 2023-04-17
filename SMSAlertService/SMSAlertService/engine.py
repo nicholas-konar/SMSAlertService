@@ -8,7 +8,7 @@ dao = DAO()
 
 def run():
     posts = reddit.get_latest_posts()
-    alerts = alert_factory.get_alerts(posts)
+    alerts = alert_factory.create_alerts(posts)
     process_alerts(alerts)
 
 
