@@ -17,12 +17,19 @@
         <h4>Phone Number Verification</h4>
         <p>We just sent you a Verification Code.<br/>Please enter it below to continue.</p>
         <form action="/authenticate/account-confirmation" class="mini-form" method="post">
-            {% if message %}
+
+            {% if status == 'BLOCKED' %}
             <p class="alert">{{ message }}</p>
             {% endif %}
-            {% if sent %}
-            <p class="info">Another code is on the way.</p>
+
+            {% if status == 'FAIL' %}
+            <p class="alert">{{ message }}</p>
             {% endif %}
+
+            {% if status == 'SUCCESS' %}
+            <p class="info">{{ message }}</p>
+            {% endif %}
+
             <div>
                 <label for="otp">Verification Code:</label>
                 <input class="center"

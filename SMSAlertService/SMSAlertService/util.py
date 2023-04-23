@@ -15,16 +15,6 @@ def authenticate(ph, otp):
         return False
 
 
-def detect_keyword(keyword, post):
-    if keyword.lower() in str(post.title).lower() \
-            or keyword.lower() in str(post.selftext).lower() \
-            or keyword.lower() + 's' in str(post.title).lower() \
-            or keyword.lower() + 's' in str(post.selftext).lower():
-        return True
-    else:
-        return False
-
-
 def generate_users(user_data_set):
     users = []
     for user_data in user_data_set:

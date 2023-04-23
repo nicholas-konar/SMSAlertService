@@ -19,9 +19,9 @@ def process_alerts(alerts):
 
 
 def process_otp(user):
-    if user.otps_sent < 5:
-        otp = Otp(user.phonenumber)
-        twilio.send_otp(otp)
-        dao.save_otp_data(user, otp)
-    else:
-        mongo.block(user)
+    otp = Otp(user.phonenumber)
+    twilio.send_otp(otp)
+    dao.record_otp_data(user, otp)
+    if user.otps_sent >= 4:
+        mongo.block(user)  # block but still send the 5th OTP
+

@@ -22,6 +22,6 @@ class DAO:
         user_data = mongo.get_user_by_phonenumber(ph)
         return User(user_data)
 
-    def save_otp_data(self, user, otp):
+    def record_otp_data(self, user, otp):
         user.otps_sent += 1
         mongo.save_otp_data(user, otp)

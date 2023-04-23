@@ -269,7 +269,7 @@ def save_otp_data(user, otp):
         }
     }
     user_records.update_one(query, value)
-    app.logger.info(f'OTP {otp.value} saved successfully')
+    app.logger.info(f'OTP data saved successfully.')
 
 
 def add_to_blacklist(phonenumber):
@@ -315,7 +315,7 @@ def add_keyword(username, keyword, subreddit):
         app.logger.info(f'User {username} added keyword {keyword}')
 
 
-def delete_keyword(username, keyword): # todo: how to identify object to delete?
+def delete_keyword(username, keyword):
     query = {"Username": username}
     value = {"$pull": {"Keywords": {"Keyword": keyword}}}
     user_records.update_one(query, value)
@@ -365,11 +365,11 @@ def get_post_data():
 
 def save_post_id(post):
     query = {"Document": "REDDIT"}
-    last_post_id = {"$set": {
+    value = {"$set": {
         f"SubReddits.${post.subreddit.display_name}": {
                 "LastPostId": post.id
             }}}
-    app_records.update_one(query, last_post_id, upsert=True)
+    app_records.update_one(query, value, upsert=True)
     app.logger.info(f'Saved post id {post.id} from r/{post.subreddit.display_name}')
 
 # def add_field_to_all_users():

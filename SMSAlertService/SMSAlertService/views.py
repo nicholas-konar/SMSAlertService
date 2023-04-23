@@ -192,43 +192,50 @@ def edit_info():
 
 @app.route('/account-recovery')
 def account_recovery():
-    app.logger.info(f'Account recovery accessed by unknown user')
     return render_template('account-recovery.html')
 
 
-@app.route('/send/<path>', methods=['POST'])
-def send(path):
+# only hit from account recovery page. May want to remove the path variable.
+@app.route('/account-recovery/send-otp', methods=['POST'])
+def send():
     ph = request.form.get('PhoneNumber')
     try:
         user = dao.get_user_by_phonenumber(ph)
         session['phonenumber'] = user.phonenumber
-        if not user.blocked:
-            engine.process_otp(user)
+
+        if user.blocked:
+            app.logger.info(f'Blocked user {user.username} attempted to receive an OTP but was denied.')
+            message = 'Your account has been locked. Please contact support@smsalertservice.com for assistance.'
+            return render_template('account-recovery.html', status=constants.BLOCKED, message=message)
         else:
-            app.logger.info(f'Failed to find user with phone number {ph} for account recovery.')
-            return render_template('account-recovery.html',
-                                   message='Your account has been locked. Please contact support@smsalertservice.com for assistance.')
-        if path == 'account-verification':
+            engine.process_otp(user)
             return render_template('account-verification.html')
+
     except TypeError:
-        if path == 'account-verification':
-            app.logger.info(f'Failed to find user with phone number {ph} for account recovery.')
-            return render_template('account-recovery.html',
-                                   message='We were unable to deliver your code. Please contact support@smsalertservice.com for assistance.')
+        app.logger.info(f'Failed to find user with phone number {ph} for account recovery.')
+        message = 'We were unable to deliver your code. Please contact support@smsalertservice.com for assistance.'
+        return render_template('account-recovery.html', status=constants.FAIL, message=message)
+
     except TwilioRestException:
-        if path == 'account-verification':
-            app.logger.info(f'Failed OTP delivery attempt: TwilioRestException for phone number {ph}')
-            return render_template('account-recovery.html',
-                                   message='We were unable to deliver your code. Please contact support@smsalertservice.com for assistance.')
+        app.logger.info(f'Failed OTP delivery: TwilioRestException for phone number {ph}')
+        message = 'We\'re unable to reach this phone number. Please contact support@smsalertservice.com for assistance.'
+        return render_template('account-recovery.html', status=constants.FAIL, message=message)
 
 
 @app.route('/resend/<path>', methods=['POST'])
 def resend(path):
     phonenumber = session['phonenumber']
     user = dao.get_user_by_phonenumber(phonenumber)
-    app.logger.info(f'Attempting resend for {user.username}')
-    engine.process_otp(user)
-    return render_template(f'{path}.html', sent=True)
+    sent = False
+    if user.blocked:
+        app.logger.info(f'Blocked user {user.username} attempted to resend an OTP but was denied.')
+        message = 'Your account has been locked. Please contact support@smsalertservice.com for assistance.'
+        return render_template(f'{path}.html', status=constants.BLOCKED, message=message)
+    else:
+        app.logger.info(f'Resending OTP to {user.username}')
+        engine.process_otp(user)
+        message = 'Another code is on the way.'
+        return render_template(f'{path}.html', status=constants.SUCCESS, message=message)
 
 
 @app.route('/authenticate/<path>', methods=['POST'])
@@ -238,15 +245,19 @@ def authenticate(path):
         user = dao.get_user_by_phonenumber(ph)
         otp = request.form.get('otp')
         authenticated = util.authenticate(ph, otp)
+
         if authenticated and path == 'account-confirmation':
             mongo.verify(user.username)
             return redirect(url_for('profile'))
+
         if authenticated and path == 'account-verification':
             mongo.verify(user.username)
             return redirect(url_for('reset_password'))
+
         elif not authenticated:
             message = "Invalid code."
             return render_template(f'{path}.html', message=message)
+
     return render_template(f'{path}.html')
 
 
