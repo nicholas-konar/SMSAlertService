@@ -274,7 +274,7 @@ def save_otp_data(user, otp):
 
 def add_to_blacklist(phonenumber):
     query = {"Document": "BLACKLIST"}
-    new_value = {"$push": {"Keywords": phonenumber}} # todo: fix typo
+    new_value = {"$push": {"Blacklist": phonenumber}}
     app_records.update_one(query, new_value)
     app.logger.info('Added ' + phonenumber + 'to blacklist')
 
