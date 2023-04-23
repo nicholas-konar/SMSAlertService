@@ -215,11 +215,11 @@ def get_message_count(username):
 
 def save_alert_data(alert):
     timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
-    user = get_user_by_username(alert.owner)
+    user = get_user_by_username(alert.owner.username)
     updated_msg_count = user["Units"] - 1
     updated_sent_count = user["UnitsSent"] + 1
 
-    query = {"Username": alert.owner}
+    query = {"Username": alert.owner.username}
     new_value = {
         "$set": {
             "Units": updated_msg_count,
@@ -238,7 +238,7 @@ def save_alert_data(alert):
     }
 
     user_records.update_one(query, new_value)
-    app.logger.info(f'Twilio data saved for user {alert.owner}')
+    app.logger.info(f'Twilio data saved for user {alert.owner.username}')
 
 
 def reset_password(username, pw):

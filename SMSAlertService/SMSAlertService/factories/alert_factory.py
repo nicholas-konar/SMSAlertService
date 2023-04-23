@@ -6,7 +6,8 @@ def create_alerts_for_multiple_posts(posts):
     alerts = []
     for post in posts:
         batch = create_alerts_for_single_post(post)
-        alerts.append(batch)
+        for alert in batch:
+            alerts.append(alert)
     return alerts
 
 
