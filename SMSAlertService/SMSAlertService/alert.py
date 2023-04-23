@@ -2,13 +2,14 @@ from SMSAlertService import util, app
 
 
 class Alert:
-    owner = {}
-    post = {}
+    owner = None
+    post = None
     subreddit = ''
     url = ''
     keywords = []
     units_left = 0
     body = ''
+    twilio = None
 
     out_of_alerts_message = f'You\'re out of alerts! Reload at www.smsalertservice.com/profile' \
                             f'\n\nA post on {subreddit} matched the following keywords: {keywords}\n{url}'
