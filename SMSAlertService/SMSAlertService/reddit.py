@@ -14,7 +14,7 @@ def get_new_posts():
     posts = []
     for subreddit in constants.SUBREDDITS:
         post = get_latest_post(subreddit)
-        last_known_post_id = post_data[f'{subreddit}']['LastPostId']
+        last_known_post_id = post_data[f'${subreddit}']['LastPostId']
         if post.id != last_known_post_id and '[WTS]' in post.title.upper(): # todo: relocate WTS filter or make filter class
             mongo.save_post_id(post)
             posts.append(post)

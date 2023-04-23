@@ -359,6 +359,7 @@ def username_taken(username):
 # -------------------------------- REDDIT POST MANAGEMENT --------------------------------
 def get_post_data():
     document = app_records.find_one({"Document": "REDDIT"})
+    app.logger.debug(f'POST DATA: {document}')
     data = document["SubReddits"]
     return data
 

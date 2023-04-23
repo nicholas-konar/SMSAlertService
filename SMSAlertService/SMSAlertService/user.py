@@ -6,6 +6,7 @@ class User:
     password = ''
     phonenumber = ''
     keywords = []
+    keyword_hits = []
     units_left = 0
     otps_sent = 0
     verified = False
@@ -21,18 +22,26 @@ class User:
         self.verified = user_data['Verified']
         self.blocked = user_data['Blocked']
 
+    def requires_alert_for_post(self, post):
+        if self.eligible():
+            self.set_keyword_hits_from_post(post)
+            if len(self.keyword_hits) > 0:
+                return True
+            else:
+                return False
+        else:
+            return False
+
     def eligible(self):
         if self.units_left > 0 and self.verified:
             return True
         else:
             return False
 
-    def get_keyword_hits(self, post):
-        keyword_hits = []
+    def set_keyword_hits_from_post(self, post):
         for keyword in self.keywords:  # todo: test this
-            if post.subreddit.display_name in keyword['Subreddits'] and self.keyword_found_in_post(keyword, post):
-                keyword_hits.append(keyword)
-        return keyword_hits
+            if post.subreddit.display_name in keyword['Subreddits'] and self.keyword_found_in_post(keyword['Keyword'], post):
+                self.keyword_hits.append(keyword)
 
     def keyword_found_in_post(self, keyword, post):
         if keyword.lower() in str(post.title).lower() \

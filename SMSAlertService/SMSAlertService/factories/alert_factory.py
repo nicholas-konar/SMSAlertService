@@ -15,7 +15,7 @@ def create_alerts_for_single_post(post):
     users = dao.get_all_users()
     batch = []
     for user in users:
-        if user.requires_alert_for(post): # todo: update to new logic
-            alert = Alert(user, post.url, post.subreddit)
+        if user.requires_alert_for_post(post):
+            alert = Alert(user, post)
             batch.append(alert)
     return batch
