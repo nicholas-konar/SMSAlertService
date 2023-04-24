@@ -1,8 +1,11 @@
+import json
+
+
 class User:
     def __init__(self, user_data):
         self.username = user_data['Username']
         self.password = user_data['Password']
-        self.phone_number = user_data['PhoneNumber']
+        self.phonenumber = user_data['PhoneNumber']
         self.keywords = user_data['Keywords']
         self.units_left = int(user_data['Units'])
         self.otps_sent = int(user_data['OTPsSent'])
@@ -34,5 +37,6 @@ class User:
                 f" {keyword.lower()}s " in f" {lower_title} " or
                 f" {keyword.lower()}s " in f" {lower_selftext} ")
 
-    def get_keywords_only(self):
-        return [keyword['Keyword'] for keyword in self.keywords]
+    def get_keywords_json(self):
+        keywords = [keyword['Keyword'] for keyword in self.keywords]
+        return json.dumps(keywords)

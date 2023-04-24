@@ -174,8 +174,8 @@ def profile():
     else:
         username = session["username"]
         user = dao.get_user_by_username(username)
-        keywords = user.get_keywords_only()
-        app.logger.info(f'User {username} accessed their profile.')
+        keywords = user.get_keywords_json()
+        app.logger.info(f'User {username} viewed their profile.')
         return render_template('profile.html', message_count=user.units_left,
                                keywords=keywords, username=username, current_phone=user.phonenumber)
 
@@ -340,9 +340,6 @@ def delete_keyword():
         keyword = request.values.get('keyword')
         mongo.delete_keyword(username, keyword)
         return redirect(url_for('profile'))
-    #  function addKeywordToTable(keyword) {
-    #               table += "<tr><td style='display: inline-block; margin: 3%; text-align:justify;'>" + keyword["Keyword"] + "</td><td style='text-align: right;'><form action='/delete-keyword?keyword=" + keyword["Keyword"] + "' method='post'><button class='btn btn-danger' style='margin-right: 5%; padding: 1px 10% 1px 10%;'><i class='fa fa-trash'></i></button></form></td></tr>";
-    #                 }
 
 
 @app.route("/delete-all-keywords", methods=['GET', 'POST'])

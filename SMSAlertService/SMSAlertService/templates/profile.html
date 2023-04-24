@@ -7,6 +7,7 @@
 <html>
 <head>
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <script src="../static/js/script.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <div class="container">
@@ -160,6 +161,7 @@
   initPayPalButton();
 
 
+
             </script>
         </div>
     </div>
@@ -171,59 +173,11 @@
         </div>
         <div class="box-area">
             <p><strong>Active Keywords:</strong></p>
-            <div id="keywords"></div>
-            <script>
-                keywords = {{ keywords|tojson }};
-                var table = document.createElement('table');
-                table.id = 'keywordTable';
-
-                for (var i = 0; i < keywords.length; i++) {
-                  var keyword = keywords[i];
-                  var row = document.createElement('tr');
-                  row.id = `row-${keyword}`;
-                  var cell1 = document.createElement('td');
-                  var cell2 = document.createElement('td');
-                  var button = document.createElement('button');
-                  button.id = keyword;
-                  button.classList.add('btn', 'btn-danger');
-                  var icon = document.createElement('i');
-                  icon.classList.add('fa', 'fa-trash');
-                  button.appendChild(icon);
-                  cell1.innerText = keyword;
-                  cell2.appendChild(button);
-                  row.appendChild(cell1);
-                  row.appendChild(cell2);
-                  table.appendChild(row);
-                }
-
-                document.getElementById("keywords").appendChild(table);
-
-                var deleteKeyword = function(keywordToDelete) {
-                  var rowId = `row-${keywordToDelete}`;
-                  var row = document.getElementById(`${rowId}`);
-                  $.ajax({
-                    url: `/delete-keyword?keyword=${keywordToDelete}`,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({foo: 'bar'}),
-                    success: function(response) {
-                      row.parentNode.removeChild(row);
-                    }
-                  });
-                };
-
-                var buttons = document.querySelectorAll('button');
-                for (var i = 0; i < buttons.length; i++) {
-                  buttons[i].addEventListener('click', function() {
-                    var keywordToDelete = this.id;
-                    console.log(`keyword to delete: ${keywordToDelete}`);
-                    deleteKeyword(keywordToDelete);
-                  });
-                }
-            </script>
-
+            <div id="keywords" data-keywords="{{ keywords }}">
+                <!-- Dynamic JS Table -->
+            </div>
         </div>
-        <div class="box-area">
+        <div class="box-area" style="display: none;">
             <form action="/promo-code" method="POST">
                 <div class="form-group">
                     <label for="promo-code"><strong>Promo Code:</strong></label>
