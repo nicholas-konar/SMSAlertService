@@ -7,6 +7,7 @@
 <html>
 <head>
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <div class="container">
     <div class="box-area billboard">
@@ -26,11 +27,11 @@
                     <h5><label for="NewKeyword" style="margin-top: 0%">Add Keywords:</label></h5>
                     <input class="form-control input" id="NewKeyword" name="newkeyword"
                            placeholder="" required="required" type="text">
-                    <input class="" id="GunAccessoriesForSale" name="GunAccessoriesForSale"
-                           placeholder="" required="required" type="checkbox" checked>
+                    <input checked class="" id="GunAccessoriesForSale"
+                           name="GunAccessoriesForSale" placeholder="" type="checkbox">
                     <label for="GunAccessoriesForSale">GunAccessoriesForSale</label>
-                    <input class="" id="GearTrade" name="GearTrade"
-                           placeholder="" required="required" type="checkbox" checked>
+                    <input checked class="" id="GearTrade"
+                           name="GearTrade" placeholder="" type="checkbox">
                     <label for="GearTrade">GearTrade</label>
                     <small class="form-text text-muted" id="newKeywordHelp">When a new post contains a keyword, we'll
                         send you an alert!</small><br/>
@@ -41,9 +42,9 @@
                 <a href="/delete-all-keywords">
                     <button class="btn btn-danger mini-container">Delete All Keywords</button>
                 </a>
-             </div>
+            </div>
             <br/>
-            <a href="/instructions" class="link">Click here to read tutorial</a>
+            <a class="link" href="/instructions">Click here to read tutorial</a>
         </div>
         <div class="box-area" id="smart-button-container">
             <div>
@@ -158,6 +159,7 @@
   }
   initPayPalButton();
 
+
             </script>
         </div>
     </div>
@@ -169,17 +171,55 @@
         </div>
         <div class="box-area">
             <p><strong>Active Keywords:</strong></p>
-            <table id="keywords"></table>
+            <div id="keywords"></div>
             <script>
-            let table = "";
-            keywords = {{ keywords|tojson }};
-            keywords.forEach(addKeywordToTable);
-            document.getElementById("keywords").innerHTML = table;
+                keywords = {{ keywords|tojson }};
+                var table = document.createElement('table');
+                table.id = 'keywordTable';
 
-            function addKeywordToTable(keyword) {
-              table += "<tr><td style='display: inline-block; margin: 3%; text-align:justify;'>" + keyword["Keyword"] + "</td><td style='text-align: right;'><form action='/delete-keyword?keyword=" + keyword["Keyword"] + "' method='post'><button class='btn btn-danger' style='margin-right: 5%; padding: 1px 10% 1px 10%;'><i class='fa fa-trash'></i></button></form></td></tr>";
-            }
+                for (var i = 0; i < keywords.length; i++) {
+                  var keyword = keywords[i];
+                  var row = document.createElement('tr');
+                  row.id = `row-${keyword}`;
+                  var cell1 = document.createElement('td');
+                  var cell2 = document.createElement('td');
+                  var button = document.createElement('button');
+                  button.id = keyword;
+                  button.classList.add('btn', 'btn-danger');
+                  var icon = document.createElement('i');
+                  icon.classList.add('fa', 'fa-trash');
+                  button.appendChild(icon);
+                  cell1.innerText = keyword;
+                  cell2.appendChild(button);
+                  row.appendChild(cell1);
+                  row.appendChild(cell2);
+                  table.appendChild(row);
+                }
 
+                document.getElementById("keywords").appendChild(table);
+
+                var deleteKeyword = function(keywordToDelete) {
+                  var rowId = `row-${keywordToDelete}`;
+                  var row = document.getElementById(`${rowId}`);
+                  $.ajax({
+                    url: `/delete-keyword?keyword=${keywordToDelete}`,
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({foo: 'bar'}),
+                    success: function(response) {
+                      row.parentNode.removeChild(row);
+                    }
+                  });
+                };
+
+                var buttons = document.querySelectorAll('button');
+                for (var i = 0; i < buttons.length; i++) {
+                  buttons[i].addEventListener('click', function() {
+                    var keywordToDelete = this.id;
+                    console.log(`keyword to delete: ${keywordToDelete}`);
+                    deleteKeyword(keywordToDelete);
+                  });
+                }
             </script>
 
         </div>

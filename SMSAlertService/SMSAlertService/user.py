@@ -52,3 +52,9 @@ class User:
             return True
         else:
             return False
+
+    def get_keywords_only(self):
+        keywords_only = []
+        for keyword in self.keywords:
+            keywords_only.append(keyword['Keyword'])
+        return keywords_only
