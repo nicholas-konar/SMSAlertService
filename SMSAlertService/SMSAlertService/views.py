@@ -1,3 +1,5 @@
+import markupsafe
+
 from bcrypt import checkpw
 from flask import request, redirect, render_template, session, url_for, jsonify
 from twilio.base.exceptions import TwilioRestException
@@ -104,33 +106,35 @@ def login():
     if "username" in session:
         return redirect(url_for("profile"))
     if request.method == "POST":
-        username = request.form.get("username").upper().strip()
-        pw_input = request.form.get("password")
+        username = markupsafe.escape(request.form.get("username").upper().strip())
+        pw_input = markupsafe.escape(request.form.get("password"))
         user = dao.get_user_by_username(username)
-        if user:
-            if checkpw(pw_input.encode('utf-8'), user.password):
-                session["username"] = user.username
-                session["phonenumber"] = user.phonenumber
-                if user.username == "ADMIN":
-                    session['ADMIN'] = True
-                    app.logger.info(f'User {user.username} logged in')
-                    return redirect(url_for('admin'))
-                else:
-                    if mongo.is_verified(user.username):
-                        app.logger.info(f'User {user.username} logged in')
-                        return redirect(url_for('profile'))
-                    else:
-                        engine.process_otp(user)
-                        app.logger.info(f'Unverified user {user.username} logging in. Redirecting to Account Confirmation page.')
-                        return redirect(url_for('account_confirmation'))
-            else:
-                message = 'Incorrect password.'
-                app.logger.info(f'Failed log in attempt: Incorrect password entered by {user.username}')
-                return render_template('login.html', message=message)
-        else:
-            message = 'User not found.'
-            app.logger.info(f'Failed log in attempt: User {username} not found')
+
+        if user is None:
+            message = 'Incorrect username or password.'
+            app.logger.info(f'Failed log in attempt: User {username} does not exist.')
             return render_template('login.html', message=message)
+
+        if checkpw(pw_input.encode('utf-8'), user.password):
+            session["username"] = user.username
+            session["phonenumber"] = user.phonenumber
+            if user.username == "ADMIN":
+                session['ADMIN'] = True
+                app.logger.info(f'User {user.username} logged in')
+                return redirect(url_for('admin'))
+            else:
+                if user.verified:
+                    app.logger.info(f'User {user.username} logged in')
+                    return redirect(url_for('profile'))
+                else:
+                    engine.process_otp(user)
+                    app.logger.info(f'Unverified user {user.username} logged in. Redirecting to Account Confirmation page.')
+                    return redirect(url_for('account_confirmation'))
+        else:
+            message = 'Incorrect username or password.'
+            app.logger.info(f'Failed log in attempt: Incorrect password entered by {user.username}.')
+            return render_template('login.html', message=message)
+
     return render_template('login.html')
 
 

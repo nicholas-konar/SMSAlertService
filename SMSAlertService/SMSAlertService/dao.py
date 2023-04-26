@@ -4,24 +4,29 @@ from SMSAlertService.user import User
 
 class DAO:
 
-    def create_user(self, username, password, phonenumber):
+    @staticmethod
+    def create_user(username, password, phonenumber):
         mongo.create_user(username, password, phonenumber)
         user_data = mongo.get_user_by_username(username)
         return User(user_data)
 
-    def get_all_users(self):
+    @staticmethod
+    def get_all_users():
         user_data = mongo.get_user_data()
         users = util.generate_users(user_data)
         return users
 
-    def get_user_by_username(self, username):
+    @staticmethod
+    def get_user_by_username(username):
         user_data = mongo.get_user_by_username(username)
         return User(user_data)
 
-    def get_user_by_phonenumber(self, ph):
+    @staticmethod
+    def get_user_by_phonenumber(ph):
         user_data = mongo.get_user_by_phonenumber(ph)
         return User(user_data)
 
-    def record_otp_data(self, user, otp):
+    @staticmethod
+    def record_otp_data(user, otp):
         user.otps_sent += 1
         mongo.save_otp_data(user, otp)
