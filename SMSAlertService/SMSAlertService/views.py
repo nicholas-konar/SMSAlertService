@@ -6,9 +6,6 @@ from twilio.base.exceptions import TwilioRestException
 from SMSAlertService import app, mongo, engine, util, constants
 from SMSAlertService.dao import DAO
 
-dao = DAO()
-# -------------------------------- ABOUT + LOGIN + LOGOUT + SIGNUP --------------------------------
-
 
 @app.route("/", methods=["POST", "GET"])
 def home():
@@ -77,7 +74,7 @@ def signup():
 
         else:
             try:
-                user = dao.create_user(username, password, phonenumber)
+                user = DAO.create_user(username, password, phonenumber)
                 engine.process_otp(user)
                 session["username"] = username
                 session["phonenumber"] = phonenumber
@@ -108,7 +105,7 @@ def login():
     if request.method == "POST":
         username = markupsafe.escape(request.form.get("username").upper().strip())
         pw_input = markupsafe.escape(request.form.get("password"))
-        user = dao.get_user_by_username(username)
+        user = DAO.get_user_by_username(username)
 
         if user is None:
             message = 'Incorrect username or password.'
@@ -177,7 +174,7 @@ def profile():
         return redirect(url_for("login"))
     else:
         username = session["username"]
-        user = dao.get_user_by_username(username)
+        user = DAO.get_user_by_username(username)
         keywords = user.get_keywords_json()
         app.logger.info(f'User {username} viewed their profile.')
         return render_template('profile.html', message_count=user.units_left,
@@ -202,7 +199,7 @@ def account_recovery():
 def send():
     ph = request.form.get('PhoneNumber')
     try:
-        user = dao.get_user_by_phonenumber(ph)
+        user = DAO.get_user_by_phonenumber(ph)
         session['phonenumber'] = user.phonenumber
 
         if user.blocked:
@@ -227,7 +224,7 @@ def send():
 @app.route('/resend/<path>', methods=['POST'])
 def resend(path):
     phonenumber = session['phonenumber']
-    user = dao.get_user_by_phonenumber(phonenumber)
+    user = DAO.get_user_by_phonenumber(phonenumber)
     sent = False
     if user.blocked:
         app.logger.info(f'Blocked user {user.username} attempted to resend an OTP but was denied.')
@@ -244,7 +241,7 @@ def resend(path):
 def authenticate(path):
     if request.method == 'POST':
         ph = session['phonenumber']
-        user = dao.get_user_by_phonenumber(ph)
+        user = DAO.get_user_by_phonenumber(ph)
         otp = request.form.get('otp')
         authenticated = util.authenticate(ph, otp)
 
