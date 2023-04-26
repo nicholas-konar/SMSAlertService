@@ -30,3 +30,17 @@ class DAO:
     def record_otp_data(user, otp):
         user.otps_sent += 1
         mongo.save_otp_data(user, otp)
+
+    @staticmethod
+    def add_keyword(user, keyword):
+        if keyword not in user.keywords:
+            mongo.add_keyword(user.username, keyword)
+
+    @staticmethod
+    def delete_keyword(user, keyword):
+        mongo.delete_keyword(user.username, keyword)
+
+    @staticmethod
+    def delete_all_keywords(user):
+        mongo.delete_all_keywords(user.username)
+

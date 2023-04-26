@@ -3,7 +3,7 @@ import markupsafe
 from bcrypt import checkpw
 from flask import request, redirect, render_template, session, url_for, jsonify
 from twilio.base.exceptions import TwilioRestException
-from SMSAlertService import app, mongo, engine, util, constants
+from SMSAlertService import app, mongo, engine, util, constants, reddit
 from SMSAlertService.dao import DAO
 
 
@@ -322,13 +322,9 @@ def add_keyword(): # todo: add subreddit support in UI
         return redirect(url_for("login"))
     else:
         username = session.get('username')
-        keyword = request.form.get('newkeyword').strip()
-        subreddits = []
-        if request.form.get(constants.GUNACCESSORIESFORSALE):
-            subreddits.append(constants.GUNACCESSORIESFORSALE)
-        if request.form.get(constants.GEARTRADE):
-            subreddits.append(constants.GEARTRADE)
-        mongo.add_keyword(username, keyword, subreddits)
+        user = DAO.get_user_by_username(username)
+        keyword = markupsafe.escape(request.form.get('newkeyword').strip())
+        DAO.add_keyword(user, keyword)
         return redirect(url_for('profile'))
 
 

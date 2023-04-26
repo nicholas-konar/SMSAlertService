@@ -2,6 +2,12 @@ import os
 import praw
 from SMSAlertService import mongo, app, constants
 
+GUNACCESSORIESFORSALE = 'GunAccessoriesForSale'
+GEARTRADE = 'GearTrade'
+GUNDEALS = 'gundeals'
+
+SUBREDDITS = [GUNACCESSORIESFORSALE, GEARTRADE, GUNDEALS]
+
 reddit = praw.Reddit(client_id=os.environ['REDDIT_CLIENT_ID'],
                      client_secret=os.environ['REDDIT_CLIENT_SECRET'],
                      user_agent=os.environ['REDDIT_USER_AGENT'],
@@ -12,7 +18,7 @@ reddit = praw.Reddit(client_id=os.environ['REDDIT_CLIENT_ID'],
 def get_new_posts():
     post_data = mongo.get_post_data()
     posts = []
-    for subreddit in constants.SUBREDDITS:
+    for subreddit in SUBREDDITS:
         post = get_latest_post(subreddit)
         last_known_post_id = post_data[f'${subreddit}']['LastPostId']
         app.logger.debug(f'Last known {subreddit} post id: {last_known_post_id}')

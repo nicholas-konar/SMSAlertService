@@ -25,8 +25,7 @@ class User:
 
     def set_keyword_hits_from_post(self, post):
         for keyword in self.keywords:
-            if (post.subreddit.display_name in keyword['Subreddits'] and
-                    self.keyword_found_in_post(keyword['Keyword'], post)):
+            if self.keyword_found_in_post(keyword, post):
                 self.keyword_hits.append(keyword)
 
     def keyword_found_in_post(self, keyword, post):
@@ -38,5 +37,4 @@ class User:
                 f" {keyword.lower()}s " in f" {lower_selftext} ")
 
     def get_keywords_json(self):
-        keywords = [keyword['Keyword'] for keyword in self.keywords]
-        return json.dumps(keywords)
+        return json.dumps(self.keywords)

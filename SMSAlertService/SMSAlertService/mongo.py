@@ -306,27 +306,25 @@ def get_keywords(username):
     return user['Keywords']
 
 
-def add_keyword(username, keyword, subreddit):
-    keywords = get_keywords(username)
-    if keyword not in keywords:
-        query = {"Username": username}
-        value = {"$push": {"Keywords": {"Keyword": keyword, "Subreddits": subreddit}}}
-        user_records.update_one(query, value)
-        app.logger.info(f'User {username} added keyword {keyword}')
+def add_keyword(username, keyword):
+    query = {"Username": username}
+    value = {"$push": {"Keywords": keyword}}
+    user_records.update_one(query, value)
+    app.logger.info(f'User {username} added keyword {keyword}.')
 
 
 def delete_keyword(username, keyword):
     query = {"Username": username}
     value = {"$pull": {"Keywords": {"Keyword": keyword}}}
     user_records.update_one(query, value)
-    app.logger.info(f'User {username} deleted keyword {keyword}')
+    app.logger.info(f'User {username} deleted keyword {keyword}.')
 
 
 def delete_all_keywords(username):
     query = {"Username": username}
     new_value = {"$set": {"Keywords": []}}
     user_records.update_one(query, new_value)
-    app.logger.info(f'User {username} deleted all keywords')
+    app.logger.info(f'User {username} deleted all keywords.')
 
 
 def get_phonenumber(username):
