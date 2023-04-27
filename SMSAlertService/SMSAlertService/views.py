@@ -49,7 +49,7 @@ def instructions():
         return render_template('instructions.html', username=username)
 
 
-@app.route("/signup", methods=['GET', 'POST'])
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
     if "username" in session:
         return redirect(url_for("profile"))
@@ -91,9 +91,9 @@ def signup():
     return render_template('signup.html')
 
 
-@app.route("/account-confirmation", methods=['GET', 'POST'])
+@app.route("/account-confirmation", methods=["GET", "POST"])
 def account_confirmation():
-    if request.method == 'GET':
+    if request.method == "GET":
         app.logger.info('Rendering account confirmation page')
         return render_template('account-confirmation.html')
 
@@ -144,7 +144,7 @@ def logout():
 
 
 # -------------------------------- PROFILE --------------------------------
-@app.route('/admin')
+@app.route("/admin")
 def admin():
     if session["ADMIN"]:
         username = session["username"]
@@ -168,7 +168,7 @@ def admin():
         return redirect(url_for("login"))
 
 
-@app.route('/profile')
+@app.route("/profile")
 def profile():
     if "username" not in session:
         return redirect(url_for("login"))
@@ -181,7 +181,7 @@ def profile():
                                keywords=keywords, username=username, current_phone=user.phonenumber)
 
 
-@app.route('/edit-info')
+@app.route("/edit-info")
 def edit_info():
     username = session["username"]
     current_phone = session['phonenumber']
@@ -189,13 +189,13 @@ def edit_info():
     return render_template('edit-info.html', username=username, current_phone=current_phone)
 
 
-@app.route('/account-recovery')
+@app.route("/account-recovery")
 def account_recovery():
     return render_template('account-recovery.html')
 
 
 # only hit from account recovery page. May want to remove the path variable.
-@app.route('/account-recovery/send-otp', methods=['POST'])
+@app.route("/account-recovery/send-otp", methods=["POST"])
 def send():
     ph = request.form.get('PhoneNumber')
     try:
@@ -221,7 +221,7 @@ def send():
         return render_template('account-recovery.html', status=constants.FAIL, message=message)
 
 
-@app.route('/resend/<path>', methods=['POST'])
+@app.route("/resend/<path>", methods=["POST"])
 def resend(path):
     phonenumber = session['phonenumber']
     user = DAO.get_user_by_phonenumber(phonenumber)
@@ -237,9 +237,9 @@ def resend(path):
         return render_template(f'{path}.html', status=constants.SUCCESS, message=message)
 
 
-@app.route('/authenticate/<path>', methods=['POST'])
+@app.route("/authenticate/<path>", methods=["POST"])
 def authenticate(path):
-    if request.method == 'POST':
+    if request.method == "POST":
         ph = session['phonenumber']
         user = DAO.get_user_by_phonenumber(ph)
         otp = request.form.get('otp')
@@ -260,11 +260,11 @@ def authenticate(path):
     return render_template(f'{path}.html')
 
 
-@app.route('/reset-password', methods=['GET', 'POST'])
+@app.route("/reset-password", methods=["GET", "POST"])
 def reset_password():
-    if request.method == 'GET':
+    if request.method == "GET":
         return render_template('reset-password.html')
-    if request.method == 'POST':
+    if request.method == "POST":
         ph = session['phonenumber']
         username = mongo.get_user_by_phonenumber(ph)
         pw = request.form.get('password')
@@ -272,7 +272,7 @@ def reset_password():
         return redirect(url_for('login'))
 
 
-@app.route('/promo-code', methods=['POST'])
+@app.route("/promo-code", methods=["POST"])
 def promo_code():
     username = session['username']
     code = request.form.get('promo-code')
@@ -281,16 +281,16 @@ def promo_code():
 
 
 # -------------------------------- PROFILE COMMANDS --------------------------------
-@app.route("/update-username", methods=['GET', 'POST'])
+@app.route("/update-username", methods=["GET", "POST"])
 def update_username():
     if "username" not in session:
         return redirect(url_for("index"))
     current_phone = session.get('phonenumber')
     old_username = session.get('username')
-    if request.method == 'GET':
+    if request.method == "GET":
         return render_template('edit-info.html', username=old_username,
                                current_phone=current_phone)
-    elif request.method == 'POST':
+    elif request.method == "POST":
         new_username = request.form.get('newusername').upper()
         username_taken = mongo.username_taken(new_username)
         if username_taken:
@@ -303,7 +303,7 @@ def update_username():
                                    current_phone=current_phone)
 
 
-@app.route("/update-phone-number", methods=['GET', 'POST'])
+@app.route("/update-phone-number", methods=["GET", "POST"])
 def update_phone_number():
     if "username" not in session:
         return redirect(url_for("index"))
@@ -325,7 +325,7 @@ def add_keyword():
         return jsonify({'Success': result})
 
 
-@app.route("/delete-keyword", methods=['POST'])
+@app.route("/delete-keyword", methods=["POST"])
 def delete_keyword():
     if username := session.get('username'):
         user = DAO.get_user_by_username(username)
@@ -334,7 +334,7 @@ def delete_keyword():
         return jsonify({'Success': result})
 
 
-@app.route("/delete-all-keywords", methods=['GET', 'POST'])
+@app.route("/delete-all-keywords", methods=["GET", "POST"])
 def delete_all_keywords():
     if "username" not in session:
         return redirect(url_for("login"))
@@ -363,13 +363,13 @@ def process_sale():
         return jsonify({"status": False})
 
 
-@app.route("/notify", methods=['GET'])
+@app.route("/notify", methods=["GET"])
 def notify():
     engine.run()
     return jsonify({'status': True})
 
 
-@app.route("/generate-codes", methods=['POST'])
+@app.route("/generate-codes", methods=["POST"])
 def generate_codes():
     # /generate-codes?reward=10&batch_size=5&distributor=Chad&prefix=nk
     # http://127.0.0.1:5000/generate-codes?reward=10&batch_size=1&distributor=Chad&prefix=nk
