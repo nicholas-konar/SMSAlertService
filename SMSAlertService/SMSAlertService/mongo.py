@@ -321,8 +321,7 @@ def delete_keyword(username, keyword):
 def delete_all_keywords(username):
     query = {"Username": username}
     new_value = {"$set": {"Keywords": []}}
-    user_records.update_one(query, new_value)
-    app.logger.info(f'User {username} deleted all keywords.')
+    return user_records.update_one(query, new_value)
 
 
 def get_phonenumber(username):
