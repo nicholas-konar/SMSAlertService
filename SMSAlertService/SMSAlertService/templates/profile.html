@@ -23,14 +23,14 @@
 
     <div class="main">
         <div class="box-area">
-            <form action="/add-keyword" method="POST">
+            <form>
                 <div class="form-group">
-                    <h5><label for="NewKeyword" style="margin-top: 0%">Add Keywords:</label></h5>
-                    <input class="form-control input" id="NewKeyword" name="newkeyword"
+                    <h5><label for="newKeyword" style="margin-top: 0%">Add Keywords:</label></h5>
+                    <input class="form-control input" id="newKeyword" name="newKeyword"
                            placeholder="" required="required" type="text">
-                    <small class="form-text text-muted" id="newKeywordHelp">When a new post contains a keyword, we'll
+                    <small class="form-text text-muted">When a new post contains a keyword, we'll
                         send you an alert!</small><br/>
-                    <button class="btn btn-primary mini-container" type="submit">Add Keyword</button>
+                    <button class="btn btn-primary mini-container" type="button" id="addKeywordButton">Add Keyword</button>
                 </div>
             </form>
             <div>

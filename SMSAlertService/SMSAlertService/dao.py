@@ -1,4 +1,4 @@
-from SMSAlertService import util, mongo
+from SMSAlertService import util, mongo, app
 from SMSAlertService.user import User
 
 
@@ -34,11 +34,19 @@ class DAO:
     @staticmethod
     def add_keyword(user, keyword):
         if keyword not in user.keywords:
-            mongo.add_keyword(user.username, keyword)
+            info = f'User {user.username} added keyword {keyword}.'
+            error = f'User {user.username} failed to add keyword {keyword}.'
+            success = mongo.add_keyword(user.username, keyword).modified_count
+            app.logger.info(info) if success else app.logger.error(error)
+            return success
 
     @staticmethod
     def delete_keyword(user, keyword):
-        mongo.delete_keyword(user.username, keyword)
+        info = f'User {user.username} deleted keyword {keyword}.'
+        error = f'User {user.username} failed to delete keyword {keyword}.'
+        success = mongo.delete_keyword(user.username, keyword).modified_count
+        app.logger.info(info) if success else app.logger.error(error)
+        return success
 
     @staticmethod
     def delete_all_keywords(user):

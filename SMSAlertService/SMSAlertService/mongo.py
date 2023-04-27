@@ -309,15 +309,13 @@ def get_keywords(username):
 def add_keyword(username, keyword):
     query = {"Username": username}
     value = {"$push": {"Keywords": keyword}}
-    user_records.update_one(query, value)
-    app.logger.info(f'User {username} added keyword {keyword}.')
+    return user_records.update_one(query, value)
 
 
 def delete_keyword(username, keyword):
     query = {"Username": username}
-    value = {"$pull": {"Keywords": {"Keyword": keyword}}}
-    user_records.update_one(query, value)
-    app.logger.info(f'User {username} deleted keyword {keyword}.')
+    value = {"$pull": {"Keywords": keyword}}
+    return user_records.update_one(query, value)
 
 
 def delete_all_keywords(username):

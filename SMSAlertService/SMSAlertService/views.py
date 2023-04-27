@@ -14,7 +14,7 @@ def home():
         return render_template('home.html')
     else:
         username = session["username"]
-        app.logger.info(f'Home accessed by {username}')
+        app.logger.info(f'User {username} viewed the homepage.')
         return render_template('home.html', username=username)
 
 
@@ -25,7 +25,7 @@ def support():
         return render_template('support.html')
     else:
         username = session["username"]
-        app.logger.info(f'Support page accessed by {username}')
+        app.logger.info(f'User {username} viewed the support page.')
         return render_template('support.html', username=username)
 
 
@@ -45,7 +45,7 @@ def instructions():
         return render_template('instructions.html')
     else:
         username = session["username"]
-        app.logger.info(f'Instructions accessed by {username}')
+        app.logger.info(f'User {username} viewed the instructions page.')
         return render_template('instructions.html', username=username)
 
 
@@ -316,27 +316,22 @@ def update_phone_number():
         return render_template('edit-info.html', message=message, username=username, current_phone=new_number)
 
 
-@app.route("/add-keyword", methods=['GET', 'POST'])
-def add_keyword(): # todo: add subreddit support in UI
-    if "username" not in session:
-        return redirect(url_for("login"))
-    else:
-        username = session.get('username')
+@app.route("/add-keyword", methods=["POST"])
+def add_keyword():
+    if username := session.get('username'):
         user = DAO.get_user_by_username(username)
-        keyword = markupsafe.escape(request.form.get('newkeyword').strip())
-        DAO.add_keyword(user, keyword)
-        return redirect(url_for('profile'))
+        keyword = markupsafe.escape(request.json['keyword'].strip())
+        result = DAO.add_keyword(user, keyword)
+        return jsonify({'Success': result})
 
 
 @app.route("/delete-keyword", methods=['POST'])
 def delete_keyword():
-    if "username" not in session:
-        return redirect(url_for("login"))
-    else:
-        username = session.get('username')
-        keyword = request.values.get('keyword')
-        mongo.delete_keyword(username, keyword)
-        return redirect(url_for('profile'))
+    if username := session.get('username'):
+        user = DAO.get_user_by_username(username)
+        keyword = markupsafe.escape(request.json['DeleteKeyword'])
+        result = DAO.delete_keyword(user, keyword)
+        return jsonify({'Success': result})
 
 
 @app.route("/delete-all-keywords", methods=['GET', 'POST'])
