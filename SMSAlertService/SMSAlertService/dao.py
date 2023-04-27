@@ -6,9 +6,19 @@ class DAO:
 
     @staticmethod
     def create_user(username, password, phonenumber):
-        mongo.create_user(username, password, phonenumber)
-        user_data = mongo.get_user_by_username(username)
-        return User(user_data)
+        info = f'Created new account for user {username}.'
+        error = f'Failed to create new account for user {username}.'
+        success = mongo.create_user(username, password, phonenumber).modified_count
+        app.logger.info(info) if success else app.logger.error(error)
+        return DAO.get_user_by_username(username)
+
+    @staticmethod
+    def verify_user(user):
+        info = f'User {user.username}\'s phone number has been verified.'
+        error = f'Failed to mark verified {user.username} in the database.'
+        success = mongo.verify(user.username).modified_count
+        app.logger.info(info) if success else app.logger.error(error)
+        return success
 
     @staticmethod
     def get_all_users():
@@ -19,7 +29,7 @@ class DAO:
     @staticmethod
     def get_user_by_username(username):
         user_data = mongo.get_user_by_username(username)
-        return User(user_data)
+        return None if user_data is None else User(user_data)
 
     @staticmethod
     def get_user_by_phonenumber(ph):
@@ -55,4 +65,5 @@ class DAO:
         success = mongo.delete_all_keywords(user.username).modified_count
         app.logger.info(info) if success else app.logger.error(error)
         return success
+
 

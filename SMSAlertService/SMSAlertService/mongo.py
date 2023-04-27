@@ -48,8 +48,7 @@ def create_user(username, password, phonenumber):
         'PromoCodeRecords': [],
         'Keywords': []
     }
-    user_records.insert_one(user_data)
-    app.logger.info(f"Created user {username} in database")
+    return user_records.insert_one(user_data)
 
 
 def drop_user(username):
@@ -60,19 +59,9 @@ def drop_user(username):
 
 
 def verify(username):
-    if not is_verified(username):
-        query = {"Username": username}
-        value = {"$set": {"Verified": True}}
-        user_records.update_one(query, value)
-        app.logger.info(f'User {username}\'s phone number has been verified.')
-
-
-def is_verified(username):
-    user = get_user_by_username(username)
-    try:
-        return user['Verified']
-    except KeyError:
-        return False
+    query = {"Username": username}
+    value = {"$set": {"Verified": True}}
+    return user_records.update_one(query, value)
 
 
 def process_transaction(username, units_purchased, amount):
