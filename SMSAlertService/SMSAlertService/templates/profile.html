@@ -23,7 +23,7 @@
 
     <div class="main">
         <div class="box-area">
-            <form>
+            <form id="addKeywordForm">
                 <div class="form-group">
                     <h5><label for="newKeyword" style="margin-top: 0%">Add Keywords:</label></h5>
                     <input class="form-control input" id="newKeyword" name="newKeyword"
@@ -34,9 +34,7 @@
                 </div>
             </form>
             <div>
-                <a href="/delete-all-keywords">
-                    <button class="btn btn-danger mini-container">Delete All Keywords</button>
-                </a>
+                <button class="btn btn-danger mini-container" id="deleteAllKeywordsButton">Delete All Keywords</button>
             </div>
             <br/>
             <a class="link" href="/instructions">Click here to read tutorial</a>
