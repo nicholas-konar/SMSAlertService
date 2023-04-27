@@ -109,7 +109,7 @@ def login():
 
         if user is None:
             message = 'Incorrect username or password.'
-            app.logger.info(f'Failed log in attempt: User {username} does not exist.')
+            app.logger.error(f'Failed log in attempt: User {username} does not exist.')
             return render_template('login.html', message=message)
 
         if checkpw(pw_input.encode('utf-8'), user.password):
@@ -117,11 +117,11 @@ def login():
             session["phonenumber"] = user.phonenumber
             if user.username == "ADMIN":
                 session['ADMIN'] = True
-                app.logger.info(f'User {user.username} logged in')
+                app.logger.info(f'User {user.username} logged in.')
                 return redirect(url_for('admin'))
             else:
                 if user.verified:
-                    app.logger.info(f'User {user.username} logged in')
+                    app.logger.info(f'User {user.username} logged in.')
                     return redirect(url_for('profile'))
                 else:
                     engine.process_otp(user)
@@ -129,7 +129,7 @@ def login():
                     return redirect(url_for('account_confirmation'))
         else:
             message = 'Incorrect username or password.'
-            app.logger.info(f'Failed log in attempt: Incorrect password entered by {user.username}.')
+            app.logger.error(f'Failed log in attempt: Incorrect password entered by {user.username}.')
             return render_template('login.html', message=message)
 
     return render_template('login.html')
@@ -139,7 +139,7 @@ def login():
 def logout():
     username = session["username"]
     session.clear()
-    app.logger.info(f'User {username} logged out')
+    app.logger.info(f'User {username} logged out.')
     return redirect(url_for("login"))
 
 
@@ -170,15 +170,14 @@ def admin():
 
 @app.route("/profile")
 def profile():
-    if "username" not in session:
-        return redirect(url_for("login"))
-    else:
-        username = session["username"]
+    if username := session["username"]:
         user = DAO.get_user_by_username(username)
         keywords = user.get_keywords_json()
         app.logger.info(f'User {username} viewed their profile.')
         return render_template('profile.html', message_count=user.units_left,
                                keywords=keywords, username=username, current_phone=user.phonenumber)
+    else:
+        return redirect(url_for("login"))
 
 
 @app.route("/edit-info")
@@ -225,7 +224,6 @@ def send():
 def resend(path):
     phonenumber = session['phonenumber']
     user = DAO.get_user_by_phonenumber(phonenumber)
-    sent = False
     if user.blocked:
         app.logger.info(f'Blocked user {user.username} attempted to resend an OTP but was denied.')
         message = 'Your account has been locked. Please contact support@smsalertservice.com for assistance.'
@@ -264,7 +262,7 @@ def authenticate(path):
 def reset_password():
     if request.method == "GET":
         return render_template('reset-password.html')
-    if request.method == "POST":
+    elif request.method == "POST":
         ph = session['phonenumber']
         username = mongo.get_user_by_phonenumber(ph)
         pw = request.form.get('password')
@@ -305,15 +303,14 @@ def update_username():
 
 @app.route("/update-phone-number", methods=["GET", "POST"])
 def update_phone_number():
-    if "username" not in session:
-        return redirect(url_for("index"))
-    else:
-        username = session.get('username')
+    if username := session.get('username'):
         new_number = request.form.get('newnumber')
         mongo.update_phonenumber(username, new_number)
         session['phonenumber'] = new_number
         message = 'Phone number updated successfully'
         return render_template('edit-info.html', message=message, username=username, current_phone=new_number)
+    else:
+        return redirect(url_for("index"))
 
 
 @app.route("/add-keyword", methods=["POST"])
@@ -334,18 +331,12 @@ def delete_keyword():
         return jsonify({'Success': result})
 
 
-@app.route("/delete-all-keywords", methods=["GET", "POST"])
+@app.route("/delete-all-keywords", methods=["POST"])
 def delete_all_keywords():
-    if "username" not in session:
-        return redirect(url_for("login"))
-    else:
-        username = session.get('username')
-        phonenumber = session.get('phonenumber')
-        mongo.delete_all_keywords(username)
-        message = 'All Keywords have been cleared.'
-        message_count = mongo.get_message_count(username)
-        return redirect(url_for('profile', message=message,
-                                username=username, current_phone=phonenumber, message_count=message_count))
+    if username := session.get('username'):
+        user = DAO.get_user_by_username(username)
+        result = DAO.delete_all_keywords(user)
+        return jsonify({'Success': result})
 
 
 # -------------------------------- COMMANDS --------------------------------
