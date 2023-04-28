@@ -21,7 +21,7 @@
         <form action="/signup" class="mini-form" method="POST">
             <div>
                 <label for="Username">Reddit Username</label>
-                <input class="form-control input" id="Username" name="username">
+                <input class="form-control input" id="Username" name="username" required="required">
                 <label for="InputPhoneNumber">Phone Number</label>
                 <input class="form-control input"
                        id="InputPhoneNumber"
@@ -31,12 +31,14 @@
                        required="required"
                        type="tel">
                 <label for="InputPassword">Password</label>
-                <input class="form-control input" id="InputPassword" name="password" type="password">
+                <input class="form-control input" id="InputPassword" name="password" type="password" required="required">
+                <div class="checkbox-container"><br/>
+                    <input class="" id="consentCheckBox" name="consentCheckBox" type="checkbox" required="required">
+                    <label for="consentCheckBox">I agree to receive communications via text from the SMS Alert Service.</label>
+                </div>
                 <button class="button btn-success" type="submit">Create Account</button>
             </div>
         </form>
-        <br/><br/>
-        <p style="color: grey;">By creating an account, you agree to receive communications via text from the SMS Alert Service.</p>
     </div>
 </div>
 </html>

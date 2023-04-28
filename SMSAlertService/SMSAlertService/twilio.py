@@ -1,4 +1,6 @@
 import os
+import time
+
 from twilio.rest import Client
 from SMSAlertService import app, util
 
@@ -19,13 +21,14 @@ def send_alert(alert):
     app.logger.info(f'Message sent to {alert.owner.username} at: {alert.destination} with SID: {alert.twilio.sid}')
 
 
-def send_otp(otp):
+def send_otp(otp, phonenumber):
     client = Client(account_sid, auth_token)
-    otp.twilio = client.messages.create(
-        body=otp.body,
+    body = f'Your SMS Alert Service verification code is {otp}.'
+    message = client.messages.create(
+        body=body,
         messaging_service_sid=messaging_service_sid,
-        to=otp.destination
+        to=phonenumber
     )
-    app.logger.info(f'OTP sent to {otp.destination} with SID: {otp.twilio.sid}')
+    return message.status
 
 

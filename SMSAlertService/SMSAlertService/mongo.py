@@ -283,11 +283,11 @@ def blacklisted(user):
     return False
 
 
-def block(user):
-    query = {"Username": user.username}
+def block(username):
+    query = {"Username": username}
     value = {"$set": {"Blocked": True}}
-    user_records.update_one(query, value)
-    app.logger.info(f'Account blocked for user {user.username}')
+    return user_records.update_one(query, value)
+
 
 
 def get_keywords(username):

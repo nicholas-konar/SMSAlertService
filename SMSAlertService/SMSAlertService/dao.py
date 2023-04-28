@@ -8,8 +8,8 @@ class DAO:
     def create_user(username, password, phonenumber):
         info = f'Created new account for user {username}.'
         error = f'Failed to create new account for user {username}.'
-        success = mongo.create_user(username, password, phonenumber).modified_count
-        app.logger.info(info) if success else app.logger.error(error)
+        acknowledged = mongo.create_user(username, password, phonenumber).acknowledged
+        app.logger.info(info) if acknowledged else app.logger.error(error)
         return DAO.get_user_by_username(username)
 
     @staticmethod
@@ -17,8 +17,26 @@ class DAO:
         info = f'User {user.username}\'s phone number has been verified.'
         error = f'Failed to mark verified {user.username} in the database.'
         success = mongo.verify(user.username).modified_count
+        app.logger.debug(f'DAO verify success = {success}')
         app.logger.info(info) if success else app.logger.error(error)
         return success
+
+    @staticmethod
+    def block_user(user):
+        info = f'User {user.username}\s account has been blocked.'
+        error = f'Failed to block user {user.username}\'s account.'
+        success = mongo.block(user.username).modified_count
+        app.logger.info(info) if success else app.logger.error(error)
+        return success
+
+    @staticmethod
+    def reset_password(user, new_password):
+        info = f'Password reset successful for user {user.username}.'
+        error = f'Failed to reset password for {user.username}.'
+        success = mongo.reset_password(user.username, new_password).modified_count
+        app.logger.info(info) if success else app.logger.error(error)
+        return success
+
 
     @staticmethod
     def get_all_users():
@@ -34,6 +52,7 @@ class DAO:
     @staticmethod
     def get_user_by_phonenumber(ph):
         user_data = mongo.get_user_by_phonenumber(ph)
+        app.logger.debug(user_data)
         return User(user_data)
 
     @staticmethod

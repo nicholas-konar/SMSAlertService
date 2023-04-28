@@ -1,10 +1,13 @@
+from contextlib import suppress
+
 import markupsafe
 
 from bcrypt import checkpw
 from flask import request, redirect, render_template, session, url_for, jsonify
 from twilio.base.exceptions import TwilioRestException
-from SMSAlertService import app, mongo, engine, util, constants, reddit
+from SMSAlertService import app, mongo, engine, util, config, twilio
 from SMSAlertService.dao import DAO
+from SMSAlertService.otp_service import OtpService
 
 
 @app.route("/", methods=["POST", "GET"])
@@ -54,16 +57,20 @@ def signup():
     if "username" in session:
         return redirect(url_for("profile"))
 
+    if request.method == "GET":
+        return render_template('signup.html')
+
     if request.method == "POST":
-        username = request.form.get("username").upper().strip()
-        phonenumber = request.form.get("phonenumber")
-        password = request.form.get("password").strip()
+        username = markupsafe.escape(request.form.get("username").upper().strip())
+        phonenumber = markupsafe.escape(request.form.get("phonenumber"))
+        password = markupsafe.escape(request.form.get("password").strip())
+        # todo: add checkbox for consent
 
         username_taken = mongo.username_taken(username)
         phonenumber_taken = mongo.phonenumber_taken(phonenumber)
 
         if username_taken:
-            message = 'Username taken.'
+            message = 'This username is already in use.'
             app.logger.info(f'Failed sign up attempt: Username {username} already in use')
             return render_template('signup.html', message=message)
 
@@ -73,28 +80,37 @@ def signup():
             return render_template('signup.html', message=message)
 
         else:
-            try:
-                user = DAO.create_user(username, password, phonenumber)
-                engine.process_otp(user)
-                session["username"] = username
-                session["phonenumber"] = phonenumber
-                app.logger.info(f'User {username} signed up successfully')
-                return redirect(url_for('account_confirmation'))
-
-            except TwilioRestException:
-                mongo.drop_user(username)
-                message = 'Invalid phone number.'
-                app.logger.info(f'Failed account confirmation: TwilioRestException thrown by phone number {phonenumber}')
-                return render_template('signup.html', message=message)
-
-    app.logger.info(f'Sign up page accessed by unknown user')
-    return render_template('signup.html')
+            session["username"] = username
+            session["phonenumber"] = phonenumber
+            session["password"] = password
+            app.logger.info(f'User {username} submitted a sign up form. ')
+            return redirect(url_for('account_confirmation'))
 
 
 @app.route("/account-confirmation", methods=["GET", "POST"])
 def account_confirmation():
     if request.method == "GET":
-        app.logger.info('Rendering account confirmation page')
+
+        username = session["username"]
+        phonenumber = session["phonenumber"]
+        password = session["password"]
+
+        try:
+            otp = OtpService.generate_otp()
+            twilio.send_otp(otp, phonenumber)
+            # DAO.record_otp_data(user, otp)
+            # if user.otps_sent >= 4:
+            #     mongo.block(user)  # block but still send the 5th OTP
+
+            user = DAO.create_user(username, password, phonenumber)
+            app.logger.info(f'User {username} signed up successfully')
+
+        except TwilioRestException:
+            mongo.drop_user(username)
+            message = 'Invalid phone number.'
+            app.logger.info(f'Failed account confirmation: TwilioRestException thrown by phone number {phonenumber}')
+            return render_template('signup.html', message=message)
+
         return render_template('account-confirmation.html')
 
 
@@ -120,7 +136,7 @@ def login():
                 app.logger.info(f'User {user.username} logged in.')
                 return redirect(url_for('admin'))
             else:
-                if user.verified:
+                if user.verified: # todo: unverified users can still log in. If the verification process is done correctly, we may not need this section at all.
                     app.logger.info(f'User {user.username} logged in.')
                     return redirect(url_for('profile'))
                 else:
@@ -190,34 +206,46 @@ def edit_info():
 
 @app.route("/account-recovery")
 def account_recovery():
+    session['otpCount'] = 0
     return render_template('account-recovery.html')
 
 
-# only hit from account recovery page. May want to remove the path variable.
 @app.route("/account-recovery/send-otp", methods=["POST"])
 def send():
-    ph = request.form.get('PhoneNumber')
+    ph = markupsafe.escape(request.form.get('PhoneNumber'))
     try:
         user = DAO.get_user_by_phonenumber(ph)
+        session['username'] = user.username
         session['phonenumber'] = user.phonenumber
+        app.logger.debug(f'OTP session count = {session.get("otpCount")}')
 
-        if user.blocked:
-            app.logger.info(f'Blocked user {user.username} attempted to receive an OTP but was denied.')
-            message = 'Your account has been locked. Please contact support@smsalertservice.com for assistance.'
-            return render_template('account-recovery.html', status=constants.BLOCKED, message=message)
+        if session.get('otpCount') > config.MAX_RESENDS or user.blocked:
+            app.logger.info(f'User {user.username} reached max OTP resends.')
+            DAO.block_user(user)
+            message = 'Max resends limit reached. Please contact support@smsalertservice.com for assistance.'
+            return render_template('account-recovery.html', status=config.BLOCKED, message=message)
+
         else:
-            engine.process_otp(user)
-            return render_template('account-verification.html')
+            otp = OtpService.generate_otp()
+            # status = OtpService.send_otp(otp, user.phonenumber)
+            status = 'accepted'
+            if status == 'accepted':
+                session['otp'] = otp
+                session['otpCount'] = session['otpCount'] + 1
+                return render_template('account-verification.html')
+            else:
+                message = 'Unable to send code. Please contact support@smsalertservice.com for assistance.'
+                return render_template('account-recovery.html', status=config.FAIL, message=message)
 
     except TypeError:
         app.logger.info(f'Failed to find user with phone number {ph} for account recovery.')
         message = 'We were unable to deliver your code. Please contact support@smsalertservice.com for assistance.'
-        return render_template('account-recovery.html', status=constants.FAIL, message=message)
+        return render_template('account-recovery.html', status=config.FAIL, message=message)
 
     except TwilioRestException:
         app.logger.info(f'Failed OTP delivery: TwilioRestException for phone number {ph}')
         message = 'We\'re unable to reach this phone number. Please contact support@smsalertservice.com for assistance.'
-        return render_template('account-recovery.html', status=constants.FAIL, message=message)
+        return render_template('account-recovery.html', status=config.FAIL, message=message)
 
 
 @app.route("/resend/<path>", methods=["POST"])
@@ -227,47 +255,57 @@ def resend(path):
     if user.blocked:
         app.logger.info(f'Blocked user {user.username} attempted to resend an OTP but was denied.')
         message = 'Your account has been locked. Please contact support@smsalertservice.com for assistance.'
-        return render_template(f'{path}.html', status=constants.BLOCKED, message=message)
+        return render_template(f'{path}.html', status=config.BLOCKED, message=message)
     else:
         app.logger.info(f'Resending OTP to {user.username}')
-        engine.process_otp(user)
+        engine.process_otp(user) # todo: bring this up to speed
         message = 'Another code is on the way.'
-        return render_template(f'{path}.html', status=constants.SUCCESS, message=message)
+        return render_template(f'{path}.html', status=config.SUCCESS, message=message)
 
 
 @app.route("/authenticate/<path>", methods=["POST"])
 def authenticate(path):
     if request.method == "POST":
-        ph = session['phonenumber']
-        user = DAO.get_user_by_phonenumber(ph)
-        otp = request.form.get('otp')
-        authenticated = util.authenticate(ph, otp)
+        expected = session.get(('otp'))
+        actual = markupsafe.escape(request.form.get('otp'))
+        authenticated = OtpService.authenticate_otp(expected, actual)
+
+        if authenticated:
+            username = session.get('username')
+            user = DAO.get_user_by_username(username)
+            if not user.verified:
+                DAO.verify_user(user)
 
         if authenticated and path == 'account-confirmation':
-            mongo.verify(user.username)
             return redirect(url_for('profile'))
 
         if authenticated and path == 'account-verification':
-            mongo.verify(user.username)
+            session['authenticated'] = True
             return redirect(url_for('reset_password'))
 
         elif not authenticated:
             message = "Invalid code."
             return render_template(f'{path}.html', message=message)
 
-    return render_template(f'{path}.html')
 
 
 @app.route("/reset-password", methods=["GET", "POST"])
 def reset_password():
+    authenticated = session.get('authenticated')
+    if not authenticated:
+        return redirect(url_for('login'))
     if request.method == "GET":
         return render_template('reset-password.html')
     elif request.method == "POST":
         ph = session['phonenumber']
-        username = mongo.get_user_by_phonenumber(ph)
-        pw = request.form.get('password')
-        mongo.reset_password(username, pw)
-        return redirect(url_for('login'))
+        user = DAO.get_user_by_phonenumber(ph)
+        new_password = markupsafe.escape(request.form.get('password'))
+        success = DAO.reset_password(user, new_password)
+        if success:
+            return redirect(url_for('login'))
+        else:
+            message = "Failed to reset password. Please contact support@smsalertservice.com for assistance."
+            return render_template('reset-password.html', status=config.FAIL, message=message)
 
 
 @app.route("/promo-code", methods=["POST"])

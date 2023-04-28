@@ -5,29 +5,12 @@ from SMSAlertService import app, mongo
 from SMSAlertService.user import User
 
 
-def authenticate(ph, otp):
-    user = mongo.get_user_by_phonenumber(ph)
-    if otp == user['OTP']:
-        app.logger.info(f'User {user["Username"]} authenticated OTP sent to {ph}')
-        return True
-    else:
-        app.logger.info(f'User {user["Username"]} failed to authenticate OTP sent to {ph}')
-        return False
-
-
 def generate_users(user_data_set):
     users = []
     for user_data in user_data_set:
         user = User(user_data)
         users.append(user)
     return users
-
-
-def generate_otp():
-    length = 6
-    code = ''.join(secrets.choice(string.digits) for i in range(length))
-    app.logger.info(f"Generated OTP '{code}'")
-    return code
 
 
 def generate_code(prefix):

@@ -1,6 +1,6 @@
 import os
 import praw
-from SMSAlertService import mongo, app, constants
+from SMSAlertService import mongo, app, config
 
 GUNACCESSORIESFORSALE = 'GunAccessoriesForSale'
 GEARTRADE = 'GearTrade'

@@ -385,3 +385,7 @@ body {
   width: 25%;
 }
 
+label[for="consentCheckBox"] {
+  display: inline;
+  color: grey;
+}
