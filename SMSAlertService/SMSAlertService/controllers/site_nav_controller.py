@@ -115,32 +115,32 @@ def signup():
 
 @site_nav_bp.route("/account-confirmation", methods=["GET"])
 def account_confirmation():
-    if request.method == "GET":
+    session['otp_resends'] = 0
+    session['otp_attempts'] = 0
 
-        username = session["username"]
-        phonenumber = session["phonenumber"]
-        password = session["password"]
+    username = session["username"]
+    phonenumber = session["phonenumber"]
+    password = session["password"]
 
-        try:
-            otp = OtpService.generate_otp()
-            twilio.send_otp(otp, phonenumber)
-            session['otp'] = otp
-            user = DAO.create_user(username, password, phonenumber)
-            app.logger.info(f'User {username} signed up successfully')
+    try: # todo: this should not be doing the sending. we need one sending endpoint and one authentication endpoint
+        otp = OtpService.generate_otp()
+        twilio.send_otp(otp, phonenumber)
+        session['otp'] = otp
+        #user = DAO.create_user(username, password, phonenumber)
+        app.logger.info(f'User {username} signed up successfully')
 
-        except TwilioRestException:
-            mongo.drop_user(username)
-            message = 'Invalid phone number.'
-            app.logger.info(f'Failed account confirmation: TwilioRestException thrown by phone number {phonenumber}')
-            return render_template('signup.html', message=message)
+    except TwilioRestException:
+        message = 'Invalid phone number.'
+        app.logger.info(f'Failed account confirmation: TwilioRestException thrown by phone number {phonenumber}')
+        return render_template('signup.html', message=message)
 
-        return render_template('account-confirmation.html')
+    return render_template('account-confirmation.html')
 
 
 @site_nav_bp.route("/account-recovery", methods=["GET"])
 def account_recovery():
-    session['otpResends'] = 0
-    session['otpAttempts'] = 0
+    session['otp_resends'] = 0
+    session['otp_attempts'] = 0
     return render_template('account-recovery.html')
 
 

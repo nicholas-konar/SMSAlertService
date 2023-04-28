@@ -1,16 +1,22 @@
 # Status
 AUTHENTICATED = 'AUTHENTICATED'
 BLOCKED = 'BLOCKED'
-FAIL = 'FAIL'
 ERROR = 'ERROR'
+FAIL = 'FAIL'
 SUCCESS = 'SUCCESS'
 
 # Screen Content
-BLOCKED_MESSAGE = 'Max resends reached. Please contact support@smsalertservice.com for assistance.'
-ERROR_MESSAGE = 'There was a problem sending your code. Please contact support@smsalertservice.com for assistance.'
+BLOCKED_MSG = 'Something went wrong. Please contact support@smsalertservice.com for assistance.'
+ERROR_MSG = 'There was a problem sending your code. Please contact support@smsalertservice.com for assistance.'
+FAIL_MSG = 'Fail message'
 
-RESEND_MESSAGE = 'Another code is on the way.'
-RETRY_MESSAGE = "Invalid code."
+MAX_ATTEMPS_MSG = 'Max attempts limit reached. Please contact support@smsalertservice.com for assistance.'
+MAX_RESENDS_MSG = 'Max resends limit reached. Please contact support@smsalertservice.com for assistance.'
 
+
+RESEND_MSG = 'Another code is on the way.'
+RETRY_MSG = "Invalid code."
+
+# Configs
 MAX_ATTEMPTS =3
 MAX_RESENDS = 3
