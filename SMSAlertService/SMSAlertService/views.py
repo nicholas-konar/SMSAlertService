@@ -6,6 +6,8 @@ from bcrypt import checkpw
 from flask import request, redirect, render_template, session, url_for, jsonify
 from twilio.base.exceptions import TwilioRestException
 from SMSAlertService import app, mongo, engine, util, config, twilio
+from SMSAlertService.config import BLOCKED_MESSAGE, ERROR_MESSAGE, RESEND_MESSAGE, FAIL, RETRY_MESSAGE, MAX_ATTEMPTS, \
+    BLOCKED, MAX_RESENDS
 from SMSAlertService.dao import DAO
 from SMSAlertService.otp_service import OtpService
 
@@ -206,7 +208,8 @@ def edit_info():
 
 @app.route("/account-recovery")
 def account_recovery():
-    session['otpCount'] = 0
+    session['otpResends'] = 0
+    session['otpAttempts'] = 0
     return render_template('account-recovery.html')
 
 
@@ -217,35 +220,32 @@ def send():
         user = DAO.get_user_by_phonenumber(ph)
         session['username'] = user.username
         session['phonenumber'] = user.phonenumber
-        app.logger.debug(f'OTP session count = {session.get("otpCount")}')
+        app.logger.debug(f'OTP session count = {session.get("otpResends")}')
 
-        if session.get('otpCount') > config.MAX_RESENDS or user.blocked:
+        if session.get('otpResends') > config.MAX_RESENDS or user.blocked:
             app.logger.info(f'User {user.username} reached max OTP resends.')
             DAO.block_user(user)
-            message = 'Max resends limit reached. Please contact support@smsalertservice.com for assistance.'
-            return render_template('account-recovery.html', status=config.BLOCKED, message=message)
+            return render_template('account-recovery.html', status=config.BLOCKED, message=BLOCKED_MESSAGE)
 
         else:
             otp = OtpService.generate_otp()
             # status = OtpService.send_otp(otp, user.phonenumber)
+            app.logger.debug(f'Mock OTP Send to {user.username}: OTP = {otp}')
             status = 'accepted'
             if status == 'accepted':
                 session['otp'] = otp
-                session['otpCount'] = session['otpCount'] + 1
+                session['otpResends'] = session.get('otpResends') + 1
                 return render_template('account-verification.html')
             else:
-                message = 'Unable to send code. Please contact support@smsalertservice.com for assistance.'
-                return render_template('account-recovery.html', status=config.FAIL, message=message)
+                return render_template('account-recovery.html', status=config.FAIL, message=ERROR_MESSAGE)
 
     except TypeError:
-        app.logger.info(f'Failed to find user with phone number {ph} for account recovery.')
-        message = 'We were unable to deliver your code. Please contact support@smsalertservice.com for assistance.'
-        return render_template('account-recovery.html', status=config.FAIL, message=message)
+        app.logger.error(f'Failed OTP delivery: TypeError exception for phone number {ph}.')
+        return render_template('account-recovery.html', status=config.FAIL, message=ERROR_MESSAGE)
 
     except TwilioRestException:
         app.logger.info(f'Failed OTP delivery: TwilioRestException for phone number {ph}')
-        message = 'We\'re unable to reach this phone number. Please contact support@smsalertservice.com for assistance.'
-        return render_template('account-recovery.html', status=config.FAIL, message=message)
+        return render_template('account-recovery.html', status=config.FAIL, message=ERROR_MESSAGE)
 
 
 @app.route("/resend/<path>", methods=["POST"])
@@ -254,39 +254,56 @@ def resend(path):
     user = DAO.get_user_by_phonenumber(phonenumber)
     if user.blocked:
         app.logger.info(f'Blocked user {user.username} attempted to resend an OTP but was denied.')
-        message = 'Your account has been locked. Please contact support@smsalertservice.com for assistance.'
-        return render_template(f'{path}.html', status=config.BLOCKED, message=message)
+        return render_template(f'{path}.html', status=config.BLOCKED, message=BLOCKED_MESSAGE)
+
+    elif session.get('otpResends') > MAX_RESENDS:
+        app.logger.info(f'Max resends limit reached. Blocking user {user.username}')
+        DAO.block_user(user)
+        return render_template(f'{path}.html', status=config.BLOCKED, message=BLOCKED_MESSAGE)
+
     else:
-        app.logger.info(f'Resending OTP to {user.username}')
-        engine.process_otp(user) # todo: bring this up to speed
-        message = 'Another code is on the way.'
-        return render_template(f'{path}.html', status=config.SUCCESS, message=message)
+        app.logger.info(f'OTP resend requested by {user.username}.')
+        otp = OtpService.generate_otp()
+        # status = OtpService.send_otp(otp, user.phonenumber)
+        app.logger.debug(f'Mock OTP Resend to {user.username}: OTP = {otp}')
+        status = 'accepted'
+        if status == 'accepted':
+            session['otp'] = otp
+            session['otpResends'] += 1
+            app.logger.info(f'Resent OTP to {user.username}')
+            return render_template(f'{path}.html', status=config.SUCCESS, message=RESEND_MESSAGE)
+        else:
+            return render_template('account-recovery.html', status=config.FAIL, message=ERROR_MESSAGE)
 
 
 @app.route("/authenticate/<path>", methods=["POST"])
 def authenticate(path):
     if request.method == "POST":
-        expected = session.get(('otp'))
+        expected = session.get('otp')
         actual = markupsafe.escape(request.form.get('otp'))
         authenticated = OtpService.authenticate_otp(expected, actual)
 
+        username = session.get('username')
+        user = DAO.get_user_by_username(username)
+
         if authenticated:
-            username = session.get('username')
-            user = DAO.get_user_by_username(username)
+            session['authenticated'] = True
+            app.logger.info(f'User {user.username} has been authenticated.')
             if not user.verified:
                 DAO.verify_user(user)
+        elif session.get('otpAttempts') > MAX_ATTEMPTS:
+            DAO.block_user(user)
+            return render_template(f'{path}.html', status=BLOCKED, message=RETRY_MESSAGE)
+        else:
+            session['otpAttempts'] += 1
+            app.logger.error(f'User {user.username} failed authentication.')
+            return render_template(f'{path}.html', status=FAIL, message=RETRY_MESSAGE)
 
-        if authenticated and path == 'account-confirmation':
+        if path == 'account-confirmation':
             return redirect(url_for('profile'))
 
-        if authenticated and path == 'account-verification':
-            session['authenticated'] = True
+        if path == 'account-verification':
             return redirect(url_for('reset_password'))
-
-        elif not authenticated:
-            message = "Invalid code."
-            return render_template(f'{path}.html', message=message)
-
 
 
 @app.route("/reset-password", methods=["GET", "POST"])

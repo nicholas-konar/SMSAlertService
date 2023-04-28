@@ -15,15 +15,14 @@ class DAO:
     @staticmethod
     def verify_user(user):
         info = f'User {user.username}\'s phone number has been verified.'
-        error = f'Failed to mark verified {user.username} in the database.'
+        error = f'Failed to verify user {user.username} in the database. Verified status is currently {user.verified}.'
         success = mongo.verify(user.username).modified_count
-        app.logger.debug(f'DAO verify success = {success}')
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
     def block_user(user):
-        info = f'User {user.username}\s account has been blocked.'
+        info = f'User {user.username}\'s account has been blocked.'
         error = f'Failed to block user {user.username}\'s account.'
         success = mongo.block(user.username).modified_count
         app.logger.info(info) if success else app.logger.error(error)
@@ -52,7 +51,6 @@ class DAO:
     @staticmethod
     def get_user_by_phonenumber(ph):
         user_data = mongo.get_user_by_phonenumber(ph)
-        app.logger.debug(user_data)
         return User(user_data)
 
     @staticmethod
