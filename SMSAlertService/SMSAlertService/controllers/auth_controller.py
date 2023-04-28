@@ -1,7 +1,7 @@
 import markupsafe
 
 from flask import Blueprint
-from flask import request, redirect, render_template, session, url_for, jsonify
+from flask import request, redirect, render_template, session, url_for
 from twilio.base.exceptions import TwilioRestException
 from SMSAlertService import app, config
 from SMSAlertService.dao import DAO
@@ -20,7 +20,7 @@ def send():
         user = DAO.get_user_by_phonenumber(ph)
         session['username'] = user.username
         session['phonenumber'] = user.phonenumber
-        if session.get('otpResends') > config.MAX_RESENDS or user.blocked:
+        if session.get('otp_resends') > config.MAX_RESENDS or user.blocked:
             app.logger.info(f'User {user.username} reached max OTP resends.')
             DAO.block_user(user)
             return render_template('account-recovery.html', status=config.BLOCKED, message=BLOCKED_MESSAGE)
@@ -32,7 +32,7 @@ def send():
             status = 'accepted'
             if status == 'accepted':
                 session['otp'] = otp
-                session['otpResends'] = session.get('otpResends') + 1
+                session['otp_resends'] = session.get('otp_resends') + 1
                 return render_template('account-verification.html')
             else:
                 return render_template('account-recovery.html', status=config.FAIL, message=ERROR_MESSAGE)
@@ -48,26 +48,26 @@ def send():
 
 @auth_bp.route("/resend/<path>", methods=["POST"])
 def resend(path):
-    phonenumber = session['phonenumber']
+    phonenumber = session.get('phonenumber')
     user = DAO.get_user_by_phonenumber(phonenumber)
+    app.logger.info(f'Processing OTP resend request by {user.username}.')
     if user.blocked:
-        app.logger.info(f'Blocked user {user.username} attempted to resend an OTP but was denied.')
+        app.logger.info(f'Denied OTP resend to user {user.username} because blocked status is {user.blocked}.')
         return render_template(f'{path}.html', status=config.BLOCKED, message=BLOCKED_MESSAGE)
 
-    elif session.get('otpResends') > MAX_RESENDS:
+    elif session.get('otp_resends') > MAX_RESENDS:
         app.logger.info(f'Max resends limit reached. Blocking user {user.username}')
         DAO.block_user(user)
         return render_template(f'{path}.html', status=config.BLOCKED, message=BLOCKED_MESSAGE)
 
     else:
-        app.logger.info(f'OTP resend requested by {user.username}.')
         otp = OtpService.generate_otp()
         # status = OtpService.send_otp(otp, user.phonenumber) #todo: uncomment after testing
         app.logger.debug(f'Mock OTP Resend to {user.username}: OTP = {otp}')
         status = 'accepted'
         if status == 'accepted':
             session['otp'] = otp
-            session['otpResends'] += 1
+            session['otp_resends'] += 1
             app.logger.info(f'Resent OTP to {user.username}')
             return render_template(f'{path}.html', status=config.SUCCESS, message=RESEND_MESSAGE)
         else:
@@ -84,17 +84,18 @@ def authenticate(path):
         username = session.get('username')
         user = DAO.get_user_by_username(username)
 
+        if session.get('otp_attempts') > MAX_ATTEMPTS:
+            DAO.block_user(user)
+            return render_template(f'{path}.html', status=BLOCKED, message=BLOCKED_MESSAGE)
+
         if authenticated:
             session['authenticated'] = True
             app.logger.info(f'User {user.username} has been authenticated.')
             if not user.verified:
                 DAO.verify_user(user)
-        elif session.get('otpAttempts') > MAX_ATTEMPTS:
-            DAO.block_user(user)
-            return render_template(f'{path}.html', status=BLOCKED, message=RETRY_MESSAGE)
         else:
-            session['otpAttempts'] += 1
-            app.logger.error(f'User {user.username} failed authentication.')
+            session['otp_attempts'] += 1
+            app.logger.error(f'User {user.username} failed authentication {session.get("otp_attempts")} time(s).')
             return render_template(f'{path}.html', status=FAIL, message=RETRY_MESSAGE)
 
         if path == 'account-confirmation':

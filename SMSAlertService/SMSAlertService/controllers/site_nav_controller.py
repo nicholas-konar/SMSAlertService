@@ -24,7 +24,7 @@ def home():
 @site_nav_bp.route("/login", methods=["POST", "GET"])
 def login():
     if "username" in session:
-        return redirect(url_for("profile"))
+        return redirect(url_for("site_nav_controller.profile"))
     if request.method == "POST":
         username = markupsafe.escape(request.form.get("username").upper().strip())
         pw_input = markupsafe.escape(request.form.get("password"))
@@ -41,15 +41,15 @@ def login():
             if user.username == "ADMIN":
                 session['ADMIN'] = True
                 app.logger.info(f'User {user.username} logged in.')
-                return redirect(url_for('admin'))
+                return redirect(url_for('admin_controller.admin'))
             else:
                 if user.verified: # todo: unverified users can still log in. If the verification process is done correctly, we may not need this section at all.
                     app.logger.info(f'User {user.username} logged in.')
-                    return redirect(url_for('profile'))
+                    return redirect(url_for('site_nav_controller.profile'))
                 else:
                     engine.process_otp(user)
                     app.logger.info(f'Unverified user {user.username} logged in. Redirecting to Account Confirmation page.')
-                    return redirect(url_for('account_confirmation'))
+                    return redirect(url_for('site_nav_controller.account_confirmation'))
         else:
             message = 'Incorrect username or password.'
             app.logger.error(f'Failed log in attempt: Incorrect password entered by {user.username}.')
@@ -58,30 +58,30 @@ def login():
     return render_template('login.html')
 
 
-@site_nav_bp.route("/logout", methods=["POST"])
+@site_nav_bp.route("/logout", methods=["GET"])
 def logout():
     username = session["username"]
     session.clear()
     app.logger.info(f'User {username} logged out.')
-    return redirect(url_for("login"))
+    return redirect(url_for("site_nav_controller.login"))
 
 
 @site_nav_bp.route("/profile", methods=["GET"])
 def profile():
-    if username := session["username"]:
+    if username := session.get('username'):
         user = DAO.get_user_by_username(username)
         keywords = user.get_keywords_json()
         app.logger.info(f'User {username} viewed their profile.')
         return render_template('profile.html', message_count=user.units_left,
                                keywords=keywords, username=username, current_phone=user.phonenumber)
     else:
-        return redirect(url_for("login"))
+        return redirect(url_for("site_nav_controller.login"))
 
 
 @site_nav_bp.route("/signup", methods=["GET", "POST"])
 def signup():
     if "username" in session:
-        return redirect(url_for("profile"))
+        return redirect(url_for("site_nav_controller.profile"))
 
     if request.method == "GET":
         return render_template('signup.html')
@@ -110,7 +110,7 @@ def signup():
             session["phonenumber"] = phonenumber
             session["password"] = password
             app.logger.info(f'User {username} submitted a sign up form. ')
-            return redirect(url_for('account_confirmation'))
+            return redirect(url_for('site_nav_controller.account_confirmation'))
 
 
 @site_nav_bp.route("/account-confirmation", methods=["GET"])
