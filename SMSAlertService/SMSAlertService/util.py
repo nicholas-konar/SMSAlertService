@@ -1,5 +1,6 @@
 import secrets
 import string
+import re
 
 from SMSAlertService import app, mongo
 from SMSAlertService.user import User
@@ -11,6 +12,11 @@ def generate_users(user_data_set):
         user = User(user_data)
         users.append(user)
     return users
+
+
+def is_valid_phone_number(ph):
+    pattern = re.compile(r'^\d{10}$')
+    return bool(pattern.match(ph))
 
 
 def generate_code(prefix):

@@ -11,27 +11,52 @@ document.addEventListener("DOMContentLoaded", async function() {
     document.body.appendChild(modalContainer);
     modalContainer.innerHTML = modalHtml;
 
-    var challengeModal = document.getElementById("challengeModal");
-    var openChallengeModalBtn = document.getElementById("resetPasswordButton");
-    var closeChallengeModalBtn = document.getElementById("closeChallengeButton");
-
-    var validateModal = document.getElementById("validateModal");
-    var openValidateModalBtn = document.getElementById("sendCodeButton");
-    var closeValidateModalBtn = document.getElementById("closeValidateButton");
 
     // Open Challenge Modal
-    openChallengeModalBtn.addEventListener("click", function() {
-        challengeModal.style.display = "block";
-        document.body.appendChild(overlay);
-    });
+    function attachChallengeModalListener(buttonId, flowType) {
+      var button = document.getElementById(buttonId);
+      if (button) {
+        button.addEventListener("click", function() {
+          openChallengeModal(flowType);
+        });
+      }
+    }
+    attachChallengeModalListener("createAccountButton", "createAccount");
+    attachChallengeModalListener("resetPasswordButton", "resetPassword");
+
+    var challengeModal = document.getElementById("challengeModal");
+    function openChallengeModal(flowType) {
+      var sendCodeButton = document.getElementById("sendCodeButton");
+      sendCodeButton.setAttribute('flowType', flowType);
+      challengeModal.style.display = "block";
+      validateModal.style.display = "none";
+      document.body.appendChild(overlay);
+    }
 
     // Close Challenge Modal
+    var closeChallengeModalBtn = document.getElementById("closeChallengeButton");
     closeChallengeModalBtn.addEventListener("click", function() {
         challengeModal.style.display = "none";
         document.body.removeChild(overlay);
     });
 
-    // Click off event
+    // Open Validate Modal (after OTP sent successfully)
+    var validateModal = document.getElementById("validateModal");
+    function openValidateModal(flowType) {
+        var validateButton = document.getElementById("validateButton");
+        validateButton.setAttribute('flowType', flowType);
+        challengeModal.style.display = "none";
+        validateModal.style.display = "block";
+    }
+
+    // Close Validate Modal
+    var closeValidateModalBtn = document.getElementById("closeValidateButton");
+    closeValidateModalBtn.addEventListener("click", function() {
+        validateModal.style.display = "none";
+        document.body.removeChild(overlay);
+    });
+
+    // Close All (click off)
     window.addEventListener("click", function(event) {
         if (event.target == overlay) {
             challengeModal.style.display = "none";
@@ -40,45 +65,93 @@ document.addEventListener("DOMContentLoaded", async function() {
         }
     });
 
-    // Open Validate Modal (after OTP sent successfully)
-    function openValidateModal() {
-      var validateModal = document.getElementById("validateModal");
-      challengeModal.style.display = "none";
-      validateModal.style.display = "block";
-    }
-
-    // Close Validate Modal
-    closeValidateModalBtn.addEventListener("click", function() {
-        validateModal.style.display = "none";
-        document.body.removeChild(overlay);
+    // Send Code Button
+    var sendCodeButton = document.getElementById("sendCodeButton");
+    sendCodeButton.addEventListener("click", function() {
+        var flowType = sendCodeButton.getAttribute('flowType');
+        sendCode(flowType);
     });
 
-    // Send Code Button
-    function sendCode() {
-        var phoneNumber = document.getElementById("phoneNumber").value
-        console.log(`JS btn got ${phoneNumber}`)
+    function sendCode(flowType) {
+        var ph = document.getElementById("phoneNumber").value;
         fetch("/send/otp", {
             method: "POST",
-            body: JSON.stringify({PhoneNumber: phoneNumber}),
-            headers: {"Content-Type": "application/json"}
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                FlowType: flowType,
+                PhoneNumber: ph
+                })
         })
         .then(response => response.json())
         .then(data => {
-            var status = data.Status;
-            var message = data.Message;
-            if (status == "SUCCESS") {
-                openValidateModal();
+            if (data.Status == "SUCCESS") {
+                openValidateModal(data.FlowType);
             } else {
                 challengeStatusMessage = document.getElementById("challengeStatusMessage");
-                challengeStatusMessage.innerHTML = message;
+                challengeStatusMessage.innerHTML = data.Message;
                 challengeStatusMessage.classList.add("alert");
             }
         })
     };
 
-    var sendCodeButton = document.getElementById("sendCodeButton");
-    sendCodeButton.addEventListener("click", function() {
-        sendCode();
+
+    // Resend Code Button
+    var resendCodeButton = document.getElementById("resendCodeButton");
+    resendCodeButton.addEventListener("click", function() {
+        resendCode();
     });
+
+    function resendCode() {
+        fetch("/resend/otp", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: ""
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.Status == "SUCCESS") {
+                validateStatusMessage = document.getElementById("validateStatusMessage");
+                validateStatusMessage.innerHTML = data.Message;
+                validateStatusMessage.classList.remove("alert");
+                validateStatusMessage.classList.add("info");
+            } else {
+                validateStatusMessage = document.getElementById("validateStatusMessage");
+                validateStatusMessage.innerHTML = data.Message;
+                validateStatusMessage.classList.remove("info");
+                validateStatusMessage.classList.add("alert");
+            }
+        })
+    };
+
+    // Validate Button
+    var validateButton = document.getElementById('validateButton');
+    validateButton.addEventListener('click', function() {
+        var flowType = validateButton.getAttribute('flowType');
+        validateCode(flowType);
+    });
+
+    function validateCode(flowType) {
+        var verificationCode = document.getElementById('verificationCode').value;
+        fetch("/validate/otp", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                FlowType: flowType,
+                OTP: verificationCode
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.Status == "AUTHENTICATED") {
+                console.log('authenticated user!');
+            } else {
+                console.log('user authentication failed');
+                validateStatusMessage = document.getElementById("validateStatusMessage");
+                validateStatusMessage.innerHTML = data.Message;
+                validateStatusMessage.classList.remove("info");
+                validateStatusMessage.classList.add("alert");
+            }
+        })
+    }
 
 });

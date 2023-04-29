@@ -16,6 +16,7 @@ MAX_RESENDS_MSG = 'Max resends limit reached. Please contact support@smsalertser
 
 RESEND_MSG = 'Another code is on the way.'
 RETRY_MSG = "Incorrect code. Please try again."
+INVALID_PH_MSG = "Please enter a valid phone number."
 
 # Configs
 MAX_ATTEMPTS =3
