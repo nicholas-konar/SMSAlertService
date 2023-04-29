@@ -12,7 +12,6 @@
     <div class="auth-container">
         <p>We need to send you a Verification Code to confirm your account.</p>
         <form>
-            <h1 id="statusMessage"><!-- Dynamic JS status message --></h1>
             <label for="PhoneNumber">Phone Number:</label>
             <input class="center"
                    id="phoneNumber"
@@ -22,6 +21,7 @@
                    required="required"
                    type="tel">
             <button class="button btn-success" id="sendCodeButton" type="button">Send Code</button>
+            <p id="statusMessage"><!-- Dynamic JS status message --></p>
         </form>
     </div>
 </div>

@@ -27,7 +27,7 @@ def send():
     if user is None:
         return jsonify({'Status': FAIL, 'Message': FAIL_MSG})
 
-    elif session.get('otp_resends') > MAX_RESENDS or user.blocked:
+    elif session.get('otp_resends') >= MAX_RESENDS or user.blocked:
         app.logger.info(f'User {user.username} exceeded max OTP resends.')
         DAO.block_user(user)
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
@@ -40,6 +40,7 @@ def send():
             session['username'] = user.username
             session['phonenumber'] = user.phonenumber
             session['otp_resends'] += 1
+            app.logger.debug(f'Resend count = {session["otp_resends"]}')
             session['otp'] = otp
             return jsonify({'Status': SUCCESS, 'OTP': otp})
 
