@@ -31,7 +31,7 @@
 }
 
 @media screen and (min-width: 600px) { /* desktop */
-  #statusMessage {
+  .statusMessage {
       margin-top: 2.5rem; /* adjust to desired height */
       overflow: auto;
       font-size: 1rem;
@@ -39,7 +39,7 @@
 }
 
 @media screen and (max-width: 800px) { /* tablet */
-  #statusMessage {
+  .statusMessage {
       margin-top: 2.5rem; /* adjust to desired height */
       overflow: auto;
       font-size: 0.9rem;
@@ -47,7 +47,7 @@
 }
 
 @media screen and (max-width: 400px) { /* mobile */
-  #statusMessage {
+  .statusMessage {
       margin-top: 2.5rem; /* adjust to desired height */
       overflow: auto;
       font-size: 0.7rem;

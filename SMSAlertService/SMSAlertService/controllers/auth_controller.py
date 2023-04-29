@@ -12,11 +12,11 @@ from SMSAlertService.config import MAX_RESENDS, BLOCKED, BLOCKED_MSG, MAX_ATTEMP
 auth_bp = Blueprint('auth_controller', __name__)
 
 
-@auth_bp.route("/modal/challenge", methods=["GET"])
+@auth_bp.route("/modal/authenticate", methods=["GET"])
 def challenge():
     session['otp_resends'] = 0
     session['otp_attempts'] = 0
-    return render_template('modal/challenge.html')
+    return render_template('modal/authenticate.html')
 
 
 @auth_bp.route("/send/otp", methods=["POST"])

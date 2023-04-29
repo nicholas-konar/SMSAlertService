@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="static/modal.css" rel="stylesheet">
+    <script src="static/js/authenticate.js"></script>
+</head>
+<body>
+<div class="modal" id="challengeModal">
+    <span class="close" id="closeChallengeButton">&times;</span>
+    <h3><i class="fa fa-envelope"></i>&nbsp;&nbsp;Account Verification</h3>
+    <div class="auth-container">
+        <p>We need to send you a Verification Code to confirm your account.</p>
+        <form>
+            <label for="PhoneNumber">Phone Number:</label>
+            <input class="center"
+                   id="phoneNumber"
+                   name="PhoneNumber"
+                   pattern="[0-9]{10}"
+                   placeholder="No spaces or dashes"
+                   required="required"
+                   type="tel">
+            <button class="button btn-success" id="sendCodeButton" type="button">Send Code</button>
+            <p class="statusMessage" id="challengeStatusMessage"><!-- Dynamic JS status message --></p>
+        </form>
+    </div>
+</div>
+
+<div class="modal" id="validateModal">
+    <span class="close" id="closeValidateButton">&times;</span>
+    <h3><i class="fa fa-envelope"></i>&nbsp;&nbsp;Account Verification</h3>
+    <div class="auth-container">
+        <p>Enter your Verification Code below to continue.</p>
+        <form>
+            <label for="otp">Verification Code:</label>
+            <input class="center"
+                   id="otp"
+                   name="otp"
+                   required="required"
+                   type="tel">
+            <button class="button btn-primary" id="validateButton" type="button">Confirm</button>
+            <button class="button btn-success" id="resendCodeButton" type="button">Resend Code</button>
+            <p class="statusMessage" id="validateStatusMessage"><!-- Dynamic JS status message --></p>
+        </form>
+    </div>
+</div>
+
+
+</body>
+</html>
