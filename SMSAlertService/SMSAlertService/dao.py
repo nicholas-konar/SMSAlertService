@@ -51,12 +51,13 @@ class DAO:
     @staticmethod
     def get_user_by_phonenumber(ph):
         user_data = mongo.get_user_by_phonenumber(ph)
-        return User(user_data)
+        return None if user_data is None else User(user_data)
 
     @staticmethod
-    def record_otp_data(user, otp):
-        user.otps_sent += 1
-        mongo.save_otp_data(user, otp)
+    def log_otp(user, message):
+        # todo: iron this out
+        app.logger.debug(f'OTP Data: {message}')
+        # mongo.save_otp_data(user, otp)
 
     @staticmethod
     def add_keyword(user, keyword):

@@ -8,14 +8,14 @@ SUCCESS = 'SUCCESS'
 # Screen Content
 BLOCKED_MSG = 'Something went wrong. Please contact support@smsalertservice.com for assistance.'
 ERROR_MSG = 'There was a problem sending your code. Please contact support@smsalertservice.com for assistance.'
-FAIL_MSG = 'Fail message'
+FAIL_MSG = 'There was a problem sending your code. Please contact support@smsalertservice.com for assistance.'
 
 MAX_ATTEMPS_MSG = 'Max attempts limit reached. Please contact support@smsalertservice.com for assistance.'
 MAX_RESENDS_MSG = 'Max resends limit reached. Please contact support@smsalertservice.com for assistance.'
 
 
 RESEND_MSG = 'Another code is on the way.'
-RETRY_MSG = "Invalid code."
+RETRY_MSG = "Incorrect code. Please try again."
 
 # Configs
 MAX_ATTEMPTS =3

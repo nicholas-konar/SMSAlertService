@@ -17,7 +17,10 @@ class OtpService:
 
     @staticmethod
     def send_otp(otp, phonenumber):
-        return twilio.send_otp(otp, phonenumber)
+        message = twilio.send_otp(otp, phonenumber)
+        user = DAO.get_user_by_phonenumber(phonenumber)
+        DAO.log_otp(user, message)
+        return message
 
     @staticmethod
     def authenticate_otp(expected, actual):

@@ -2,12 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="../../static/js/challenge.js"></script>
+    <link href="static/modal.css" rel="stylesheet">
+    <script src="static/js/challenge.js"></script>
 </head>
 <body>
 <div class="modal">
     <span class="close">&times;</span>
-    <p>This is the modal content!</p>
+    <h3><i class="fa fa-envelope"></i>&nbsp;&nbsp;Account Verification</h3>
+    <div class="auth-container">
+        <p>We need to send you a Verification Code to confirm your account.</p>
+        <form>
+            <h1 id="statusMessage"><!-- Dynamic JS status message --></h1>
+            <label for="PhoneNumber">Phone Number:</label>
+            <input class="center"
+                   id="phoneNumber"
+                   name="PhoneNumber"
+                   pattern="[0-9]{10}"
+                   placeholder="No spaces or dashes"
+                   required="required"
+                   type="tel">
+            <button class="button btn-success" id="sendCodeButton" type="button">Send Code</button>
+        </form>
+    </div>
 </div>
 
 </body>

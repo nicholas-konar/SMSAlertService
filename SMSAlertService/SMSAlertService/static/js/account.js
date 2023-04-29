@@ -106,8 +106,8 @@ document.addEventListener("DOMContentLoaded", function() {
     })
     .catch(error => console.error(error));
     }
-    const addButton = document.getElementById("addKeywordButton");
-    addButton.addEventListener("click", addKeyword);
+    const addKeywordButton = document.getElementById("addKeywordButton");
+    addKeywordButton.addEventListener("click", addKeyword);
 
     const addKeywordForm = document.getElementById("addKeywordForm");
     addKeywordForm.addEventListener("submit", function(event) {
