@@ -7,6 +7,7 @@
 <head>
     <link href="static/style.css" rel="stylesheet">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <script src="../static/js/challenge.js"></script>
 </head>
 
 <div class="container">
@@ -28,7 +29,7 @@
             </div>
         </form>
         <form action="/account-recovery" class="mini-form" method="get">
-            <input class="button btn-danger" type="submit" value="Reset Password"/>
+            <input class="button btn-danger" id="resetPasswordButton" type="button" value="Reset Password"/>
         </form>
         <form action="/signup" class="mini-form" method="get">
             <input class="button btn-success" type="submit" value="Sign Up"/>
