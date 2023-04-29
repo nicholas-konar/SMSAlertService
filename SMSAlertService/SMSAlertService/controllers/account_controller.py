@@ -2,6 +2,7 @@ import markupsafe
 
 from flask import Blueprint, request, redirect, render_template, session, url_for, jsonify
 from SMSAlertService import app, mongo, alert_engine, util, config, twilio
+from SMSAlertService.config import SUCCESS, FAIL
 from SMSAlertService.dao import DAO
 
 account_bp = Blueprint('account_controller', __name__)
@@ -12,8 +13,10 @@ def add_keyword():
     if username := session.get('username'):
         user = DAO.get_user_by_username(username)
         keyword = markupsafe.escape(request.json['keyword'].strip())
-        result = DAO.add_keyword(user, keyword)
-        return jsonify({'Success': result})
+        success = DAO.add_keyword(user, keyword)
+        return jsonify({'Status': SUCCESS}) if success else jsonify({'Status': FAIL})
+    else:
+        return jsonify({'Status': FAIL})
 
 
 @account_bp.route("/delete-keyword", methods=["POST"])
@@ -21,16 +24,20 @@ def delete_keyword():
     if username := session.get('username'):
         user = DAO.get_user_by_username(username)
         keyword = markupsafe.escape(request.json['DeleteKeyword'])
-        result = DAO.delete_keyword(user, keyword)
-        return jsonify({'Success': result})
+        success = DAO.delete_keyword(user, keyword)
+        return jsonify({'Status': SUCCESS}) if success else jsonify({'Status': FAIL})
+    else:
+        return jsonify({'Status': FAIL})
 
 
 @account_bp.route("/delete-all-keywords", methods=["POST"])
 def delete_all_keywords():
     if username := session.get('username'):
         user = DAO.get_user_by_username(username)
-        result = DAO.delete_all_keywords(user)
-        return jsonify({'Success': result})
+        success = DAO.delete_all_keywords(user)
+        return jsonify({'Status': SUCCESS}) if success else jsonify({'Status': FAIL})
+    else:
+        return jsonify({'Status': FAIL})
 
 
 @account_bp.route("/reset-password", methods=["GET", "POST"])
@@ -60,7 +67,6 @@ def promo_code():
     return redirect(url_for("profile"))
 
 
-# -------------------------------- PROFILE COMMANDS --------------------------------
 @account_bp.route("/update-username", methods=["GET", "POST"])
 def update_username():
     if "username" not in session:

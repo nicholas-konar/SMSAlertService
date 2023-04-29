@@ -144,8 +144,14 @@ document.addEventListener("DOMContentLoaded", async function() {
         .then(data => {
             if (data.Status == "AUTHENTICATED") {
                 console.log('authenticated user!');
+                if (data.FlowType == 'resetPassword') {
+                    // todo: reset password modal, redirect to profile
+                } else if (data.FlowType == 'createAccount') {
+                    // todo: create account, redirect to profile
+                }
             } else {
                 console.log('user authentication failed');
+                // todo: clear input field
                 validateStatusMessage = document.getElementById("validateStatusMessage");
                 validateStatusMessage.innerHTML = data.Message;
                 validateStatusMessage.classList.remove("info");

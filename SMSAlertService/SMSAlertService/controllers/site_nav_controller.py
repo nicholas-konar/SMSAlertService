@@ -72,7 +72,7 @@ def profile():
         user = DAO.get_user_by_username(username)
         keywords = user.get_keywords_json()
         app.logger.info(f'User {username} viewed their profile.')
-        return render_template('profile.html', message_count=user.units_left,
+        return render_template('account.html', message_count=user.units_left,
                                keywords=keywords, username=username, current_phone=user.phonenumber)
     else:
         return redirect(url_for("site_nav_controller.login"))

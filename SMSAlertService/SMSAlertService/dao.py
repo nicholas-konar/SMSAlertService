@@ -67,6 +67,8 @@ class DAO:
             success = mongo.add_keyword(user.username, keyword).modified_count
             app.logger.info(info) if success else app.logger.error(error)
             return success
+        else:
+            return False
 
     @staticmethod
     def delete_keyword(user, keyword):
