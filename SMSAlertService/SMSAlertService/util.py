@@ -1,7 +1,9 @@
 import secrets
 import string
 import re
+import pytz
 
+from datetime import datetime
 from SMSAlertService import app, mongo
 from SMSAlertService.user import User
 
@@ -12,6 +14,12 @@ def generate_users(user_data_set):
         user = User(user_data)
         users.append(user)
     return users
+
+
+def timestamp():
+    est = pytz.timezone('US/Eastern')
+    now = datetime.now(est)
+    return now.strftime('%m-%d-%Y %H:%M')
 
 
 def is_valid_phone_number(ph):

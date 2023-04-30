@@ -6,19 +6,20 @@ class DAO:
 
     @staticmethod
     def set_cookie(user, cookie):
-        info = f'Set cookie to user {user.username}.'
+        info = f'Set cookie for user {user.username}.'
         error = f'Failed to set cookie for user {user.username}.'
         success = mongo.set_cookie(user.username, cookie).modified_count
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
-    def create_user(username, password, phonenumber):
+    def create_user(username, password, phonenumber, verified):
         info = f'Created new account for user {username}.'
         error = f'Failed to create new account for user {username}.'
-        acknowledged = mongo.create_user(username, password, phonenumber).acknowledged
+        timestamp = util.timestamp()
+        acknowledged = mongo.create_user(username, password, phonenumber, verified, timestamp).acknowledged
         app.logger.info(info) if acknowledged else app.logger.error(error)
-        return DAO.get_user_by_username(username)
+        return acknowledged
 
     @staticmethod
     def verify_user(user):

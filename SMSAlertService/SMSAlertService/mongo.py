@@ -27,26 +27,27 @@ app_records = db.app_data
 promo_code_records = db.promo_code_data
 
 
-def create_user(username, password, phonenumber):
-    timestamp = arrow.now().format('MM-DD-YYYY HH:mm:ss')
+def create_user(username, password, phonenumber, verified, timestamp):
     hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     user_data = {
+        'Cookie': 0,
         'SignUpDate': timestamp,
         'Password': hashed_pw,
         'Username': username,
         'PhoneNumber': phonenumber,
-        'Verified': False,
-        'Blocked': False,
+        'Subreddits': [],
+        'Keywords': [],
         'TotalRevenue': 0,
         'Units': 0,
         'UnitsSent': 0,
         'UnitsPurchased': 0,
         'OTP': None,
         'OTPsSent': 0,
+        'Verified': verified,
+        'Blocked': False,
         'TwilioRecords': [],
         'SalesRecords': [],
         'PromoCodeRecords': [],
-        'Keywords': []
     }
     return user_records.insert_one(user_data)
 

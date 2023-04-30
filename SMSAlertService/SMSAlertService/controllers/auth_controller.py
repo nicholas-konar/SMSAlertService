@@ -1,3 +1,5 @@
+import secrets
+
 import markupsafe
 
 from flask import Blueprint
@@ -98,10 +100,15 @@ def validate():
     if authenticated:
         if not user.verified:
             DAO.verify_user(user)
-        session['authenticated'] = True
         flow_type = request.json['FlowType']
+        cookie = secrets.token_hex(16)
+        session["username"] = user.username
+        session["phonenumber"] = user.phonenumber
+        resp = jsonify({'Status': AUTHENTICATED, 'FlowType': flow_type})
+        resp.set_cookie('cookie', cookie, secure=True, httponly=True)
+        DAO.set_cookie(user, cookie)
         app.logger.info(f'User {user.username} has been authenticated.')
-        return jsonify({'Status': AUTHENTICATED, 'FlowType': flow_type})
+        return resp
     else:
         session['otp_attempts'] += 1
         app.logger.error(f'User {user.username} failed authentication {session.get("otp_attempts")} time(s).')

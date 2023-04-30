@@ -16,13 +16,12 @@ account_bp = Blueprint('account_controller', __name__)
 @account_bp.route("/account/create", methods=["POST"])
 @protected
 def create():
-    # create account
-    # username, ph, pw
     username = markupsafe.escape(request.json['Username'])
     ph = markupsafe.escape(request.json['Phonenumber'])
     pw = markupsafe.escape(request.json['Password'])
     verified = markupsafe.escape(request.json['Verified'])
-    return None
+    acknowledged = DAO.create_user(username=username, phonenumber=ph, password=pw, verified=verified)
+    return jsonify({'Status': SUCCESS}) if acknowledged else jsonify({'Status': FAIL, 'Message': FAIL_MSG})
 
 
 @account_bp.route("/login", methods=["POST"])
@@ -43,7 +42,6 @@ def login():
     elif checkpw(pw_input.encode('utf-8'), user.password):
         app.logger.debug(f'Setting cookie...')
         cookie = secrets.token_hex(16)
-        session['cookie'] = cookie
         session["username"] = user.username
         session["phonenumber"] = user.phonenumber
         resp = jsonify({'Status': SUCCESS})
