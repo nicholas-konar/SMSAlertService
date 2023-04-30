@@ -95,4 +95,21 @@ class DAO:
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
+    @staticmethod
+    def username_taken(username):
+        return mongo.username_taken(username)
+
+    @staticmethod
+    def update_username(old, new):
+        info = f'User {old} changed their username to {new}.'
+        error = f'Failed to update username {old}. Requested: {new}.'
+        success = mongo.update_username(old, new).modified_count
+        app.logger.info(info) if success else app.logger.error(error)
+        return success
+
+    @staticmethod
+    def get_blacklist(user):
+        return mongo.get_blacklist()
+
+
 

@@ -90,8 +90,7 @@ def process_transaction(username, units_purchased, amount):
         }
     }
 
-    user_records.update_one(query, new_value)
-    app.logger.info(f'Purchase completed by {username}')
+    return user_records.update_one(query, new_value)
 
 
 def redeem(username, code):
@@ -165,8 +164,7 @@ def create_promo_codes(reward, quantity, distributor, prefix):
             'ActivationDate': timestamp,
             'DeactivationDate': ""
         }
-        promo_code_records.insert_one(promo_code_data)
-        app.logger.info(f"Created Promo Code '{code}' ({i + 1} of {quantity})")
+        return promo_code_records.insert_one(promo_code_data)
 
 
 def get_code(promo_code):
@@ -226,8 +224,7 @@ def save_alert_data(alert):
         }
     }
 
-    user_records.update_one(query, new_value)
-    app.logger.info(f'Twilio data saved for user {alert.owner.username}')
+    return user_records.update_one(query, new_value)
 
 
 def reset_password(username, pw):
@@ -256,15 +253,13 @@ def save_otp_data(user, otp):
             }
         }
     }
-    user_records.update_one(query, value)
-    app.logger.info(f'OTP data saved successfully.')
+    return user_records.update_one(query, value)
 
 
 def add_to_blacklist(phonenumber):
     query = {"Document": "BLACKLIST"}
     new_value = {"$push": {"Blacklist": phonenumber}}
-    app_records.update_one(query, new_value)
-    app.logger.info('Added ' + phonenumber + 'to blacklist')
+    return app_records.update_one(query, new_value)
 
 
 def get_blacklist():
@@ -272,26 +267,10 @@ def get_blacklist():
     return document['Blacklist']
 
 
-def blacklisted(user):
-    blacklist = get_blacklist()
-    app.logger.info('Checking blacklist for ' + user['PhoneNumber'])
-    for number in blacklist:
-        if user['PhoneNumber'] == number:
-            app.logger.info(f'Blacklisted number detected for user {user["Username"]}: {user["PhoneNumber"]}')
-            return True
-    return False
-
-
 def block(username):
     query = {"Username": username}
     value = {"$set": {"Blocked": True}}
     return user_records.update_one(query, value)
-
-
-
-def get_keywords(username):
-    user = user_records.find_one({"Username": username})
-    return user['Keywords']
 
 
 def add_keyword(username, keyword):
@@ -312,11 +291,6 @@ def delete_all_keywords(username):
     return user_records.update_one(query, new_value)
 
 
-def get_phonenumber(username):
-    user = get_user_by_username(username)
-    return user['PhoneNumber']
-
-
 def update_phonenumber(username, phonenumber):
     query = {"Username": username}
     new_value = {"$set": {"PhoneNumber": phonenumber}}
@@ -327,8 +301,7 @@ def update_phonenumber(username, phonenumber):
 def update_username(old_username, new_username):
     query = {"Username": old_username}
     new_value = {"$set": {"Username": new_username}}
-    user_records.update_one(query, new_value)
-    app.logger.info('User ' + old_username + ' changed username to ' + new_username)
+    return user_records.update_one(query, new_value)
 
 
 def phonenumber_taken(phonenumber):
@@ -339,12 +312,10 @@ def username_taken(username):
     return user_records.find_one({"Username": username})
 
 
-# -------------------------------- REDDIT POST MANAGEMENT --------------------------------
 def get_post_data():
     document = app_records.find_one({"Document": "REDDIT"})
     app.logger.debug(f'POST DATA: {document}')
-    data = document["SubReddits"]
-    return data
+    return document["SubReddits"]
 
 
 def save_post_id(post):
@@ -353,8 +324,7 @@ def save_post_id(post):
         f"SubReddits.${post.subreddit.display_name}": {
                 "LastPostId": post.id
             }}}
-    app_records.update_one(query, value, upsert=True)
-    app.logger.info(f'Saved post id {post.id} from r/{post.subreddit.display_name}')
+    return app_records.update_one(query, value, upsert=True)
 
 # def add_field_to_all_users():
 #     app.logger.info(f'adding field to all users')

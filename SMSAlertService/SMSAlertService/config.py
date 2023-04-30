@@ -13,6 +13,7 @@ FAIL_MSG = 'There was a problem sending your code. Please contact support@smsale
 MAX_ATTEMPS_MSG = 'Max attempts limit reached. Please contact support@smsalertservice.com for assistance.'
 MAX_RESENDS_MSG = 'Max resends limit reached. Please contact support@smsalertservice.com for assistance.'
 
+USERNAME_TAKEN_MSG = "This username is unavailable."
 INVALID_LOGIN_MSG = "Incorrect username or password."
 RESEND_MSG = 'Another code is on the way.'
 RETRY_MSG = "Incorrect code. Please try again."
