@@ -10,6 +10,11 @@ admin_bp = Blueprint('admin_controller', __name__)
 
 @admin_bp.route("/admin")
 def admin():
+    if user.username == "ADMIN":
+        session['ADMIN'] = True
+        app.logger.info(f'User {user.username} logged in.')
+        return redirect(url_for('admin_controller.admin'))
+    # todo: do something with the code above
     if session["ADMIN"]:
         username = session["username"]
         users = mongo.get_user_data()

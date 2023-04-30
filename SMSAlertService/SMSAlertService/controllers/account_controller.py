@@ -1,14 +1,64 @@
+import secrets
+
 import markupsafe
 
+from bcrypt import checkpw
 from flask import Blueprint, request, redirect, render_template, session, url_for, jsonify
 from SMSAlertService import app, mongo, alert_engine, util, config, twilio
-from SMSAlertService.config import SUCCESS, FAIL, FAIL_MSG, PW_RESET_SUCCESS
+from SMSAlertService.config import SUCCESS, FAIL, FAIL_MSG, PW_RESET_SUCCESS, INVALID_LOGIN_MSG, MAX_LOGIN_ATTEMPTS, \
+    BLOCKED, BLOCKED_MSG
 from SMSAlertService.dao import DAO
+from SMSAlertService.decorators import protected
 
 account_bp = Blueprint('account_controller', __name__)
 
 
+@account_bp.route("/account/create", methods=["POST"])
+@protected
+def create():
+    # create account
+    # username, ph, pw
+    username = markupsafe.escape(request.json['Username'])
+    ph = markupsafe.escape(request.json['Phonenumber'])
+    pw = markupsafe.escape(request.json['Password'])
+    verified = markupsafe.escape(request.json['Verified'])
+    return None
+
+
+@account_bp.route("/login", methods=["POST"])
+def login():
+    username = markupsafe.escape(request.json['Username'].upper().strip())
+    pw_input = markupsafe.escape(request.json['Password'])
+    user = DAO.get_user_by_username(username)
+    app.logger.debug(f'checking user stuff during login')
+    if user is None:
+        app.logger.error(f'Failed log in attempt: User {username} does not exist.')
+        return jsonify({'Status': FAIL, 'Message': INVALID_LOGIN_MSG})
+
+    elif session['login_attempts'] >= MAX_LOGIN_ATTEMPTS or user.blocked:
+        app.logger.debug(f'User {user.username} has exceeded max log in attempts.')
+        DAO.block_user(user)
+        return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
+
+    elif checkpw(pw_input.encode('utf-8'), user.password):
+        app.logger.debug(f'Setting cookie...')
+        cookie = secrets.token_hex(16)
+        session['cookie'] = cookie
+        session["username"] = user.username
+        session["phonenumber"] = user.phonenumber
+        resp = jsonify({'Status': SUCCESS})
+        resp.set_cookie('cookie', cookie, secure=True, httponly=True)
+        DAO.set_cookie(user, cookie)
+        return resp
+
+    else:
+        session['login_attempts'] += 1
+        app.logger.error(f'Incorrect password entered by {user.username}. Login attempts = {session.get("login_attempts")}')
+        return jsonify({'Status': FAIL, 'Message': INVALID_LOGIN_MSG})
+
+
 @account_bp.route("/add-keyword", methods=["POST"])
+@protected
 def add_keyword():
     if username := session.get('username'):
         user = DAO.get_user_by_username(username)
@@ -20,6 +70,7 @@ def add_keyword():
 
 
 @account_bp.route("/delete-keyword", methods=["POST"])
+@protected
 def delete_keyword():
     if username := session.get('username'):
         user = DAO.get_user_by_username(username)
@@ -31,16 +82,16 @@ def delete_keyword():
 
 
 @account_bp.route("/delete-all-keywords", methods=["POST"])
+@protected
 def delete_all_keywords():
-    if username := session.get('username'):
-        user = DAO.get_user_by_username(username)
-        success = DAO.delete_all_keywords(user)
-        return jsonify({'Status': SUCCESS}) if success else jsonify({'Status': FAIL})
-    else:
-        return jsonify({'Status': FAIL})
+    username = session.get('username')
+    user = DAO.get_user_by_username(username)
+    success = DAO.delete_all_keywords(user)
+    return jsonify({'Status': SUCCESS}) if success else jsonify({'Status': FAIL})
 
 
 @account_bp.route("/promo-code", methods=["POST"])
+@protected
 def promo_code():
     username = session['username']
     code = request.form.get('promo-code')

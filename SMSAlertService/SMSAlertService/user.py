@@ -3,6 +3,7 @@ import json
 
 class User:
     def __init__(self, user_data):
+        self.cookie = user_data['Cookie']
         self.username = user_data['Username']
         self.password = user_data['Password']
         self.phonenumber = user_data['PhoneNumber']

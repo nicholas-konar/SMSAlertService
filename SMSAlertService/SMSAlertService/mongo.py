@@ -51,11 +51,10 @@ def create_user(username, password, phonenumber):
     return user_records.insert_one(user_data)
 
 
-def drop_user(username):
-    app.logger.debug(f'preparing to drop user {username}')
+def set_cookie(username, cookie):
     query = {"Username": username}
-    user_records.delete_one(query)
-    app.logger.debug(f'Dropped user {username}')
+    new_value = {"$set": {"Cookie": cookie}}
+    return user_records.update_one(query, new_value)
 
 
 def verify(username):

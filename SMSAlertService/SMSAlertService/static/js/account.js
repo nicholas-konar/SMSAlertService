@@ -49,24 +49,24 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     function addKeyword() {
-    const newKeyword = document.getElementById("newKeyword").value;
-    fetch("/add-keyword", {
-        method: "POST",
-        body: JSON.stringify({keyword: newKeyword}),
-        headers: {"Content-Type": "application/json"}
-    })
-    .then(response => response.json())
-    .then(data => {
-        var inputField = document.getElementById("newKeyword");
-        inputField.value = "";
-        if (data.Status == "SUCCESS") {
-            tableRow = makeTableRow(newKeyword);
-            table.insertBefore(tableRow, table.firstChild);
-        } else {
-            // Do nothing
-        }
-    })
-    .catch(error => console.error(error));
+        const newKeyword = document.getElementById("newKeyword").value;
+        fetch("/add-keyword", {
+            method: "POST",
+            body: JSON.stringify({keyword: newKeyword}),
+            headers: {"Content-Type": "application/json"}
+        })
+        .then(response => response.json())
+        .then(data => {
+            var inputField = document.getElementById("newKeyword");
+            inputField.value = "";
+            if (data.Status == "SUCCESS") {
+                tableRow = makeTableRow(newKeyword);
+                table.insertBefore(tableRow, table.firstChild);
+            } else {
+                // Do nothing
+            }
+        })
+        .catch(error => console.error(error));
     }
 
     // Delete Keyword
