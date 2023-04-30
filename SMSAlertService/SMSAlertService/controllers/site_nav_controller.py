@@ -26,19 +26,6 @@ def logout():
     return redirect(url_for("site_nav_controller.login"))
 
 
-@site_nav_bp.route("/account", methods=["GET"])
-@protected
-def account():
-    if username := session.get('username'):
-        user = DAO.get_user_by_username(username)
-        keywords = user.get_keywords_json()
-        app.logger.info(f'User {username} viewed their account.')
-        return render_template('account.html', message_count=user.units_left,
-                               keywords=keywords, username=username, current_phone=user.phonenumber)
-    else:
-        return redirect(url_for("site_nav_controller.login"))
-
-
 @site_nav_bp.route("/signup", methods=["GET", "POST"])
 def signup():
     if "username" in session:
@@ -72,13 +59,6 @@ def signup():
             session["password"] = password
             app.logger.info(f'User {username} submitted a sign up form. ')
             return redirect(url_for('site_nav_controller.account_confirmation'))
-
-
-@site_nav_bp.route("/account/recovery", methods=["GET"])
-def account_recovery():
-    session['otp_resends'] = 0
-    session['otp_attempts'] = 0
-    return render_template('account-recovery.html')
 
 
 @site_nav_bp.route("/support", methods=["GET"])

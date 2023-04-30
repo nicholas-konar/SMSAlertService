@@ -13,6 +13,26 @@ from SMSAlertService.decorators import protected
 account_bp = Blueprint('account_controller', __name__)
 
 
+@account_bp.route("/account", methods=["GET"])
+@protected
+def account():
+    if username := session.get('username'):
+        user = DAO.get_user_by_username(username)
+        keywords = user.get_keywords_json()
+        app.logger.info(f'User {username} viewed their account.')
+        return render_template('account.html', message_count=user.units_left,
+                               keywords=keywords, username=username, current_phone=user.phonenumber)
+    else:
+        return redirect(url_for("site_nav_controller.login"))
+
+
+@account_bp.route("/account/recovery", methods=["GET"])
+def account_recovery():
+    session['otp_resends'] = 0
+    session['otp_attempts'] = 0
+    return render_template('account-recovery.html')
+
+
 @account_bp.route("/account/create", methods=["POST"])
 @protected
 def create():
@@ -25,7 +45,7 @@ def create():
         if acknowledged else jsonify({'Status': FAIL, 'Message': FAIL_MSG})
 
 
-@account_bp.route("/login", methods=["POST"])
+@account_bp.route("/account/login", methods=["POST"])
 def login():
     username = markupsafe.escape(request.json['Username'].upper().strip())
     pw_input = markupsafe.escape(request.json['Password'])
@@ -56,7 +76,7 @@ def login():
         return jsonify({'Status': FAIL, 'Message': INVALID_LOGIN_MSG})
 
 
-@account_bp.route("/add-keyword", methods=["POST"])
+@account_bp.route("/account/keyword/add", methods=["POST"])
 @protected
 def add_keyword():
     username = session.get('username')
@@ -67,7 +87,7 @@ def add_keyword():
         if success else jsonify({'Status': FAIL})
 
 
-@account_bp.route("/delete-keyword", methods=["POST"])
+@account_bp.route("/account/keyword/delete", methods=["POST"])
 @protected
 def delete_keyword():
     username = session.get('username')
@@ -78,7 +98,7 @@ def delete_keyword():
         if success else jsonify({'Status': FAIL})
 
 
-@account_bp.route("/delete-all-keywords", methods=["POST"])
+@account_bp.route("/account/keyword/delete-all", methods=["POST"])
 @protected
 def delete_all_keywords():
     username = session.get('username')
@@ -88,7 +108,7 @@ def delete_all_keywords():
         if success else jsonify({'Status': FAIL})
 
 
-@account_bp.route("/reset-password", methods=["POST"])
+@account_bp.route("/account/update/password", methods=["POST"])
 @protected
 def reset_password():
     username = session['username']
@@ -99,7 +119,7 @@ def reset_password():
         if success else jsonify({'Status': FAIL, 'Message': FAIL_MSG})
 
 
-@account_bp.route("account/update/username", methods=["POST"])
+@account_bp.route("/account/update/username", methods=["POST"])
 @protected
 def update_username():
     old = session.get('username')
@@ -110,7 +130,4 @@ def update_username():
     else:
         success = DAO.update_username(old, new)
         session["username"] = new
-        return jsonify({'Status': SUCCESS})
-
-
-
+        return jsonify({'Status': SUCCESS}) if success else jsonify({'Status': FAIL, 'Message': FAIL_MSG})
