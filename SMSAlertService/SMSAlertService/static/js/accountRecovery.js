@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     function resetPassword(newPassword) {
-        fetch("/reset-password", {
+        fetch("/account/update/password", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({NewPassword: newPassword})
@@ -12,12 +12,10 @@ document.addEventListener("DOMContentLoaded", function() {
             var resetPasswordStatusMessage = document.getElementById("resetPasswordStatusMessage");
             var resetPasswordForm = document.getElementById("resetPasswordForm");
             if (data.Status == "SUCCESS") {
-                console.log('password reset successful')
                 resetPasswordStatusMessage.innerHTML = data.Message;
                 resetPasswordForm.style.display = "none";
                 backToLoginButton.style.display = "block";
             } else {
-                console.log('password reset epic fail')
                 resetPasswordStatusMessage.innerHTML = data.Message;
                 resetPasswordStatusMessage.classList.remove("info");
                 resetPasswordStatusMessage.classList.add("alert");
