@@ -9,6 +9,7 @@ SUCCESS = 'SUCCESS'
 BLOCKED_MSG = 'Something went wrong. Please contact support@smsalertservice.com for assistance.'
 ERROR_MSG = 'There was a problem sending your code. Please contact support@smsalertservice.com for assistance.'
 FAIL_MSG = 'There was a problem sending your code. Please contact support@smsalertservice.com for assistance.'
+PW_RESET_SUCCESS = 'Your password has been reset.'
 
 MAX_ATTEMPS_MSG = 'Max attempts limit reached. Please contact support@smsalertservice.com for assistance.'
 MAX_RESENDS_MSG = 'Max resends limit reached. Please contact support@smsalertservice.com for assistance.'

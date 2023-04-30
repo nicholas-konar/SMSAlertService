@@ -43,8 +43,8 @@ def send():
             session['username'] = user.username
             session['phonenumber'] = user.phonenumber
             session['otp_resends'] += 1
-            app.logger.debug(f'Resend count = {session["otp_resends"]}')
             session['otp'] = otp
+            app.logger.debug(f'FlowType = {flow_type}')
             return jsonify({'Status': SUCCESS, 'FlowType': flow_type})
 
         except TwilioRestException:
@@ -96,11 +96,12 @@ def validate():
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
 
     if authenticated:
-        session['authenticated'] = True
-        app.logger.info(f'User {user.username} has been authenticated.')
         if not user.verified:
             DAO.verify_user(user)
-        return jsonify({'Status': AUTHENTICATED})
+        session['authenticated'] = True
+        flow_type = request.json['FlowType']
+        app.logger.info(f'User {user.username} has been authenticated.')
+        return jsonify({'Status': AUTHENTICATED, 'FlowType': flow_type})
     else:
         session['otp_attempts'] += 1
         app.logger.error(f'User {user.username} failed authentication {session.get("otp_attempts")} time(s).')

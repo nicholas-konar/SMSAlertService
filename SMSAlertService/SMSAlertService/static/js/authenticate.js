@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async function() {
 
-    // Modal Window
+    // Modal Container
     var overlay = document.createElement("div");
     overlay.classList.add("overlay");
 
@@ -13,6 +13,15 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 
     // Open Challenge Modal
+    var challengeModal = document.getElementById("challengeModal");
+    function openChallengeModal(flowType) {
+      var sendCodeButton = document.getElementById("sendCodeButton");
+      sendCodeButton.setAttribute('flowType', flowType);
+      challengeModal.style.display = "block";
+      validateModal.style.display = "none";
+      document.body.appendChild(overlay);
+    }
+
     function attachChallengeModalListener(buttonId, flowType) {
       var button = document.getElementById(buttonId);
       if (button) {
@@ -24,15 +33,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     attachChallengeModalListener("createAccountButton", "createAccount");
     attachChallengeModalListener("resetPasswordButton", "resetPassword");
 
-    var challengeModal = document.getElementById("challengeModal");
-    function openChallengeModal(flowType) {
-      var sendCodeButton = document.getElementById("sendCodeButton");
-      sendCodeButton.setAttribute('flowType', flowType);
-      challengeModal.style.display = "block";
-      validateModal.style.display = "none";
-      document.body.appendChild(overlay);
-    }
-
     // Close Challenge Modal
     var closeChallengeModalBtn = document.getElementById("closeChallengeButton");
     closeChallengeModalBtn.addEventListener("click", function() {
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         document.body.removeChild(overlay);
     });
 
-    // Open Validate Modal (after OTP sent successfully)
+    // Open Validate Modal
     var validateModal = document.getElementById("validateModal");
     function openValidateModal(flowType) {
         var validateButton = document.getElementById("validateButton");
@@ -94,7 +94,6 @@ document.addEventListener("DOMContentLoaded", async function() {
         })
     };
 
-
     // Resend Code Button
     var resendCodeButton = document.getElementById("resendCodeButton");
     resendCodeButton.addEventListener("click", function() {
@@ -109,13 +108,12 @@ document.addEventListener("DOMContentLoaded", async function() {
         })
         .then(response => response.json())
         .then(data => {
+            validateStatusMessage = document.getElementById("validateStatusMessage");
             if (data.Status == "SUCCESS") {
-                validateStatusMessage = document.getElementById("validateStatusMessage");
                 validateStatusMessage.innerHTML = data.Message;
                 validateStatusMessage.classList.remove("alert");
                 validateStatusMessage.classList.add("info");
             } else {
-                validateStatusMessage = document.getElementById("validateStatusMessage");
                 validateStatusMessage.innerHTML = data.Message;
                 validateStatusMessage.classList.remove("info");
                 validateStatusMessage.classList.add("alert");
@@ -144,14 +142,15 @@ document.addEventListener("DOMContentLoaded", async function() {
         .then(data => {
             if (data.Status == "AUTHENTICATED") {
                 console.log('authenticated user!');
+                console.log(`FlowType = ${data.FlowType}`)
                 if (data.FlowType == 'resetPassword') {
-                    // todo: reset password modal, redirect to profile
+                    window.location.href = "/account/recovery";
                 } else if (data.FlowType == 'createAccount') {
-                    // todo: create account, redirect to profile
                 }
             } else {
                 console.log('user authentication failed');
-                // todo: clear input field
+                var verificationCodeField = document.getElementById("verificationCode");
+                verificationCodeField.value = "";
                 validateStatusMessage = document.getElementById("validateStatusMessage");
                 validateStatusMessage.innerHTML = data.Message;
                 validateStatusMessage.classList.remove("info");
@@ -159,5 +158,4 @@ document.addEventListener("DOMContentLoaded", async function() {
             }
         })
     }
-
 });

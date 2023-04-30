@@ -234,8 +234,7 @@ def reset_password(username, pw):
     hashed_pw = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
     query = {"Username": username}
     value = {"$set": {"Password": hashed_pw}}
-    user_records.update_one(query, value)
-    app.logger.info(f'New password saved for user {username}')
+    return user_records.update_one(query, value)
 
 
 def save_otp_data(user, otp):
