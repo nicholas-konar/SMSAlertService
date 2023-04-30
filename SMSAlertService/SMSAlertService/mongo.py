@@ -29,12 +29,11 @@ app_records = db.app_data
 promo_code_records = db.promo_code_data
 
 
-def create_user(username, password, phonenumber, verified, timestamp):
-    hashed_pw = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+def create_user(username, pw_hash, phonenumber, verified, timestamp):
     user_data = {
         'Cookie': 0,
         'SignUpDate': timestamp,
-        'Password': hashed_pw,
+        'Password': pw_hash,
         'Username': username,
         'PhoneNumber': phonenumber,
         'Subreddits': [],

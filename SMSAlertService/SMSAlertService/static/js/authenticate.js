@@ -30,8 +30,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         });
       }
     }
-    attachChallengeModalListener("createAccountButton", "createAccount");
-    attachChallengeModalListener("resetPasswordButton", "resetPassword");
+    attachChallengeModalListener("createAccountButton", "create");
+    attachChallengeModalListener("resetPasswordButton", "recover");
 
     // Close Challenge Modal
     var closeChallengeModalBtn = document.getElementById("closeChallengeButton");
@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     function sendCode(flowType) {
         var ph = document.getElementById("phoneNumber").value;
-        fetch("/send/otp", {
+        fetch(`account/${flowType}/send/otp`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     });
 
     function resendCode() {
-        fetch("/resend/otp", {
+        fetch(`account/${flowType}/resend/otp`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: ""
@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     function validateCode(flowType) {
         var verificationCode = document.getElementById('verificationCode').value;
-        fetch("/validate/otp", {
+        fetch(`account/${flowType}/validate/otp`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
@@ -143,9 +143,9 @@ document.addEventListener("DOMContentLoaded", async function() {
             if (data.Status == "AUTHENTICATED") {
                 console.log('authenticated user!');
                 console.log(`FlowType = ${data.FlowType}`)
-                if (data.FlowType == 'resetPassword') {
-                    window.location.href = "/account/recovery";
-                } else if (data.FlowType == 'createAccount') {
+                if (data.FlowType == 'recover') {
+                    window.location.href = "/account/recover";
+                } else if (data.FlowType == 'create') {
                 }
             } else {
                 console.log('user authentication failed');

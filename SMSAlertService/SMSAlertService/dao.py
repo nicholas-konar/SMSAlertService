@@ -1,3 +1,5 @@
+import bcrypt
+
 from SMSAlertService import util, mongo, app
 from SMSAlertService.user import User
 
@@ -17,7 +19,8 @@ class DAO:
         info = f'Created new account for user {username}.'
         error = f'Failed to create new account for user {username}.'
         timestamp = util.timestamp()
-        acknowledged = mongo.create_user(username, password, phonenumber, verified, timestamp).acknowledged
+        pw_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        acknowledged = mongo.create_user(username, pw_hash, phonenumber, verified, timestamp).acknowledged
         app.logger.info(info) if acknowledged else app.logger.error(error)
         return acknowledged
 
@@ -113,7 +116,7 @@ class DAO:
         return success
 
     @staticmethod
-    def get_blacklist(user):
+    def get_blacklist():
         return mongo.get_blacklist()
 
 

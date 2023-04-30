@@ -21,10 +21,24 @@ def challenge():
     return render_template('modal/authenticate.html')
 
 
-@auth_bp.route("/send/otp", methods=["POST"])
-def send():
+@auth_bp.route("/account/create/send/otp", methods=["POST"])
+def send_to_create():
+    return jsonify({'Status': SUCCESS})
+
+
+@auth_bp.route("/account/create/resend/otp", methods=["POST"])
+def resend_to_create():
+    return jsonify({'Status': SUCCESS})
+
+
+@auth_bp.route("/account/create/validate/otp", methods=["POST"])
+def validate_to_create():
+    return jsonify({'Status': SUCCESS})
+
+
+@auth_bp.route("/account/recover/send/otp", methods=["POST"])
+def send_to_recover():
     ph = markupsafe.escape(request.json['PhoneNumber'])
-    flow_type = request.json['FlowType']
 
     if not util.is_valid_phone_number(ph):
         return jsonify({'Status': FAIL, 'Message': INVALID_PH_MSG})
@@ -46,6 +60,7 @@ def send():
             session['phonenumber'] = user.phonenumber
             session['otp_resends'] += 1
             session['otp'] = otp
+            flow_type = request.json['FlowType']
             app.logger.debug(f'FlowType = {flow_type}')
             return jsonify({'Status': SUCCESS, 'FlowType': flow_type})
 
@@ -54,8 +69,8 @@ def send():
             return jsonify({'Success': ERROR, 'Message': ERROR_MSG})
 
 
-@auth_bp.route("/resend/otp", methods=["POST"])
-def resend():
+@auth_bp.route("/account/recover/resend/otp", methods=["POST"])
+def resend_to_recover():
     ph = session.get('phonenumber')
     user = DAO.get_user_by_phonenumber(ph)
     app.logger.info(f'Processing OTP resend request by {user.username}.')
@@ -84,8 +99,8 @@ def resend():
             return jsonify({'Success': ERROR, 'Message': ERROR_MSG})
 
 
-@auth_bp.route("/validate/otp", methods=["POST"])
-def validate():
+@auth_bp.route("/account/recover/validate/otp", methods=["POST"])
+def validate_to_recover():
     expected = session.get('otp')
     actual = markupsafe.escape(request.json['OTP'])
     authenticated = OtpService.authenticate_otp(expected, actual)
@@ -97,7 +112,7 @@ def validate():
         DAO.block_user(user)
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
 
-    if authenticated:
+    if authenticated: # this is not compatible with account creation, the user is created after authentication
         if not user.verified:
             DAO.verify_user(user)
         flow_type = request.json['FlowType']
@@ -106,7 +121,7 @@ def validate():
         session["phonenumber"] = user.phonenumber
         resp = jsonify({'Status': AUTHENTICATED, 'FlowType': flow_type})
         resp.set_cookie('cookie', cookie, secure=True, httponly=True)
-        DAO.save_token(user, cookie)
+        DAO.set_cookie(user, cookie)
         app.logger.info(f'User {user.username} has been authenticated.')
         return resp
     else:
