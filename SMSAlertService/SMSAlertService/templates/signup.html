@@ -7,36 +7,36 @@
 <head>
     <link href="static/style.css" rel="stylesheet">
     <meta content="width=device-width, initial-scale=1" name="viewport">
+    <script src="static/js/signup.js"></script>
+    <script src="static/js/authenticate.js"></script>
 </head>
 
 <div class="container">
     <div class="box-area billboard">
         <h3>Welcome to the SMS Alert Service<br/><i class="fa fa-envelope fa-2x"></i></h3>
     </div>
-    {% if message %}
-    <p class="alert">{{ message }}</p>
-    {% endif %}
     <div class="box-area">
         <h4>Sign Up</h4>
-        <form action="/signup" class="mini-form" method="POST">
+        <p class="statusMessage" id="signUpStatusMessage"><!-- Dynamic JS Status Message --></p>
+        <form class="mini-form">
             <div>
-                <label for="Username">Reddit Username</label>
-                <input class="form-control input" id="Username" name="username" required="required">
-                <label for="InputPhoneNumber">Phone Number</label>
+                <label for="usernameInputField">Reddit Username</label>
+                <input class="form-control input" id="usernameInputField" name="usernameInputField" required="required">
+                <label for="phoneNumberInputField">Phone Number</label>
                 <input class="form-control input"
-                       id="InputPhoneNumber"
-                       name="phonenumber"
+                       id="phoneNumberInputField"
+                       name="phoneNumberInputField"
                        pattern="[0-9]{10}"
                        placeholder="No spaces or dashes"
                        required="required"
                        type="tel">
-                <label for="InputPassword">Password</label>
-                <input class="form-control input" id="InputPassword" name="password" type="password" required="required">
+                <label for="passwordInputField">Password</label>
+                <input class="form-control input" id="passwordInputField" name="passwordInputField" type="password" required="required">
                 <div class="checkbox-container"><br/>
-                    <input class="" id="consentCheckBox" name="consentCheckBox" type="checkbox" required="required">
-                    <label for="consentCheckBox">I agree to receive communications via text from the SMS Alert Service.</label>
+                    <input id="consentCheckBox" name="consentCheckBox" type="checkbox" required="required">
+                    <label for="consentCheckBox">I consent to receiving communications via text from the SMS Alert Service.</label>
                 </div>
-                <button class="button btn-success" type="submit">Create Account</button>
+                <button class="button btn-success" id="createAccountButton" type="submit">Create Account</button>
             </div>
         </form>
     </div>

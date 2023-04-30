@@ -13,15 +13,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 
     // Open Challenge Modal
-    var challengeModal = document.getElementById("challengeModal");
-    function openChallengeModal(flowType) {
-      var sendCodeButton = document.getElementById("sendCodeButton");
-      sendCodeButton.setAttribute('flowType', flowType);
-      challengeModal.style.display = "block";
-      validateModal.style.display = "none";
-      document.body.appendChild(overlay);
-    }
-
     function attachChallengeModalListener(buttonId, flowType) {
       var button = document.getElementById(buttonId);
       if (button) {
@@ -32,6 +23,15 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
     attachChallengeModalListener("createAccountButton", "create");
     attachChallengeModalListener("resetPasswordButton", "recover");
+
+    var challengeModal = document.getElementById("challengeModal");
+    function openChallengeModal(flowType) {
+      var sendCodeButton = document.getElementById("sendCodeButton");
+      sendCodeButton.setAttribute('flowType', flowType);
+      challengeModal.style.display = "block";
+      validateModal.style.display = "none";
+      document.body.appendChild(overlay);
+    }
 
     // Close Challenge Modal
     var closeChallengeModalBtn = document.getElementById("closeChallengeButton");
@@ -74,6 +74,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     function sendCode(flowType) {
         var ph = document.getElementById("phoneNumber").value;
+        console.log(`Send Code button clicked. Fetching account/${flowType}/send/otp`)
         fetch(`account/${flowType}/send/otp`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},

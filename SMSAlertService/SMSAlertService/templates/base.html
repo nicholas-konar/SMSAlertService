@@ -32,13 +32,13 @@
                 <a class="nav-item nav-link" href="/">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-item nav-link" href="/profile">My Profile</a>
+                <a class="nav-item nav-link" href="/account">Account</a>
             </li>
             <li class="nav-item">
                 <a class="nav-item nav-link" href="/support">Support</a>
             </li>
             <li class="nav-item">
-                <a class="nav-item nav-link" href="/logout" methods="post">Log Out</a>
+                <a class="nav-item nav-link" href="account/logout" methods="get">Log Out</a>
             </li>
             {% endif %}
         </ul>
@@ -70,9 +70,15 @@
         <div class="footer-flex-item">
             <a href="/">Home</a>
         </div>
+        {% if username %}
         <div class="footer-flex-item">
-            <a href="/profile">Profile</a>
+            <a href="/account">Account</a>
         </div>
+        {% else %}
+        <div class="footer-flex-item">
+            <a href="/signup">Sign Up</a>
+        </div>
+        {% endif %}
         <div class="footer-flex-item">
             <a href="/instructions">Instructions</a>
         </div>

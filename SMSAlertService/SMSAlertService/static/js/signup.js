@@ -1,22 +1,24 @@
 document.addEventListener("DOMContentLoaded", function() {
 
-    function login(username, password) {
-        fetch("/account/login", {
+    function createAccount(username, pw, ph, verified) {
+        fetch("/account/create", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
                 Username: username,
-                Password: password
+                PhoneNumber: ph,
+                Password: pw,
+                Verified: verified
             })
         })
         .then(response => response.json())
         .then(data => {
             if (data.Status == "SUCCESS"){
-                console.log("login success")
+                console.log("Account created successfully.")
                 window.location.href = "/account";
             } else {
-                console.log("failed login")
-                var loginStatusMessage = document.getElementById("loginStatusMessage");
+                console.log("Account creation failed.")
+                var loginStatusMessage = document.getElementById("signUpStatusMessage");
                 loginStatusMessage.innerHTML = data.Message;
                 loginStatusMessage.classList.add("alert");
             }
@@ -24,10 +26,8 @@ document.addEventListener("DOMContentLoaded", function() {
         .catch(error => console.error(error));
     }
 
-    var loginButton = document.getElementById("loginButton");
-    loginButton.addEventListener('click', function() {
-        username = document.getElementById("usernameInputField").value;
-        password = document.getElementById("passwordInputField").value;
-        login(username, password);
+    var createAccountButton = document.getElementById("createAccountButton");
+    createAccountButton.addEventListener('click', function(event) {
+        event.preventDefault();
     })
 });
