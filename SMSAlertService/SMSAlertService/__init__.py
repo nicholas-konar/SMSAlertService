@@ -3,7 +3,7 @@ from flask import Flask
 app = Flask(__name__)
 
 import os
-
+from SMSAlertService.config import SESSION_TIMEOUT
 from SMSAlertService.controllers.account_controller import account_bp
 from SMSAlertService.controllers.admin_controller import admin_bp
 from SMSAlertService.controllers.alert_controller import alert_bp
@@ -19,6 +19,7 @@ app.register_blueprint(payment_bp)
 app.register_blueprint(site_nav_bp)
 
 app.secret_key = os.environ['SMS_ALERT_SERVICE_SECRET_KEY']
+app.config['SESSION_TIME_OUT'] = SESSION_TIMEOUT
 
 
 if __name__ == "__main__":

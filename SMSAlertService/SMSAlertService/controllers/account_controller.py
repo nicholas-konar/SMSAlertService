@@ -26,25 +26,6 @@ def account():
         return redirect(url_for("site_nav_controller.login"))
 
 
-@account_bp.route("/account/recovery", methods=["GET"])
-def account_recovery():
-    session['otp_resends'] = 0
-    session['otp_attempts'] = 0
-    return render_template('account-recovery.html')
-
-
-@account_bp.route("/account/create", methods=["POST"])
-@protected
-def create():
-    username = markupsafe.escape(request.json['Username'])
-    ph = markupsafe.escape(request.json['Phonenumber'])
-    pw = markupsafe.escape(request.json['Password'])
-    verified = markupsafe.escape(request.json['Verified'])
-    acknowledged = DAO.create_user(username=username, phonenumber=ph, password=pw, verified=verified)
-    return jsonify({'Status': SUCCESS}) \
-        if acknowledged else jsonify({'Status': FAIL, 'Message': FAIL_MSG})
-
-
 @account_bp.route("/account/login", methods=["POST"])
 def login():
     username = markupsafe.escape(request.json['Username'].upper().strip())
@@ -76,36 +57,30 @@ def login():
         return jsonify({'Status': FAIL, 'Message': INVALID_LOGIN_MSG})
 
 
-@account_bp.route("/account/keyword/add", methods=["POST"])
+@account_bp.route("/account/logout", methods=["POST"])
+def logout():
+    session.clear()
+    return redirect(url_for("site_nav_controller.login"))
+
+
+@account_bp.route("/account/create", methods=["POST"])
 @protected
-def add_keyword():
-    username = session.get('username')
-    user = DAO.get_user_by_username(username)
-    keyword = markupsafe.escape(request.json['keyword'].strip())
-    success = DAO.add_keyword(user, keyword)
+def create():
+    username = markupsafe.escape(request.json['Username'])
+    ph = markupsafe.escape(request.json['Phonenumber'])
+    pw = markupsafe.escape(request.json['Password'])
+    verified = markupsafe.escape(request.json['Verified'])
+    acknowledged = DAO.create_user(username=username, phonenumber=ph, password=pw, verified=verified)
     return jsonify({'Status': SUCCESS}) \
-        if success else jsonify({'Status': FAIL})
+        if acknowledged else jsonify({'Status': FAIL, 'Message': FAIL_MSG})
 
 
-@account_bp.route("/account/keyword/delete", methods=["POST"])
+@account_bp.route("/account/update", methods=["GET"])
 @protected
-def delete_keyword():
-    username = session.get('username')
-    user = DAO.get_user_by_username(username)
-    keyword = markupsafe.escape(request.json['DeleteKeyword'])
-    success = DAO.delete_keyword(user, keyword)
-    return jsonify({'Status': SUCCESS}) \
-        if success else jsonify({'Status': FAIL})
-
-
-@account_bp.route("/account/keyword/delete-all", methods=["POST"])
-@protected
-def delete_all_keywords():
-    username = session.get('username')
-    user = DAO.get_user_by_username(username)
-    success = DAO.delete_all_keywords(user)
-    return jsonify({'Status': SUCCESS}) \
-        if success else jsonify({'Status': FAIL})
+def edit_info():
+    username = session["username"]
+    current_phone = session['phonenumber']
+    return render_template('edit-info.html', username=username, current_phone=current_phone)
 
 
 @account_bp.route("/account/update/password", methods=["POST"])
@@ -131,3 +106,44 @@ def update_username():
         success = DAO.update_username(old, new)
         session["username"] = new
         return jsonify({'Status': SUCCESS}) if success else jsonify({'Status': FAIL, 'Message': FAIL_MSG})
+
+
+@account_bp.route("/account/recovery", methods=["GET"])
+def account_recovery():
+    session['otp_resends'] = 0
+    session['otp_attempts'] = 0
+    return render_template('account-recovery.html')
+
+
+@account_bp.route("/account/keyword/add", methods=["POST"])
+@protected
+def add_keyword():
+    username = session.get('username')
+    user = DAO.get_user_by_username(username)
+    keyword = markupsafe.escape(request.json['keyword'].strip())
+    success = DAO.add_keyword(user, keyword)
+    return jsonify({'Status': SUCCESS}) \
+        if success else jsonify({'Status': FAIL})
+
+
+@account_bp.route("/account/keyword/delete", methods=["POST"])
+@protected
+def delete_keyword():
+    username = session.get('username')
+    user = DAO.get_user_by_username(username)
+    keyword = markupsafe.escape(request.json['DeleteKeyword'])
+    success = DAO.delete_keyword(user, keyword)
+    return jsonify({'Status': SUCCESS}) \
+        if success else jsonify({'Status': FAIL})
+
+
+@account_bp.route("/account/keyword/delete/all", methods=["POST"])
+@protected
+def delete_all_keywords():
+    username = session.get('username')
+    user = DAO.get_user_by_username(username)
+    success = DAO.delete_all_keywords(user)
+    return jsonify({'Status': SUCCESS}) \
+        if success else jsonify({'Status': FAIL})
+
+
