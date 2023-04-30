@@ -16,12 +16,12 @@ account_bp = Blueprint('account_controller', __name__)
 @account_bp.route("/account", methods=["GET"])
 @protected
 def account():
-    if username := session.get('username'):
-        user = DAO.get_user_by_username(username)
+    if user_id := session.get('user_id'):
+        user = DAO.get_user(user_id)
         keywords = user.get_keywords_json()
-        app.logger.info(f'User {username} viewed their account.')
+        app.logger.info(f'User {user.username} viewed their account.')
         return render_template('account.html', message_count=user.units_left,
-                               keywords=keywords, username=username, current_phone=user.phonenumber)
+                               keywords=keywords, username=user.username, current_phone=user.phonenumber)
     else:
         return redirect(url_for("site_nav_controller.login"))
 
@@ -31,7 +31,7 @@ def login():
     username = markupsafe.escape(request.json['Username'].upper().strip())
     pw_input = markupsafe.escape(request.json['Password'])
     user = DAO.get_user_by_username(username)
-    app.logger.debug(f'checking user stuff during login')
+
     if user is None:
         app.logger.error(f'Failed log in attempt: User {username} does not exist.')
         return jsonify({'Status': FAIL, 'Message': INVALID_LOGIN_MSG})
@@ -42,13 +42,14 @@ def login():
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
 
     elif checkpw(pw_input.encode('utf-8'), user.password):
-        app.logger.debug(f'Setting cookie...')
-        cookie = secrets.token_hex(16)
-        session["username"] = user.username
-        session["phonenumber"] = user.phonenumber
+        token = secrets.token_hex(16)
+        session['token'] = token
+        session['user_id'] = user.id
+        session['username'] = user.username
+        session['phonenumber'] = user.phonenumber
+        DAO.set_cookie(user, token)
         resp = jsonify({'Status': SUCCESS})
-        resp.set_cookie('cookie', cookie, secure=True, httponly=True)
-        DAO.set_cookie(user, cookie)
+        resp.set_cookie('sms_alert_service_login', value=token, secure=True, httponly=True)
         return resp
 
     else:

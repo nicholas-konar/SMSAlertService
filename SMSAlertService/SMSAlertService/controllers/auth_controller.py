@@ -106,7 +106,7 @@ def validate():
         session["phonenumber"] = user.phonenumber
         resp = jsonify({'Status': AUTHENTICATED, 'FlowType': flow_type})
         resp.set_cookie('cookie', cookie, secure=True, httponly=True)
-        DAO.set_cookie(user, cookie)
+        DAO.save_token(user, cookie)
         app.logger.info(f'User {user.username} has been authenticated.')
         return resp
     else:

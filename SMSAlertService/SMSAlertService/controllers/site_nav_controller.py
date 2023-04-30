@@ -1,6 +1,4 @@
 from flask import Blueprint, render_template, session
-from SMSAlertService import app
-from SMSAlertService.decorators import protected
 
 site_nav_bp = Blueprint('site_nav_controller', __name__)
 

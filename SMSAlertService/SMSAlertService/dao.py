@@ -8,7 +8,7 @@ class DAO:
     def set_cookie(user, cookie):
         info = f'Set cookie for user {user.username}.'
         error = f'Failed to set cookie for user {user.username}.'
-        success = mongo.set_cookie(user.username, cookie).modified_count
+        success = mongo.set_cookie(user.id, cookie).modified_count
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
@@ -53,13 +53,18 @@ class DAO:
         return users
 
     @staticmethod
+    def get_user(user_id):
+        user_data = mongo.get_user_data(user_id)
+        return None if user_data is None else User(user_data)
+
+    @staticmethod
     def get_user_by_username(username):
-        user_data = mongo.get_user_by_username(username)
+        user_data = mongo.get_user_data_by_username(username)
         return None if user_data is None else User(user_data)
 
     @staticmethod
     def get_user_by_phonenumber(ph):
-        user_data = mongo.get_user_by_phonenumber(ph)
+        user_data = mongo.get_user_data_by_phonenumber(ph)
         return None if user_data is None else User(user_data)
 
     @staticmethod

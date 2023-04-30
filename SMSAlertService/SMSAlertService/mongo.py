@@ -6,6 +6,8 @@ import string
 import arrow
 import bcrypt
 import pymongo
+from bson.objectid import ObjectId
+
 
 from SMSAlertService import app, util
 
@@ -52,8 +54,8 @@ def create_user(username, password, phonenumber, verified, timestamp):
     return user_records.insert_one(user_data)
 
 
-def set_cookie(username, cookie):
-    query = {"Username": username}
+def set_cookie(user_id, cookie):
+    query = {"_id": ObjectId(user_id)}
     new_value = {"$set": {"Cookie": cookie}}
     return user_records.update_one(query, new_value)
 
@@ -70,7 +72,7 @@ def process_transaction(username, units_purchased, amount):
     old_unit_count = get_message_count(username)
     updated_unit_count = old_unit_count + int(units_purchased)
 
-    user = get_user_by_username(username)
+    user = get_user_data_by_username(username)
     updated_units_purchased = user['UnitsPurchased'] + int(units_purchased)
     updated_total_revenue = user["TotalRevenue"] + math.floor(float(amount))
 
@@ -93,29 +95,29 @@ def process_transaction(username, units_purchased, amount):
     return user_records.update_one(query, new_value)
 
 
-def redeem(username, code):
-    timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
-    promo_code = code['Code']
-    reward = code['Reward']
-    old_unit_count = get_message_count(username)
-    updated_unit_count = old_unit_count + int(reward)
-
-    query = {"Username": username}
-    new_value = {
-        "$set": {
-            "Units": updated_unit_count,
-        },
-        "$push": {
-            "PromoCodeRecords": {
-                "Date": timestamp,
-                "Code": promo_code,
-                "Reward": reward
-            }
-        }
-    }
-
-    user_records.update_one(query, new_value)
-    app.logger.info(f'{username} redeemed code {code} for {reward} units')
+# def redeem(username, code):
+#     timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
+#     promo_code = code['Code']
+#     reward = code['Reward']
+#     old_unit_count = get_message_count(username)
+#     updated_unit_count = old_unit_count + int(reward)
+#
+#     query = {"Username": username}
+#     new_value = {
+#         "$set": {
+#             "Units": updated_unit_count,
+#         },
+#         "$push": {
+#             "PromoCodeRecords": {
+#                 "Date": timestamp,
+#                 "Code": promo_code,
+#                 "Reward": reward
+#             }
+#         }
+#     }
+#
+#     user_records.update_one(query, new_value)
+#     app.logger.info(f'{username} redeemed code {code} for {reward} units')
 
 
 def process_promo_code(username, promo_code):
@@ -179,30 +181,21 @@ def get_codes():
     return codes
 
 
-def get_user_by_username(username):
+def get_user_data(user_id):
+    return user_records.find_one({"_id": ObjectId(user_id)})
+
+
+def get_user_data_by_username(username):
     return user_records.find_one({"Username": username})
 
 
-def get_user_by_phonenumber(ph):
+def get_user_data_by_phonenumber(ph):
     return user_records.find_one({"PhoneNumber": ph})
-
-
-def get_user_data():
-    user_data = []
-    records = user_records.find()
-    for user in records:
-        user_data.append(user)
-    return user_data
-
-
-def get_message_count(username):
-    user = get_user_by_username(username)
-    return user["Units"]
 
 
 def save_alert_data(alert):
     timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
-    user = get_user_by_username(alert.owner.username)
+    user = get_user_data_by_username(alert.owner.username)
     updated_msg_count = user["Units"] - 1
     updated_sent_count = user["UnitsSent"] + 1
 

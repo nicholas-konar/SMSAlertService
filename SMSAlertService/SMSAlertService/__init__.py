@@ -19,6 +19,8 @@ app.register_blueprint(payment_bp)
 app.register_blueprint(site_nav_bp)
 
 app.secret_key = os.environ['SMS_ALERT_SERVICE_SECRET_KEY']
+
+app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_TIME_OUT'] = SESSION_TIMEOUT
 
 
