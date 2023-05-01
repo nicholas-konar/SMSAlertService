@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", async function() {
 
+    var authenticationEvent = new CustomEvent("authenticationEvent");
+
     // Modal Container
     var overlay = document.createElement("div");
     overlay.classList.add("overlay");
@@ -13,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 
     // Create Account Trigger
-    document.addEventListener("verifiedCredentials", function() {
+    document.addEventListener("verifiedCredentialsEvent", function() {
       openChallengeModal('create');
     });
 
@@ -162,7 +164,8 @@ document.addEventListener("DOMContentLoaded", async function() {
                 if (data.FlowType == 'recover') {
                     window.location.href = "/account/recover";
                 } else if (data.FlowType == 'create') {
-                    // Dispatch auth event
+                    console.log('dispatching auth event!');
+                    document.dispatchEvent(authenticationEvent);
                 }
             } else {
                 console.log('user authentication failed');

@@ -67,7 +67,7 @@ def resend_to_create():
 
 @auth_bp.route("/account/create/validate/otp", methods=["POST"])
 def validate_to_create():
-    flow_type = request.json['FlowType']
+    flow_type = markupsafe.escape(request.json['FlowType'])
     expected = session.get('otp')  # todo: this could allow attackers to spoof session and gain access to any account
     actual = markupsafe.escape(request.json['OTP']) # todo: send expected otp through each request along with FlowType.
     authenticated = OtpService.authenticate_otp(expected, actual)

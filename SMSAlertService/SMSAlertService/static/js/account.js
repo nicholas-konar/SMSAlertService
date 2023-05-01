@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function addKeyword() {
         const newKeyword = document.getElementById("newKeyword").value;
-        fetch("/add-keyword", {
+        fetch("/account/keyword/add", {
             method: "POST",
             body: JSON.stringify({keyword: newKeyword}),
             headers: {"Content-Type": "application/json"}
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var rowId = `row-${keywordToDelete}`;
         var row = document.getElementById(`${rowId}`);
         $.ajax({
-            url: "/delete-keyword",
+            url: "/account/keyword/delete",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({DeleteKeyword: keywordToDelete}),
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function deleteAllKeywords() {
         $.ajax({
-            url: "/delete-all-keywords",
+            url: "/account/keyword/delete-all",
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify({DeleteAllKeywords: true}),

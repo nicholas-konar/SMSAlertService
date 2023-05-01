@@ -17,7 +17,6 @@ account_bp = Blueprint('account_controller', __name__)
 @protected
 def account():
     user_id = session.get('user_id')
-    app.logger.debug(f'USER ID = {user_id}')
     user = DAO.get_user(user_id)
     keywords = user.get_keywords_json()
     return render_template('account.html', message_count=user.units_left,
@@ -37,7 +36,7 @@ def login():
         return jsonify({'Status': FAIL, 'Message': INVALID_LOGIN_MSG})
 
     elif session['login_attempts'] >= MAX_LOGIN_ATTEMPTS or user.blocked:
-        app.logger.debug(f'User {user.username} has exceeded max log in attempts.')
+        app.logger.error(f'User {user.username} has exceeded max log in attempts.')
         DAO.block_user(user)
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
 
@@ -66,22 +65,20 @@ def logout():
 
 
 @account_bp.route("/account/create", methods=["POST"])
-@protected
 def create():
     username = markupsafe.escape(request.json['Username'])
-    ph = markupsafe.escape(request.json['Phonenumber'])
+    ph = markupsafe.escape(request.json['PhoneNumber'])
     pw = markupsafe.escape(request.json['Password'])
     verified = markupsafe.escape(request.json['Verified'])
 
     token = secrets.token_hex(16)
-    insertion = DAO.create_user(username=username,
+    insertion = DAO.create_user(username=username.upper(),
                                 phonenumber=ph,
                                 password=pw,
                                 verified=verified,
                                 cookie=token)
     if insertion.acknowledged:
-        app.logger.debug(f'ACCOUNT CREATED: INSERTED ID = {insertion.inserted_id}')
-        session['user_id'] = insertion.inserted_id
+        session['user_id'] = str(insertion.inserted_id)
         session['token'] = token
         resp = jsonify({'Status': SUCCESS})
         resp.set_cookie('sms_alert_service_login', value=token, secure=True, httponly=True)
@@ -153,7 +150,7 @@ def delete_keyword():
         if success else jsonify({'Status': FAIL})
 
 
-@account_bp.route("/account/keyword/delete/all", methods=["POST"])
+@account_bp.route("/account/keyword/delete-all", methods=["POST"])
 @protected
 def delete_all_keywords():
     username = session.get('username')
