@@ -14,12 +14,12 @@ document.addEventListener("DOMContentLoaded", async function() {
     modalContainer.innerHTML = modalHtml;
 
 
-    // Create Account Trigger
+    // Create Account Form Validation & Credentials Available Event
     document.addEventListener("verifiedCredentialsEvent", function() {
       openChallengeModal('create');
     });
 
-    // Reset Password Trigger
+    // Reset Password Button Click Event
     var resetPasswordButton = document.getElementById("resetPasswordButton");
     if (resetPasswordButton) {
         resetPasswordButton.addEventListener("click", function() {
@@ -30,10 +30,10 @@ document.addEventListener("DOMContentLoaded", async function() {
     // Open Challenge Modal
     var challengeModal = document.getElementById("challengeModal");
     function openChallengeModal(flowType) {
+        // If signing up, prefill ph number in modal
         var phoneNumberInput = document.getElementById("phoneNumberInputField");
-        console.log(`phoneNumberInputField value = ${phoneNumberInput}`)
-        var modalPhoneNumberInputField = document.getElementById("phoneNumber");
         if (phoneNumberInput) {
+            var modalPhoneNumberInputField = document.getElementById("modalPhoneNumberInputField");
             modalPhoneNumberInputField.value = phoneNumberInput.value;
         }
         var sendCodeButton = document.getElementById("sendCodeButton");
@@ -81,11 +81,19 @@ document.addEventListener("DOMContentLoaded", async function() {
     var sendCodeButton = document.getElementById("sendCodeButton");
     sendCodeButton.addEventListener("click", function() {
         var flowType = sendCodeButton.getAttribute('flowType');
-        sendCode(flowType);
+        var ph = document.getElementById("modalPhoneNumberInputField").value;
+        const regex = /^\d{10}$/;
+        if (regex.test(ph)) {
+            sendCode(flowType);
+        } else {
+            challengeStatusMessage = document.getElementById("challengeStatusMessage");
+            challengeStatusMessage.innerHTML = "Please enter a valid 10 digit phone number.";
+            challengeStatusMessage.classList.add("alert");
+        }
     });
 
     function sendCode(flowType) {
-        var ph = document.getElementById("phoneNumber").value;
+        var ph = document.getElementById("modalPhoneNumberInputField").value;
         fetch(`account/${flowType}/send/otp`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -114,7 +122,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     });
 
     function resendCode(flowType) {
-        var ph = document.getElementById("phoneNumber").value;
+        var ph = document.getElementById("modalPhoneNumberInputField").value;
         fetch(`account/${flowType}/resend/otp`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -147,7 +155,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     function validateCode(flowType) {
         var verificationCode = document.getElementById('verificationCode').value;
-        var ph = document.getElementById("phoneNumber").value
+        var ph = document.getElementById("modalPhoneNumberInputField").value
         fetch(`account/${flowType}/validate/otp`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},

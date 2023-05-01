@@ -73,6 +73,7 @@ def validate_to_create():
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
 
     if authenticated:
+        session['authenticated'] = True
         app.logger.info(f'Prospective user has been authenticated.')
         return jsonify({'Status': AUTHENTICATED, 'FlowType': flow_type})
 
@@ -161,9 +162,9 @@ def validate_to_recover():
     if authenticated:
         if not user.verified:
             DAO.verify_user(user)
+        session['authenticated'] = True
         resp = jsonify({'Status': AUTHENTICATED, 'FlowType': flow_type})
         app.logger.info(f'{user.username} has been authenticated.')
-        # todo: generate and respond with auth token for create account/pw reset api
         return resp
 
     else:

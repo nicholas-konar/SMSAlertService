@@ -1,14 +1,13 @@
 import secrets
 
 import markupsafe
-
 from bcrypt import checkpw
-from flask import Blueprint, request, redirect, render_template, session, url_for, jsonify
-from SMSAlertService import app, mongo, alert_engine, util, config, twilio
-from SMSAlertService.config import SUCCESS, FAIL, FAIL_MSG, PW_RESET_SUCCESS, INVALID_LOGIN_MSG, MAX_LOGIN_ATTEMPTS, \
-    BLOCKED, BLOCKED_MSG, USERNAME_TAKEN_MSG
+from flask import Blueprint, request, redirect, render_template, session, url_for, jsonify, abort
+from SMSAlertService import app
 from SMSAlertService.dao import DAO
 from SMSAlertService.decorators import protected
+from SMSAlertService.config import SUCCESS, FAIL, FAIL_MSG, PW_RESET_SUCCESS, INVALID_LOGIN_MSG, MAX_LOGIN_ATTEMPTS, \
+    BLOCKED, BLOCKED_MSG, USERNAME_TAKEN_MSG, CREATE_ACCOUNT_FAIL_MSG
 
 account_bp = Blueprint('account_controller', __name__)
 
@@ -62,28 +61,28 @@ def logout():
 
 @account_bp.route("/account/create", methods=["POST"])
 def create():
-    # todo: pass auth token in request
-    auth_token = markupsafe.escape(request.json['AuthToken'])
-    username = markupsafe.escape(request.json['Username'])
-    ph = markupsafe.escape(request.json['PhoneNumber'])
-    pw = markupsafe.escape(request.json['Password'])
-    verified = markupsafe.escape(request.json['Verified'])
+    if session.get('authenticated'):
+        username = markupsafe.escape(request.json['Username'])
+        ph = markupsafe.escape(request.json['PhoneNumber'])
+        pw = markupsafe.escape(request.json['Password'])
+        verified = markupsafe.escape(request.json['Verified'])
 
-    token = secrets.token_hex(16)
-    insertion = DAO.create_user(username=username.upper(),
-                                phonenumber=ph,
-                                password=pw,
-                                verified=verified,
-                                cookie=token)
-    if insertion.acknowledged:
-        session['user_id'] = str(insertion.inserted_id)
-        session['token'] = token
-        resp = jsonify({'Status': SUCCESS})
-        resp.set_cookie('sms_alert_service_login', value=token, secure=True, httponly=True)
-        return resp
-
+        token = secrets.token_hex(16)
+        insertion = DAO.create_user(username=username.upper(),
+                                    phonenumber=ph,
+                                    password=pw,
+                                    verified=verified,
+                                    cookie=token)
+        if insertion.acknowledged:
+            session['user_id'] = str(insertion.inserted_id)
+            session['token'] = token
+            resp = jsonify({'Status': SUCCESS})
+            resp.set_cookie('sms_alert_service_login', value=token, secure=True, httponly=True)
+            return resp
+        else:
+            return jsonify({'Status': FAIL, 'Message': CREATE_ACCOUNT_FAIL_MSG})
     else:
-        return jsonify({'Status': FAIL, 'Message': FAIL_MSG})
+        abort(403, "Access denied")
 
 
 @account_bp.route("/account/update", methods=["GET"])

@@ -5,6 +5,39 @@ document.addEventListener("DOMContentLoaded", function() {
     var createAccountStatusMessage = document.getElementById("createAccountStatusMessage");
     createAccountStatusMessage.style.color = "red";
 
+    document.addEventListener("authenticationEvent", function(event) {
+        var username = document.getElementById("usernameInputField").value;
+        var ph = document.getElementById("modalPhoneNumberInputField").value;
+        var pw = document.getElementById("passwordInputField").value;
+        createAccount(username, ph, pw, true);
+    })
+
+    function createAccount(username, ph, pw, verified) {
+        fetch("/account/create", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                Username: username,
+                PhoneNumber: ph,
+                Password: pw,
+                Verified: verified
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.Status == "SUCCESS"){
+                console.log("Account created successfully. Going to account.")
+                window.location.href = "/account";
+            } else {
+                console.log("Account creation failed.")
+                var loginStatusMessage = document.getElementById("signUpStatusMessage");
+                loginStatusMessage.innerHTML = data.Message;
+                loginStatusMessage.classList.add("alert");
+            }
+        })
+        .catch(error => console.error(error));
+    }
+
     var createAccountButton = document.getElementById("createAccountButton");
     createAccountButton.addEventListener('click', function(event) {
         event.preventDefault();
@@ -60,38 +93,4 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .catch(error => console.error(error));
     }
-
-//    document.addEventListener("authenticationEvent", function(event) {
-//        var username = document.getElementById("usernameInputField").value;
-//        var ph = document.getElementById("phoneNumberInputField").value;
-//        var pw = document.getElementById("passwordInputField").value;
-//        createAccount(username, ph, pw, true);
-//    })
-
-    function createAccount(username, ph, pw, verified) {
-        fetch("/account/create", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                Username: username,
-                PhoneNumber: ph,
-                Password: pw,
-                Verified: verified
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.Status == "SUCCESS"){
-                console.log("Account created successfully. Going to account.")
-                window.location.href = "/account";
-            } else {
-                console.log("Account creation failed.")
-                var loginStatusMessage = document.getElementById("signUpStatusMessage");
-                loginStatusMessage.innerHTML = data.Message;
-                loginStatusMessage.classList.add("alert");
-            }
-        })
-        .catch(error => console.error(error));
-    }
-
 });
