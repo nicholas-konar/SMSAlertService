@@ -10,14 +10,6 @@ from SMSAlertService import app, mongo
 from SMSAlertService.user import User
 
 
-def generate_users(user_data_set):
-    users = []
-    for user_data in user_data_set:
-        user = User(user_data)
-        users.append(user)
-    return users
-
-
 def timestamp():
     est = pytz.timezone('US/Eastern')
     now = datetime.now(est)

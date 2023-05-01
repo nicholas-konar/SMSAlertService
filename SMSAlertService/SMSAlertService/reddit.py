@@ -16,7 +16,7 @@ reddit = praw.Reddit(client_id=os.environ['REDDIT_CLIENT_ID'],
 
 
 def get_new_posts():
-    post_data = mongo.get_post_data()
+    post_data = mongo.get_reddit_data()
     posts = []
     for subreddit in SUBREDDITS:
         post = get_latest_post(subreddit)

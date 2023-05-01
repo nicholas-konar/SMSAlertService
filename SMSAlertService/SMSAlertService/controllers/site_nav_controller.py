@@ -1,6 +1,15 @@
-from flask import Blueprint, render_template, session
+from flask import Blueprint, render_template, session, jsonify
+
+from SMSAlertService import mongo
+from SMSAlertService.dao import DAO
 
 site_nav_bp = Blueprint('site_nav_controller', __name__)
+
+
+@site_nav_bp.route("/test")
+def test():
+    DAO.get_all_users()
+    return {}
 
 
 @site_nav_bp.route("/", methods=["GET"])
@@ -17,6 +26,9 @@ def login():
 
 @site_nav_bp.route("/signup", methods=["GET", "POST"])
 def signup():
+    if 'otp_resends' and 'otp_attempts' not in session:
+        session['otp_resends'] = 0
+        session['otp_attempts'] = 0
     return render_template('signup.html')
 
 

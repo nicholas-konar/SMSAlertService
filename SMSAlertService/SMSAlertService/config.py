@@ -20,7 +20,8 @@ INVALID_LOGIN_MSG = "Incorrect username or password."
 RESEND_MSG = 'Another code is on the way.'
 RETRY_MSG = "Incorrect code. Please try again."
 INVALID_PH_MSG = "Please enter a valid phone number."
-PW_RESET_SUCCESS = 'Your password has been reset.' # todo: fix typo (missing _MSG)
+PW_RESET_SUCCESS_MSG = 'Your password has been reset.'
+PW_RESET_FAIL_MSG = 'Unable to reset password. Please contact support@smsalertservice.com for assistance.'
 
 # Configs
 SESSION_TIMEOUT = 1800 # 30 minutes

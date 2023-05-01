@@ -10,7 +10,6 @@ class User:
         self.phonenumber = user_data['PhoneNumber']
         self.keywords = user_data['Keywords']
         self.units_left = int(user_data['Units'])
-        self.otps_sent = int(user_data['OTPsSent'])
         self.verified = user_data['Verified']
         self.blocked = user_data['Blocked']
         self.keyword_hits = []

@@ -1,14 +1,9 @@
 import math
 import os
-import secrets
-import string
-
 import arrow
-import bcrypt
 import pymongo
-from bson.objectid import ObjectId
 
-from SMSAlertService import app, util
+from bson.objectid import ObjectId
 
 # NO VPN
 # In compass, enter regular_url value from below, then select default tls and upload mongodb.pem in the second file upload box (nothing in the first)
@@ -41,29 +36,21 @@ def create_user(username, pw_hash, phonenumber, verified, timestamp, cookie):
         'Units': 0,
         'UnitsSent': 0,
         'UnitsPurchased': 0,
-        'OTP': None,
-        'OTPsSent': 0,
         'Verified': verified,
         'Blocked': False,
         'TwilioRecords': [],
-        'SalesRecords': [],
-        'PromoCodeRecords': [],
+        'SalesRecords': []
     }
     return user_records.insert_one(user_data)
 
 
 def set_cookie(user_id, cookie):
     query = {"_id": ObjectId(user_id)}
-    new_value = {"$set": {"Cookie": cookie}}
-    return user_records.update_one(query, new_value)
-
-
-def verify(username):
-    query = {"Username": username}
-    value = {"$set": {"Verified": True}}
+    value = {"$set": {"Cookie": cookie}}
     return user_records.update_one(query, value)
 
 
+# todo: this needs help
 def process_transaction(username, units_purchased, amount):
     timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
 
@@ -75,7 +62,7 @@ def process_transaction(username, units_purchased, amount):
     updated_total_revenue = user["TotalRevenue"] + math.floor(float(amount))
 
     query = {"Username": username}
-    new_value = {
+    value = {
         "$set": {
             "Units": updated_unit_count,
             "UnitsPurchased": updated_units_purchased,
@@ -90,96 +77,16 @@ def process_transaction(username, units_purchased, amount):
         }
     }
 
-    return user_records.update_one(query, new_value)
+    return user_records.update_one(query, value)
 
 
-def redeem(username, code):
-    timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
-    promo_code = code['Code']
-    reward = code['Reward']
-    old_unit_count = get_message_count(username)
-    updated_unit_count = old_unit_count + int(reward)
-
-    query = {"Username": username}
-    new_value = {
-        "$set": {
-            "Units": updated_unit_count,
-        },
-        "$push": {
-            "PromoCodeRecords": {
-                "Date": timestamp,
-                "Code": promo_code,
-                "Reward": reward
-            }
-        }
-    }
-
-    user_records.update_one(query, new_value)
-    app.logger.info(f'{username} redeemed code {code} for {reward} units')
+def get_all_user_data():
+    return user_records.find()
 
 
-def process_promo_code(username, promo_code):
-    try:
-        code = get_code(promo_code)
-        if code['Active']:
-            redeem(username, code)
-            deactivate_code(code, username)
-            app.logger.info(f'Processing complete for promo code {promo_code}')
-            return code
-        else:
-            app.logger.info(
-                f'Failure to process promo code {promo_code} for user {username}: Code not active')
-            return False
-    except TypeError as e:
-        app.logger.info(f'Failure to process promo code {promo_code} for user {username}: Invalid code \n{e}')
-        return False
+def get_all_active_user_data():
+    return user_records.find({"Units": {"$gt": 0}})
 
-
-def deactivate_code(code, username):
-    timestamp = arrow.now().format('MM-DD-YYYY HH:mm:ss')
-    value = code['Code']
-    query = {'Code': value}
-    promo_code_data = {
-        '$set': {
-            'Active': False,
-            'RedeemedBy': username,
-            'DeactivationDate': timestamp, }
-    }
-    promo_code_records.update_one(query, promo_code_data)
-    app.logger.info(f"Deactivated code {code['Code']}")
-
-
-def create_promo_codes(reward, quantity, distributor, prefix):
-    timestamp = arrow.now().format('MM-DD-YYYY HH:mm:ss')
-    distributor = distributor.upper()
-    batch = int(quantity)
-    for i in range(batch):
-        code = util.generate_code(prefix)
-        promo_code_data = {
-            'Code': code,
-            'Reward': reward,
-            'Active': True,
-            'RedeemedBy': "",
-            'Distributor': distributor,
-            'ActivationDate': timestamp,
-            'DeactivationDate': ""
-        }
-        return promo_code_records.insert_one(promo_code_data)
-
-
-def get_code(promo_code):
-    return promo_code_records.find_one({"Code": promo_code})
-
-
-def get_codes():
-    codes = []
-    records = promo_code_records.find()
-    for code in records:
-        codes.append(code)
-    return codes
-
-
-# todo: need get all users query
 
 def get_user_data_by_id(user_id):
     return user_records.find_one({"_id": ObjectId(user_id)})
@@ -200,7 +107,7 @@ def save_alert_data(alert):
     updated_sent_count = user["UnitsSent"] + 1
 
     query = {"Username": alert.owner.username}
-    new_value = {
+    value = {
         "$set": {
             "Units": updated_msg_count,
             "UnitsSent": updated_sent_count
@@ -216,36 +123,12 @@ def save_alert_data(alert):
             }
         }
     }
-
-    return user_records.update_one(query, new_value)
-
-
-def reset_password(username, pw):
-    hashed_pw = bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt())
-    query = {"Username": username}
-    value = {"$set": {"Password": hashed_pw}}
     return user_records.update_one(query, value)
 
 
-def save_otp_data(user, otp):
-    timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
-    query = {"Username": user.username}
-    value = {
-        "$set": {
-            "OTP": otp.value,
-            "OTPsSent": user.otps_sent
-        },
-        "$push": {
-            "TwilioRecords": {
-                "Date": timestamp,
-                "Type": "OTP",
-                "Body": otp.twilio.body,
-                "Status": otp.twilio.status,
-                "ErrorMessage": otp.twilio.error_message,
-                "SID": otp.twilio.sid
-            }
-        }
-    }
+def reset_password(user_id, hashed_pw):
+    query = {"_id": ObjectId(user_id)}
+    value = {"$set": {"Password": hashed_pw}}
     return user_records.update_one(query, value)
 
 
@@ -260,46 +143,44 @@ def get_blacklist():
     return document['Blacklist']
 
 
-def block(username):
-    query = {"Username": username}
+def block(user_id):
+    query = {"_id": ObjectId(user_id)}
     value = {"$set": {"Blocked": True}}
     return user_records.update_one(query, value)
 
 
-def add_keyword(username, keyword):
-    query = {"Username": username}
+def add_keyword(user_id, keyword):
+    query = {"_id": ObjectId(user_id)}
     value = {"$push": {"Keywords": keyword}}
     return user_records.update_one(query, value)
 
 
-def delete_keyword(username, keyword):
-    query = {"Username": username}
+def delete_keyword(user_id, keyword):
+    query = {"_id": ObjectId(user_id)}
     value = {"$pull": {"Keywords": keyword}}
     return user_records.update_one(query, value)
 
 
-def delete_all_keywords(username):
-    query = {"Username": username}
-    new_value = {"$set": {"Keywords": []}}
-    return user_records.update_one(query, new_value)
+def delete_all_keywords(user_id):
+    query = {"_id": ObjectId(user_id)}
+    value = {"$set": {"Keywords": []}}
+    return user_records.update_one(query, value)
 
 
-def update_phonenumber(username, phonenumber):
-    query = {"Username": username}
-    new_value = {"$set": {"PhoneNumber": phonenumber}}
-    user_records.update_one(query, new_value)
-    app.logger.info('User ' + username + ' updated PhoneNumber to ' + phonenumber)
+def update_phonenumber(user_id, phonenumber):
+    query = {"_id": ObjectId(user_id)}
+    value = {"$set": {"PhoneNumber": phonenumber}}
+    return user_records.update_one(query, value)
 
 
-def update_username(old_username, new_username):
-    query = {"Username": old_username}
-    new_value = {"$set": {"Username": new_username}}
-    return user_records.update_one(query, new_value)
+def update_username(user_id, new_username):
+    query = {"_id": ObjectId(user_id)}
+    value = {"$set": {"Username": new_username}}
+    return user_records.update_one(query, value)
 
 
-def get_post_data():
+def get_reddit_data():
     document = app_records.find_one({"Document": "REDDIT"})
-    app.logger.debug(f'POST DATA: {document}')
     return document["SubReddits"]
 
 

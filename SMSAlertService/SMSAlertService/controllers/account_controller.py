@@ -6,8 +6,8 @@ from flask import Blueprint, request, redirect, render_template, session, url_fo
 from SMSAlertService import app
 from SMSAlertService.dao import DAO
 from SMSAlertService.decorators import protected
-from SMSAlertService.config import SUCCESS, FAIL, FAIL_MSG, PW_RESET_SUCCESS, INVALID_LOGIN_MSG, MAX_LOGIN_ATTEMPTS, \
-    BLOCKED, BLOCKED_MSG, USERNAME_TAKEN_MSG, CREATE_ACCOUNT_FAIL_MSG
+from SMSAlertService.config import SUCCESS, FAIL, FAIL_MSG, INVALID_LOGIN_MSG, MAX_LOGIN_ATTEMPTS, \
+    BLOCKED, BLOCKED_MSG, USERNAME_TAKEN_MSG, CREATE_ACCOUNT_FAIL_MSG, PW_RESET_SUCCESS_MSG, PW_RESET_FAIL_MSG
 
 account_bp = Blueprint('account_controller', __name__)
 
@@ -68,11 +68,11 @@ def create():
         verified = markupsafe.escape(request.json['Verified'])
 
         token = secrets.token_hex(16)
-        insertion = DAO.create_user(username=username.upper(),
-                                    phonenumber=ph,
-                                    password=pw,
-                                    verified=verified,
-                                    cookie=token)
+        insertion = DAO.create_account(username=username.upper(),
+                                       phonenumber=ph,
+                                       password=pw,
+                                       verified=verified,
+                                       cookie=token)
         if insertion.acknowledged:
             session['user_id'] = str(insertion.inserted_id)
             session['token'] = token
@@ -104,7 +104,8 @@ def update_username():
     if available['Username']:
         success = DAO.update_username(old, new)
         session["username"] = new
-        return jsonify({'Status': SUCCESS}) if success else jsonify({'Status': FAIL, 'Message': FAIL_MSG})
+        return jsonify({'Status': SUCCESS}) if success \
+            else jsonify({'Status': FAIL, 'Message': FAIL_MSG})
     else:
         return jsonify({'Status': FAIL, 'Message': USERNAME_TAKEN_MSG})
 
@@ -116,8 +117,8 @@ def reset_password():
     user = DAO.get_user_by_id(user_id)
     new_password = markupsafe.escape(request.json['NewPassword'])
     success = DAO.reset_password(user, new_password)
-    return jsonify({'Status': SUCCESS, 'Message': PW_RESET_SUCCESS}) \
-        if success else jsonify({'Status': FAIL, 'Message': FAIL_MSG})
+    return jsonify({'Status': SUCCESS, 'Message': PW_RESET_SUCCESS_MSG}) if success \
+        else jsonify({'Status': FAIL, 'Message': PW_RESET_FAIL_MSG})
 
 
 @account_bp.route("/account/recover", methods=["GET"])
@@ -134,8 +135,8 @@ def add_keyword():
     user = DAO.get_user_by_id(user_id)
     keyword = markupsafe.escape(request.json['keyword'].strip())
     success = DAO.add_keyword(user, keyword)
-    return jsonify({'Status': SUCCESS}) \
-        if success else jsonify({'Status': FAIL})
+    return jsonify({'Status': SUCCESS}) if success \
+        else jsonify({'Status': FAIL})
 
 
 @account_bp.route("/account/keyword/delete", methods=["POST"])
@@ -145,8 +146,8 @@ def delete_keyword():
     user = DAO.get_user_by_id(user_id)
     keyword = markupsafe.escape(request.json['DeleteKeyword'])
     success = DAO.delete_keyword(user, keyword)
-    return jsonify({'Status': SUCCESS}) \
-        if success else jsonify({'Status': FAIL})
+    return jsonify({'Status': SUCCESS}) if success \
+        else jsonify({'Status': FAIL})
 
 
 @account_bp.route("/account/keyword/delete-all", methods=["POST"])
@@ -155,7 +156,7 @@ def delete_all_keywords():
     user_id = session.get('user_id')
     user = DAO.get_user_by_id(user_id)
     success = DAO.delete_all_keywords(user)
-    return jsonify({'Status': SUCCESS}) \
-        if success else jsonify({'Status': FAIL})
+    return jsonify({'Status': SUCCESS}) if success \
+        else jsonify({'Status': FAIL})
 
 
