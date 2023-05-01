@@ -37,6 +37,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         }
         var sendCodeButton = document.getElementById("sendCodeButton");
         sendCodeButton.setAttribute('flowType', flowType);
+        var resendCodeButton = document.getElementById("resendCodeButton");
+        resendCodeButton.setAttribute('flowType', flowType);
         challengeModal.style.display = "block";
         validateModal.style.display = "none";
         document.body.appendChild(overlay);
@@ -106,14 +108,19 @@ document.addEventListener("DOMContentLoaded", async function() {
     // Resend Code Button
     var resendCodeButton = document.getElementById("resendCodeButton");
     resendCodeButton.addEventListener("click", function() {
-        resendCode();
+        var flowType = sendCodeButton.getAttribute('flowType');
+        resendCode(flowType);
     });
 
-    function resendCode() {
+    function resendCode(flowType) {
+        var ph = document.getElementById("phoneNumber").value;
         fetch(`account/${flowType}/resend/otp`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: ""
+            body: JSON.stringify({
+                FlowType: flowType,
+                PhoneNumber: ph
+                })
         })
         .then(response => response.json())
         .then(data => {

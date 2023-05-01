@@ -8,7 +8,6 @@ import bcrypt
 import pymongo
 from bson.objectid import ObjectId
 
-
 from SMSAlertService import app, util
 
 # NO VPN
@@ -29,9 +28,9 @@ app_records = db.app_data
 promo_code_records = db.promo_code_data
 
 
-def create_user(username, pw_hash, phonenumber, verified, timestamp):
+def create_user(username, pw_hash, phonenumber, verified, timestamp, cookie):
     user_data = {
-        'Cookie': 0,
+        'Cookie': cookie,
         'SignUpDate': timestamp,
         'Password': pw_hash,
         'Username': username,
@@ -94,29 +93,29 @@ def process_transaction(username, units_purchased, amount):
     return user_records.update_one(query, new_value)
 
 
-# def redeem(username, code):
-#     timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
-#     promo_code = code['Code']
-#     reward = code['Reward']
-#     old_unit_count = get_message_count(username)
-#     updated_unit_count = old_unit_count + int(reward)
-#
-#     query = {"Username": username}
-#     new_value = {
-#         "$set": {
-#             "Units": updated_unit_count,
-#         },
-#         "$push": {
-#             "PromoCodeRecords": {
-#                 "Date": timestamp,
-#                 "Code": promo_code,
-#                 "Reward": reward
-#             }
-#         }
-#     }
-#
-#     user_records.update_one(query, new_value)
-#     app.logger.info(f'{username} redeemed code {code} for {reward} units')
+def redeem(username, code):
+    timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
+    promo_code = code['Code']
+    reward = code['Reward']
+    old_unit_count = get_message_count(username)
+    updated_unit_count = old_unit_count + int(reward)
+
+    query = {"Username": username}
+    new_value = {
+        "$set": {
+            "Units": updated_unit_count,
+        },
+        "$push": {
+            "PromoCodeRecords": {
+                "Date": timestamp,
+                "Code": promo_code,
+                "Reward": reward
+            }
+        }
+    }
+
+    user_records.update_one(query, new_value)
+    app.logger.info(f'{username} redeemed code {code} for {reward} units')
 
 
 def process_promo_code(username, promo_code):
@@ -180,12 +179,13 @@ def get_codes():
     return codes
 
 
+# todo: need get all users query
+
 def get_user_data(user_id):
     return user_records.find_one({"_id": ObjectId(user_id)})
 
 
 def get_user_data_by_username(username):
-    app.logger.debug(f'Lookin for {username}')
     return user_records.find_one({"Username": username})
 
 
@@ -307,8 +307,8 @@ def save_post_id(post):
     query = {"Document": "REDDIT"}
     value = {"$set": {
         f"SubReddits.${post.subreddit.display_name}": {
-                "LastPostId": post.id
-            }}}
+            "LastPostId": post.id
+        }}}
     return app_records.update_one(query, value, upsert=True)
 
 # def add_field_to_all_users():

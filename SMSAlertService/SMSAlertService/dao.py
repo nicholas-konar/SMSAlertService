@@ -15,14 +15,19 @@ class DAO:
         return success
 
     @staticmethod
-    def create_user(username, password, phonenumber, verified):
+    def create_user(username, password, phonenumber, verified, cookie):
         info = f'Created new account for user {username}.'
         error = f'Failed to create new account for user {username}.'
         timestamp = util.timestamp()
         pw_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-        acknowledged = mongo.create_user(username, pw_hash, phonenumber, verified, timestamp).acknowledged
-        app.logger.info(info) if acknowledged else app.logger.error(error)
-        return acknowledged
+        insertion = mongo.create_user(username=username,
+                                      pw_hash=pw_hash,
+                                      phonenumber=phonenumber,
+                                      verified=verified,
+                                      timestamp=timestamp,
+                                      cookie=cookie)
+        app.logger.info(info) if insertion.acknowledged else app.logger.error(error)
+        return insertion
 
     @staticmethod
     def verify_user(user):
@@ -79,9 +84,9 @@ class DAO:
     @staticmethod
     def add_keyword(user, keyword):
         if keyword not in user.keywords:
+            success = mongo.add_keyword(user.username, keyword).modified_count
             info = f'User {user.username} added keyword {keyword}.'
             error = f'User {user.username} failed to add keyword {keyword}.'
-            success = mongo.add_keyword(user.username, keyword).modified_count
             app.logger.info(info) if success else app.logger.error(error)
             return success
         else:
@@ -89,25 +94,25 @@ class DAO:
 
     @staticmethod
     def delete_keyword(user, keyword):
+        success = mongo.delete_keyword(user.username, keyword).modified_count
         info = f'User {user.username} deleted keyword {keyword}.'
         error = f'User {user.username} failed to delete keyword {keyword}.'
-        success = mongo.delete_keyword(user.username, keyword).modified_count
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
     def delete_all_keywords(user):
+        success = mongo.delete_all_keywords(user.username).modified_count
         info = f'User {user.username} deleted all keywords.'
         error = f'User {user.username} failed to delete all keywords.'
-        success = mongo.delete_all_keywords(user.username).modified_count
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
     def update_username(old, new):
+        success = mongo.update_username(old, new).modified_count
         info = f'User {old} changed their username to {new}.'
         error = f'Failed to update username {old}. Requested: {new}.'
-        success = mongo.update_username(old, new).modified_count
         app.logger.info(info) if success else app.logger.error(error)
         return success
 

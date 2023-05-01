@@ -17,6 +17,7 @@ account_bp = Blueprint('account_controller', __name__)
 @protected
 def account():
     user_id = session.get('user_id')
+    app.logger.debug(f'USER ID = {user_id}')
     user = DAO.get_user(user_id)
     keywords = user.get_keywords_json()
     return render_template('account.html', message_count=user.units_left,
@@ -28,6 +29,8 @@ def login():
     username = markupsafe.escape(request.json['Username'].upper().strip())
     pw_input = markupsafe.escape(request.json['Password'])
     user = DAO.get_user_by_username(username)
+
+    # todo: handle OTP auth flow? Would need username/ph to query user, and ID token
 
     if user is None:
         app.logger.error(f'Failed log in attempt: User {username} does not exist.')
@@ -69,11 +72,23 @@ def create():
     ph = markupsafe.escape(request.json['Phonenumber'])
     pw = markupsafe.escape(request.json['Password'])
     verified = markupsafe.escape(request.json['Verified'])
-    acknowledged = DAO.create_user(username=username, phonenumber=ph, password=pw, verified=verified)
-    user = DAO.get_user_by_username(username)
-    session['user_id'] = user.id
-    return jsonify({'Status': SUCCESS}) \
-        if acknowledged else jsonify({'Status': FAIL, 'Message': FAIL_MSG})
+
+    token = secrets.token_hex(16)
+    insertion = DAO.create_user(username=username,
+                                phonenumber=ph,
+                                password=pw,
+                                verified=verified,
+                                cookie=token)
+    if insertion.acknowledged:
+        app.logger.debug(f'ACCOUNT CREATED: INSERTED ID = {insertion.inserted_id}')
+        session['user_id'] = insertion.inserted_id
+        session['token'] = token
+        resp = jsonify({'Status': SUCCESS})
+        resp.set_cookie('sms_alert_service_login', value=token, secure=True, httponly=True)
+        return resp
+
+    else:
+        return jsonify({'Status': FAIL, 'Message': FAIL_MSG})
 
 
 @account_bp.route("/account/update", methods=["GET"])
