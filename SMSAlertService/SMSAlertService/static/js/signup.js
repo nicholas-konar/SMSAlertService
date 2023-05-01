@@ -61,12 +61,12 @@ document.addEventListener("DOMContentLoaded", function() {
         .catch(error => console.error(error));
     }
 
-    document.addEventListener("authenticationEvent", function(event) {
-        var username = document.getElementById("usernameInputField").value;
-        var ph = document.getElementById("phoneNumberInputField").value;
-        var pw = document.getElementById("passwordInputField").value;
-        createAccount(username, ph, pw, true);
-    })
+//    document.addEventListener("authenticationEvent", function(event) {
+//        var username = document.getElementById("usernameInputField").value;
+//        var ph = document.getElementById("phoneNumberInputField").value;
+//        var pw = document.getElementById("passwordInputField").value;
+//        createAccount(username, ph, pw, true);
+//    })
 
     function createAccount(username, ph, pw, verified) {
         fetch("/account/create", {

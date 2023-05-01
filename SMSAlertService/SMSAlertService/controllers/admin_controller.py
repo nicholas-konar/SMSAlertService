@@ -1,9 +1,5 @@
-from flask import Blueprint, request, redirect, render_template, session, url_for, jsonify
-from twilio.base.exceptions import TwilioRestException
-from SMSAlertService import app, mongo, alert_engine, util, config, twilio
-from SMSAlertService.dao import DAO
-from SMSAlertService.otp_service import OtpService
-import markupsafe
+from flask import Blueprint, request, redirect, render_template, session, url_for
+from SMSAlertService import app, mongo, util
 
 admin_bp = Blueprint('admin_controller', __name__)
 
@@ -17,7 +13,7 @@ def admin():
     # todo: do something with the code above
     if session["ADMIN"]:
         username = session["username"]
-        users = mongo.get_user_data()
+        users = mongo.get_user_data_by_id()
         total_users = len(users)
         total_units_sent = util.calculate_total_units_sent(users)
         total_units_sold = util.calculate_total_units_sold(users)

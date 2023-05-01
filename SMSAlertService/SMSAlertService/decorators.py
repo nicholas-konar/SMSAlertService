@@ -29,7 +29,7 @@ def protected(func):
             app.logger.error('Access Denied: Missing cookie or user_id in session.')
             return redirect(url_for('site_nav_controller.login'))
         else:
-            user = DAO.get_user(user_id)
+            user = DAO.get_user_by_id(user_id)
             if user is None:
                 app.logger.error('Access Denied: user_id found in session but not in records.')
                 return redirect(url_for('site_nav_controller.login'))

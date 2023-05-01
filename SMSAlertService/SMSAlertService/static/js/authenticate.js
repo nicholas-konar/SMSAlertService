@@ -30,12 +30,11 @@ document.addEventListener("DOMContentLoaded", async function() {
     // Open Challenge Modal
     var challengeModal = document.getElementById("challengeModal");
     function openChallengeModal(flowType) {
-        var phoneNumberInput = document.getElementById("phoneNumberInputField").value;
+        var phoneNumberInput = document.getElementById("phoneNumberInputField");
         console.log(`phoneNumberInputField value = ${phoneNumberInput}`)
         var modalPhoneNumberInputField = document.getElementById("phoneNumber");
         if (phoneNumberInput) {
-//            modalPhoneNumberInputField.placeholder = phoneNumberInput;
-            modalPhoneNumberInputField.value = phoneNumberInput;
+            modalPhoneNumberInputField.value = phoneNumberInput.value;
         }
         var sendCodeButton = document.getElementById("sendCodeButton");
         sendCodeButton.setAttribute('flowType', flowType);
@@ -148,12 +147,14 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     function validateCode(flowType) {
         var verificationCode = document.getElementById('verificationCode').value;
+        var ph = document.getElementById("phoneNumber").value
         fetch(`account/${flowType}/validate/otp`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
                 FlowType: flowType,
-                OTP: verificationCode
+                OTP: verificationCode,
+                PhoneNumber: ph
             })
         })
         .then(response => response.json())

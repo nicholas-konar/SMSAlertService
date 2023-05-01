@@ -56,13 +56,13 @@ class DAO:
 
     @staticmethod
     def get_all_users():
-        user_data = mongo.get_user_data()
+        user_data = mongo.get_user_data_by_id()
         users = util.generate_users(user_data)
         return users
 
     @staticmethod
-    def get_user(user_id):
-        user_data = mongo.get_user_data(user_id)
+    def get_user_by_id(user_id):
+        user_data = mongo.get_user_data_by_id(user_id)
         return None if user_data is None else User(user_data)
 
     @staticmethod

@@ -181,7 +181,7 @@ def get_codes():
 
 # todo: need get all users query
 
-def get_user_data(user_id):
+def get_user_data_by_id(user_id):
     return user_records.find_one({"_id": ObjectId(user_id)})
 
 

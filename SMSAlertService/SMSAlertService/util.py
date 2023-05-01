@@ -1,6 +1,8 @@
 import secrets
 import string
 import re
+
+import bcrypt
 import pytz
 
 from datetime import datetime
@@ -90,3 +92,11 @@ def format_keywords(keywords):
     for keyword in keywords:
         formatted_keywords += f' {keyword["Keyword"]}'
     return formatted_keywords
+
+
+def hash_data(data):
+    return bcrypt.hashpw(data.encode('utf-8'), bcrypt.gensalt(4))
+
+
+def check_hash(data, hashed_data):
+    return bcrypt.checkpw(data.encode('utf-8'), hashed_data)

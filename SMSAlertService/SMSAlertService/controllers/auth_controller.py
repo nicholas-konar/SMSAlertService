@@ -1,15 +1,13 @@
-import secrets
-
 import markupsafe
 
 from flask import Blueprint
-from flask import request, redirect, render_template, session, url_for, jsonify
+from flask import request, render_template, session, jsonify
 from twilio.base.exceptions import TwilioRestException
-from SMSAlertService import app, config, util
+from SMSAlertService import app, util
 from SMSAlertService.dao import DAO
-from SMSAlertService.otp_service import OtpService
+from SMSAlertService.services.otp_service import OtpService
 from SMSAlertService.config import MAX_RESENDS, BLOCKED, BLOCKED_MSG, MAX_ATTEMPTS, RESEND_MSG, ERROR_MSG, FAIL, \
-    RETRY_MSG, SUCCESS, FAIL_MSG, ERROR, INVALID_PH_MSG, AUTHENTICATED
+    RETRY_MSG, SUCCESS, ERROR, INVALID_PH_MSG, AUTHENTICATED
 
 auth_bp = Blueprint('auth_controller', __name__)
 
@@ -30,11 +28,10 @@ def send_to_create():
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
 
     try:
-        otp = OtpService.generate_otp()
-        # status = OtpService.send_otp(otp, user.phonenumber) # todo: uncomment after testing
+        otp_hash = OtpService.send_otp(ph)
         app.logger.info(f'Sending OTP to prospective user at {ph}. Resends = {session["otp_resends"]}.')
         session['otp_resends'] += 1
-        session['otp'] = otp # todo: should probably make this more secure
+        session['otp'] = otp_hash
         return jsonify({'Status': SUCCESS, 'FlowType': flow_type})
 
     except TwilioRestException:
@@ -53,11 +50,10 @@ def resend_to_create():
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
 
     try:
-        otp = OtpService.generate_otp()
-        # status = OtpService.send_otp(otp, user.phonenumber) # todo: uncomment after testing
+        otp_hash = OtpService.send_otp(ph)
         app.logger.info(f'Sending OTP to prospective user at {ph}. Resends = {session["otp_resends"]}.')
         session['otp_resends'] += 1
-        session['otp'] = otp # todo: should probably make this more secure
+        session['otp'] = otp_hash
         return jsonify({'Status': SUCCESS, 'FlowType': flow_type, 'Message': RESEND_MSG})
 
     except TwilioRestException:
@@ -68,9 +64,9 @@ def resend_to_create():
 @auth_bp.route("/account/create/validate/otp", methods=["POST"])
 def validate_to_create():
     flow_type = markupsafe.escape(request.json['FlowType'])
-    expected = session.get('otp')  # todo: this could allow attackers to spoof session and gain access to any account
-    actual = markupsafe.escape(request.json['OTP']) # todo: send expected otp through each request along with FlowType.
-    authenticated = OtpService.authenticate_otp(expected, actual)
+    expected_hash = session.get('otp')
+    actual = markupsafe.escape(request.json['OTP'])
+    authenticated = OtpService.authenticate_otp(expected=expected_hash, actual=actual)
 
     if session.get('otp_attempts') >= MAX_ATTEMPTS:
         app.logger.info(f'Max attempts limit (in session only) reached by prospective user. Denied resend.')
@@ -99,9 +95,6 @@ def send_to_recover():
     ph = markupsafe.escape(request.json['PhoneNumber'])
     flow_type = request.json['FlowType']
 
-    if not util.is_valid_phone_number(ph):
-        return jsonify({'Status': FAIL, 'Message': INVALID_PH_MSG})
-
     if (user := DAO.get_user_by_phonenumber(ph)) is None:
         return jsonify({'Status': FAIL, 'Message': INVALID_PH_MSG})
 
@@ -111,13 +104,10 @@ def send_to_recover():
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
 
     try:
-        otp = OtpService.generate_otp()
-        # status = OtpService.send_otp(otp, user.phonenumber) #todo: uncomment after testing
+        otp_hash = OtpService.send_otp(user.phonenumber)
         app.logger.debug(f'Sending OTP to {user.username}. Resends = {session["otp_resends"]}.')
-        session['username'] = user.username
-        session['phonenumber'] = user.phonenumber
+        session['otp'] = otp_hash
         session['otp_resends'] += 1
-        session['otp'] = otp
         return jsonify({'Status': SUCCESS, 'FlowType': flow_type})
 
     except TwilioRestException:
@@ -142,13 +132,10 @@ def resend_to_recover():
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
 
     try:
-        otp = OtpService.generate_otp()
-        # status = OtpService.send_otp(otp, user.phonenumber) #todo: uncomment after testing
+        otp_hash = OtpService.send_otp(user.phonenumber)
         app.logger.debug(f'Resending OTP to {user.username}. Resends = {session["otp_resends"]}.')
-        session['username'] = user.username
-        session['phonenumber'] = user.phonenumber
         session['otp_resends'] += 1
-        session['otp'] = otp
+        session['otp'] = otp_hash
         return jsonify({'Status': SUCCESS, 'FlowType': flow_type, 'Message': RESEND_MSG})
 
     except TwilioRestException:
@@ -159,12 +146,12 @@ def resend_to_recover():
 @auth_bp.route("/account/recover/validate/otp", methods=["POST"])
 def validate_to_recover():
     flow_type = request.json['FlowType']
-    expected = session.get('otp') # todo: this could allow attackers to spoof session and gain access to any account
+    expected_hash = session.get('otp')
     actual = markupsafe.escape(request.json['OTP'])
-    authenticated = OtpService.authenticate_otp(expected, actual)
+    authenticated = OtpService.authenticate_otp(expected=expected_hash, actual=actual)
 
-    username = session.get('username')
-    user = DAO.get_user_by_username(username)
+    ph = markupsafe.escape(request.json['PhoneNumber'])
+    user = DAO.get_user_by_phonenumber(ph)
 
     if session.get('otp_attempts') >= MAX_ATTEMPTS or user.blocked:
         app.logger.info(f'Max attempts limit reached. Blocking user {user.username}')
@@ -176,6 +163,7 @@ def validate_to_recover():
             DAO.verify_user(user)
         resp = jsonify({'Status': AUTHENTICATED, 'FlowType': flow_type})
         app.logger.info(f'{user.username} has been authenticated.')
+        # todo: generate and respond with auth token for create account/pw reset api
         return resp
 
     else:

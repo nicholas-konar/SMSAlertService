@@ -17,7 +17,7 @@ account_bp = Blueprint('account_controller', __name__)
 @protected
 def account():
     user_id = session.get('user_id')
-    user = DAO.get_user(user_id)
+    user = DAO.get_user_by_id(user_id)
     keywords = user.get_keywords_json()
     return render_template('account.html', message_count=user.units_left,
                            keywords=keywords, username=user.username, current_phone=user.phonenumber)
@@ -28,8 +28,6 @@ def login():
     username = markupsafe.escape(request.json['Username'].upper().strip())
     pw_input = markupsafe.escape(request.json['Password'])
     user = DAO.get_user_by_username(username)
-
-    # todo: handle OTP auth flow? Would need username/ph to query user, and ID token
 
     if user is None:
         app.logger.error(f'Failed log in attempt: User {username} does not exist.')
@@ -44,8 +42,6 @@ def login():
         token = secrets.token_hex(16)
         session['token'] = token
         session['user_id'] = user.id
-        session['username'] = user.username
-        session['phonenumber'] = user.phonenumber
         DAO.set_cookie(user, token)
         resp = jsonify({'Status': SUCCESS})
         resp.set_cookie('sms_alert_service_login', value=token, secure=True, httponly=True)
@@ -66,6 +62,8 @@ def logout():
 
 @account_bp.route("/account/create", methods=["POST"])
 def create():
+    # todo: pass auth token in request
+    auth_token = markupsafe.escape(request.json['AuthToken'])
     username = markupsafe.escape(request.json['Username'])
     ph = markupsafe.escape(request.json['PhoneNumber'])
     pw = markupsafe.escape(request.json['Password'])
@@ -91,30 +89,32 @@ def create():
 @account_bp.route("/account/update", methods=["GET"])
 @protected
 def edit_info():
-    username = session["username"]
-    current_phone = session['phonenumber']
-    return render_template('edit-info.html', username=username, current_phone=current_phone)
+    user_id = session.get('user_id')
+    user = DAO.get_user_by_id(user_id)
+    return render_template('edit-info.html', username=user.username, current_phone=user.phonenumber)
 
 
 @account_bp.route("/account/update/username", methods=["POST"])
 @protected
 def update_username():
-    old = session.get('username')
+    user_id = session.get('user_id')
+    user = DAO.get_user_by_id(user_id)
+    old = user.username
     new = markupsafe.escape(request.json['NewUsername'].upper())
-    username_taken = mongo.username_taken(new)
-    if username_taken:
-        return jsonify({'Status': FAIL, 'Message': USERNAME_TAKEN_MSG})
-    else:
+    available = DAO.get_credential_availability(username=new, ph=None)
+    if available['Username']:
         success = DAO.update_username(old, new)
         session["username"] = new
         return jsonify({'Status': SUCCESS}) if success else jsonify({'Status': FAIL, 'Message': FAIL_MSG})
+    else:
+        return jsonify({'Status': FAIL, 'Message': USERNAME_TAKEN_MSG})
 
 
 @account_bp.route("/account/update/password", methods=["POST"])
 @protected
 def reset_password():
-    username = session['username']
-    user = DAO.get_user_by_username(username)
+    user_id = session.get('user_id')
+    user = DAO.get_user_by_id(user_id)
     new_password = markupsafe.escape(request.json['NewPassword'])
     success = DAO.reset_password(user, new_password)
     return jsonify({'Status': SUCCESS, 'Message': PW_RESET_SUCCESS}) \
@@ -131,8 +131,8 @@ def recover_account():
 @account_bp.route("/account/keyword/add", methods=["POST"])
 @protected
 def add_keyword():
-    username = session.get('username')
-    user = DAO.get_user_by_username(username)
+    user_id = session.get('user_id')
+    user = DAO.get_user_by_id(user_id)
     keyword = markupsafe.escape(request.json['keyword'].strip())
     success = DAO.add_keyword(user, keyword)
     return jsonify({'Status': SUCCESS}) \
@@ -142,8 +142,8 @@ def add_keyword():
 @account_bp.route("/account/keyword/delete", methods=["POST"])
 @protected
 def delete_keyword():
-    username = session.get('username')
-    user = DAO.get_user_by_username(username)
+    user_id = session.get('user_id')
+    user = DAO.get_user_by_id(user_id)
     keyword = markupsafe.escape(request.json['DeleteKeyword'])
     success = DAO.delete_keyword(user, keyword)
     return jsonify({'Status': SUCCESS}) \
@@ -153,8 +153,8 @@ def delete_keyword():
 @account_bp.route("/account/keyword/delete-all", methods=["POST"])
 @protected
 def delete_all_keywords():
-    username = session.get('username')
-    user = DAO.get_user_by_username(username)
+    user_id = session.get('user_id')
+    user = DAO.get_user_by_id(user_id)
     success = DAO.delete_all_keywords(user)
     return jsonify({'Status': SUCCESS}) \
         if success else jsonify({'Status': FAIL})
