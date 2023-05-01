@@ -23,6 +23,9 @@ def challenge():
 
 @auth_bp.route("/account/create/send/otp", methods=["POST"])
 def send_to_create():
+    ph = markupsafe.escape(request.json('PhoneNumber'))
+    # is username taken?
+    # is ph taken?
     return jsonify({'Status': SUCCESS})
 
 
@@ -34,6 +37,15 @@ def resend_to_create():
 @auth_bp.route("/account/create/validate/otp", methods=["POST"])
 def validate_to_create():
     return jsonify({'Status': SUCCESS})
+
+
+@auth_bp.route("/account/create/validate/credentials", methods=["POST"])
+def validate_credentials():
+    username = markupsafe.escape(request.json['Username'])
+    ph = markupsafe.escape(request.json['PhoneNumber'])
+    credential_availability = DAO.get_credential_availability(username, ph)
+    app.logger.debug({'CredentialAvailability': credential_availability})
+    return jsonify({'CredentialAvailability': credential_availability})
 
 
 @auth_bp.route("/account/recover/send/otp", methods=["POST"])

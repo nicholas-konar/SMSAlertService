@@ -104,10 +104,6 @@ class DAO:
         return success
 
     @staticmethod
-    def username_taken(username):
-        return mongo.username_taken(username)
-
-    @staticmethod
     def update_username(old, new):
         info = f'User {old} changed their username to {new}.'
         error = f'Failed to update username {old}. Requested: {new}.'
@@ -118,6 +114,16 @@ class DAO:
     @staticmethod
     def get_blacklist():
         return mongo.get_blacklist()
+
+    @staticmethod
+    def get_credential_availability(username, ph):
+        username_availability = not mongo.get_user_data_by_username(username.upper())
+        ph_availability = not mongo.get_user_data_by_phonenumber(ph)
+        credential_availability = {
+                'Username': username_availability,
+                'PhoneNumber': ph_availability
+            }
+        return credential_availability
 
 
 

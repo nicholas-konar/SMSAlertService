@@ -185,6 +185,7 @@ def get_user_data(user_id):
 
 
 def get_user_data_by_username(username):
+    app.logger.debug(f'Lookin for {username}')
     return user_records.find_one({"Username": username})
 
 
@@ -294,14 +295,6 @@ def update_username(old_username, new_username):
     query = {"Username": old_username}
     new_value = {"$set": {"Username": new_username}}
     return user_records.update_one(query, new_value)
-
-
-def phonenumber_taken(phonenumber):
-    return user_records.find_one({"PhoneNumber": phonenumber})
-
-
-def username_taken(username):
-    return user_records.find_one({"Username": username})
 
 
 def get_post_data():

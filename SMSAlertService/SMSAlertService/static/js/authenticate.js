@@ -12,25 +12,34 @@ document.addEventListener("DOMContentLoaded", async function() {
     modalContainer.innerHTML = modalHtml;
 
 
-    // Open Challenge Modal
-    function attachChallengeModalListener(buttonId, flowType) {
-      var button = document.getElementById(buttonId);
-      if (button) {
-        button.addEventListener("click", function() {
-          openChallengeModal(flowType);
-        });
-      }
-    }
-    attachChallengeModalListener("createAccountButton", "create");
-    attachChallengeModalListener("resetPasswordButton", "recover");
+    // Create Account Trigger
+    document.addEventListener("verifiedCredentials", function() {
+      openChallengeModal('create');
+    });
 
+    // Reset Password Trigger
+    var resetPasswordButton = document.getElementById("resetPasswordButton");
+    if (resetPasswordButton) {
+        resetPasswordButton.addEventListener("click", function() {
+            openChallengeModal('recover');
+        });
+    }
+
+    // Open Challenge Modal
     var challengeModal = document.getElementById("challengeModal");
     function openChallengeModal(flowType) {
-      var sendCodeButton = document.getElementById("sendCodeButton");
-      sendCodeButton.setAttribute('flowType', flowType);
-      challengeModal.style.display = "block";
-      validateModal.style.display = "none";
-      document.body.appendChild(overlay);
+        var phoneNumberInput = document.getElementById("phoneNumberInputField").value;
+        console.log(`phoneNumberInputField value = ${phoneNumberInput}`)
+        var modalPhoneNumberInputField = document.getElementById("phoneNumber");
+        if (phoneNumberInput) {
+//            modalPhoneNumberInputField.placeholder = phoneNumberInput;
+            modalPhoneNumberInputField.value = phoneNumberInput;
+        }
+        var sendCodeButton = document.getElementById("sendCodeButton");
+        sendCodeButton.setAttribute('flowType', flowType);
+        challengeModal.style.display = "block";
+        validateModal.style.display = "none";
+        document.body.appendChild(overlay);
     }
 
     // Close Challenge Modal
@@ -74,7 +83,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     function sendCode(flowType) {
         var ph = document.getElementById("phoneNumber").value;
-        console.log(`Send Code button clicked. Fetching account/${flowType}/send/otp`)
         fetch(`account/${flowType}/send/otp`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -147,6 +155,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                 if (data.FlowType == 'recover') {
                     window.location.href = "/account/recover";
                 } else if (data.FlowType == 'create') {
+                    // Dispatch auth event
                 }
             } else {
                 console.log('user authentication failed');
