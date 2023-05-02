@@ -160,9 +160,8 @@ def validate_to_recover():
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
 
     if authenticated:
-        if not user.verified:
-            DAO.verify_user(user)
         session['authenticated'] = True
+        session['user_id'] = user.id
         resp = jsonify({'Status': AUTHENTICATED, 'FlowType': flow_type})
         app.logger.info(f'{user.username} has been authenticated.')
         return resp

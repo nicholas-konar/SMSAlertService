@@ -111,14 +111,17 @@ def update_username():
 
 
 @account_bp.route("/account/update/password", methods=["POST"])
-@protected
 def reset_password():
-    user_id = session.get('user_id')
-    user = DAO.get_user_by_id(user_id)
-    new_password = markupsafe.escape(request.json['NewPassword'])
-    success = DAO.reset_password(user, new_password)
-    return jsonify({'Status': SUCCESS, 'Message': PW_RESET_SUCCESS_MSG}) if success \
-        else jsonify({'Status': FAIL, 'Message': PW_RESET_FAIL_MSG})
+    if session.get('authenticated'):
+        session.pop('authenticated')
+        user_id = session.get('user_id')
+        user = DAO.get_user_by_id(user_id)
+        new_password = markupsafe.escape(request.json['NewPassword'])
+        success = DAO.reset_password(user, new_password)
+        return jsonify({'Status': SUCCESS, 'Message': PW_RESET_SUCCESS_MSG}) if success \
+            else jsonify({'Status': FAIL, 'Message': PW_RESET_FAIL_MSG})
+    else:
+        return abort(403, 'Access Denied')
 
 
 @account_bp.route("/account/recover", methods=["GET"])
