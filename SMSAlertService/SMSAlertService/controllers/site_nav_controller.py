@@ -1,15 +1,6 @@
-from flask import Blueprint, render_template, session, jsonify
-
-from SMSAlertService import mongo
-from SMSAlertService.dao import DAO
+from flask import Blueprint, render_template, session
 
 site_nav_bp = Blueprint('site_nav_controller', __name__)
-
-
-@site_nav_bp.route("/test")
-def test():
-    DAO.get_all_users()
-    return {}
 
 
 @site_nav_bp.route("/", methods=["GET"])

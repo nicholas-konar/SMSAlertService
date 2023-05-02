@@ -16,11 +16,6 @@ def timestamp():
     return now.strftime('%m-%d-%Y %H:%M')
 
 
-def is_valid_phone_number(ph):
-    pattern = re.compile(r'^\d{10}$')
-    return bool(pattern.match(ph))
-
-
 def generate_code(prefix):
     length = 6
     code = ''.join(secrets.choice(string.ascii_uppercase + string.digits)

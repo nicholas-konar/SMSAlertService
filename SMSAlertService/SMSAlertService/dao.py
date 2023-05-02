@@ -1,5 +1,3 @@
-import bcrypt
-
 from SMSAlertService import util, mongo, app
 from SMSAlertService.user import User
 
@@ -51,28 +49,27 @@ class DAO:
 
     @staticmethod
     def add_keyword(user, keyword):
-        if keyword not in user.keywords:
-            success = mongo.add_keyword(user.id, keyword).modified_count
-            info = f'User {user.username} added keyword {keyword}.'
-            error = f'User {user.username} failed to add keyword {keyword}.'
-            app.logger.info(info) if success else app.logger.error(error)
-            return success
-        else:
+        if keyword in user.keywords:
             return False
+        success = mongo.add_keyword(user.id, keyword).modified_count
+        info = f'{user.username} added keyword {keyword}.'
+        error = f'{user.username} failed to add keyword {keyword}.'
+        app.logger.info(info) if success else app.logger.error(error)
+        return success
 
     @staticmethod
     def delete_keyword(user, keyword):
         success = mongo.delete_keyword(user.id, keyword).modified_count
-        info = f'User {user.username} deleted keyword {keyword}.'
-        error = f'User {user.username} failed to delete keyword {keyword}.'
+        info = f'{user.username} deleted keyword {keyword}.'
+        error = f'{user.username} failed to delete keyword {keyword}.'
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
     def delete_all_keywords(user):
         success = mongo.delete_all_keywords(user.username).modified_count
-        info = f'User {user.username} deleted all keywords.'
-        error = f'User {user.username} failed to delete all keywords.'
+        info = f'{user.username} deleted all keywords.'
+        error = f'{user.username} failed to delete all keywords.'
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
@@ -97,7 +94,7 @@ class DAO:
     def update_username(user, new):
         old = user.username
         success = mongo.update_username(user.id, new).modified_count
-        info = f'User {old} changed their username to {new}.'
+        info = f'{old} changed their username to {new}.'
         error = f'Failed to update username {old}. Requested: {new}.'
         app.logger.info(info) if success else app.logger.error(error)
         return success

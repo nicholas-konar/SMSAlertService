@@ -1,21 +1,16 @@
 import secrets
 import string
-import time
 
-import bcrypt
-
-from SMSAlertService import app, twilio, util
-from SMSAlertService.dao import DAO
+from SMSAlertService import app, util
 
 
 class OtpService:
 
     @staticmethod
-    def generate_otp():
-        length = 6
-        code = ''.join(secrets.choice(string.digits) for i in range(length))
-        app.logger.debug(f"Generated OTP '{code}'")
-        return code
+    def generate_otp(length=6):
+        otp = ''.join(secrets.choice(string.digits) for i in range(length))
+        app.logger.debug(f"Generated OTP '{otp}'")
+        return otp
 
     @staticmethod
     def send_otp(phonenumber):
