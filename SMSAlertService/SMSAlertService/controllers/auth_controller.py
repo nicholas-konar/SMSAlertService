@@ -16,7 +16,7 @@ auth_bp = Blueprint('auth_controller', __name__)
 def authenticate():
     session['otp_resends'] = 0
     session['otp_attempts'] = 0
-    return render_template('modal/authenticate.html')
+    return render_template('modal/authentication.html')
 
 
 @auth_bp.route("/account/create/send/otp", methods=["POST"])

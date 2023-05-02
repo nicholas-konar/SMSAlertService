@@ -8,6 +8,7 @@
 <head>
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <script src="../static/js/account.js"></script>
+    <script src="../static/js/paypalModal.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <div class="container">
@@ -157,6 +158,10 @@
     </div>
 
     <div class="sidebar">
+        <div class="box-area">
+            <p><strong>Paypal Modal Window</strong></p>
+            <button class="button btn-primary" id="openPaypalModalButton">Open</button>
+        </div>
         <div class="box-area">
             <p><strong>SMS Alerts:</strong></p>
             <h3>{{ message_count }}</h3>

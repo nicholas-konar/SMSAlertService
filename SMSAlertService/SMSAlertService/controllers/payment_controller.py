@@ -18,3 +18,9 @@ def process_sale():
         return jsonify({"status": False})
 
 
+@payment_bp.route("/modal/paypal", methods=["GET"])
+def authenticate():
+    SANDBOX_CLIENT_ID = 'ARQ2SvMKJy5FXgCDIX6HM2Z_ig8N1RK7xoGmOwZbS36L6TpAsDriybrjKq0zp88c-AxulF9VNt-afqqd'
+    return render_template('modal/paypal.html', client_id=SANDBOX_CLIENT_ID)
+
+
