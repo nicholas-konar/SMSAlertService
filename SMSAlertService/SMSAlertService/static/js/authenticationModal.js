@@ -2,10 +2,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     var authenticationEvent = new CustomEvent("authenticationEvent");
 
-    // Modal Container
-    var overlay = document.createElement("div");
-    overlay.classList.add("overlay");
-
     var modalHtmlResponse = await fetch("/modal/authenticate");
     var modalHtml = await modalHtmlResponse.text();
 
@@ -13,22 +9,33 @@ document.addEventListener("DOMContentLoaded", async function() {
     document.body.appendChild(modalContainer);
     modalContainer.innerHTML = modalHtml;
 
+    var challengeModal = document.getElementById("challengeModal");
+    var validateModal = document.getElementById("validateModal");
 
-    // Create Account Form Validation & Credentials Available Event
+    var closeChallengeModalBtn = document.getElementById("closeChallengeButton");
+    closeChallengeModalBtn.addEventListener("click", closeModal);
+
+    var closeValidateModalBtn = document.getElementById("closeValidateButton");
+    closeValidateModalBtn.addEventListener("click", closeModal);
+
+    var overlay = document.createElement("div");
+    overlay.addEventListener("click", closeModal);
+    overlay.classList.add("overlay");
+
+
+    // After Sign-Up Form is submitted + validated
     document.addEventListener("verifiedCredentialsEvent", function() {
-      openChallengeModal('create');
+        openChallengeModal('create')
     });
 
-    // Reset Password Button Click Event
+    // Reset Password Button Click (only exists on Login page)
     var resetPasswordButton = document.getElementById("resetPasswordButton");
     if (resetPasswordButton) {
         resetPasswordButton.addEventListener("click", function() {
-            openChallengeModal('recover');
+            openChallengeModal('recover')
         });
     }
 
-    // Open Challenge Modal
-    var challengeModal = document.getElementById("challengeModal");
     function openChallengeModal(flowType) {
         // If signing up, prefill ph number in modal
         var phoneNumberInput = document.getElementById("phoneNumberInputField");
@@ -45,15 +52,6 @@ document.addEventListener("DOMContentLoaded", async function() {
         document.body.appendChild(overlay);
     }
 
-    // Close Challenge Modal
-    var closeChallengeModalBtn = document.getElementById("closeChallengeButton");
-    closeChallengeModalBtn.addEventListener("click", function() {
-        challengeModal.style.display = "none";
-        document.body.removeChild(overlay);
-    });
-
-    // Open Validate Modal
-    var validateModal = document.getElementById("validateModal");
     function openValidateModal(flowType) {
         var validateButton = document.getElementById("validateButton");
         validateButton.setAttribute('flowType', flowType);
@@ -61,21 +59,11 @@ document.addEventListener("DOMContentLoaded", async function() {
         validateModal.style.display = "block";
     }
 
-    // Close Validate Modal
-    var closeValidateModalBtn = document.getElementById("closeValidateButton");
-    closeValidateModalBtn.addEventListener("click", function() {
+    function closeModal() {
+        challengeModal.style.display = "none";
         validateModal.style.display = "none";
         document.body.removeChild(overlay);
-    });
-
-    // Close All (click off)
-    window.addEventListener("click", function(event) {
-        if (event.target == overlay) {
-            challengeModal.style.display = "none";
-            validateModal.style.display = "none";
-            document.body.removeChild(overlay);
-        }
-    });
+    }
 
     // Send Code Button
     var sendCodeButton = document.getElementById("sendCodeButton");
@@ -154,7 +142,8 @@ document.addEventListener("DOMContentLoaded", async function() {
     });
 
     function validateCode(flowType) {
-        var verificationCode = document.getElementById('verificationCode').value;
+        var verificationCodeField = document.getElementById("verificationCode");
+        var verificationCode = verificationCodeField.value;
         var ph = document.getElementById("modalPhoneNumberInputField").value
         fetch(`account/${flowType}/validate/otp`, {
             method: "POST",
@@ -168,22 +157,16 @@ document.addEventListener("DOMContentLoaded", async function() {
         .then(response => response.json())
         .then(data => {
             if (data.Status == "AUTHENTICATED") {
-                console.log('authenticated user!');
-                console.log(`FlowType = ${data.FlowType}`)
                 if (data.FlowType == 'recover') {
                     window.location.href = "/account/recover";
                 } else if (data.FlowType == 'create') {
-                    console.log('dispatching auth event!');
                     document.dispatchEvent(authenticationEvent);
                 }
             } else {
-                console.log('user authentication failed');
-                var verificationCodeField = document.getElementById("verificationCode");
                 verificationCodeField.value = "";
                 validateStatusMessage = document.getElementById("validateStatusMessage");
                 validateStatusMessage.innerHTML = data.Message;
-                validateStatusMessage.classList.remove("info");
-                validateStatusMessage.classList.add("alert");
+                validateStatusMessage.classList.remove("info").add("alert");
             }
         })
     }
