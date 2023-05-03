@@ -67,7 +67,7 @@ class DAO:
 
     @staticmethod
     def delete_all_keywords(user):
-        success = mongo.delete_all_keywords(user.username).modified_count
+        success = mongo.delete_all_keywords(user.id).modified_count
         info = f'{user.username} deleted all keywords.'
         error = f'{user.username} failed to delete all keywords.'
         app.logger.info(info) if success else app.logger.error(error)

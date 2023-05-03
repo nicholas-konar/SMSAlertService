@@ -62,6 +62,7 @@ def logout():
 @account_bp.route("/account/create", methods=["POST"])
 def create():
     if session.get('authenticated'):
+        session.pop('authenticated', None)
         username = markupsafe.escape(request.json['Username'])
         ph = markupsafe.escape(request.json['PhoneNumber'])
         pw = markupsafe.escape(request.json['Password'])
@@ -126,9 +127,9 @@ def reset_password():
 
 @account_bp.route("/account/recover", methods=["GET"])
 def recover_account():
-    session['otp_resends'] = 0
-    session['otp_attempts'] = 0
-    return render_template('reset-password.html')
+    authenticated = session.get('authenticated')
+    return render_template('reset-password.html') if authenticated \
+        else abort(403, 'Access Denied')
 
 
 @account_bp.route("/account/keyword/add", methods=["POST"])
