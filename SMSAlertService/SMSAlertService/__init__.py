@@ -26,6 +26,3 @@ app.config['SESSION_TIME_OUT'] = SESSION_TIMEOUT
 
 if __name__ == "__main__":
     app.run()
-
-# export FLASK_APP=SMSAlertService/__init__.py --> in terminal
-# and export FLASK_ENV=development

@@ -3,19 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <link href="static/modal.css" rel="stylesheet">
+    <link href="static/style.css" rel="stylesheet">
+    <script src="static/js/paypalButtons.js"></script>
     <script src="static/js/paypalModal.js"></script>
-
 </head>
 <body>
 
 <div class="modal" id="paypalModal">
     <div class="modalHeader">
         <span class="close" id="closePaypalModalButton">&times;</span>
-        <h3><i class="fa fa-envelope"></i>&nbsp;&nbsp;Test Modal Content</h3>
+        <h3><i class="fa fa-envelope"></i>&nbsp;&nbsp;Check Out</h3>
     </div>
     <div class="modalBody">
-        <p>This is the testModalBody section.</p>
+        <div id="smart-button-container">
+            <div>
+                <div style="text-align: center;">
+                    <div style="margin-bottom: 1.25rem;">
+                        <h5>Select an alert package:</h5><br/>
+                        <select id="item-options">
+                            <option>Select Package</option>
+                            <option price="5" value="50 Alerts">50 Alerts - 5.00 USD (.10 each)</option>
+                            <option price="10" value="125 Alerts">125 Alerts - 10.00 USD (.08 each)</option>
+                            <option price="15" value="250 Alerts">250 Alerts - 15.00 USD (.06 each)</option>
+                        </select>
+                    </div>
+                    <div id="paypal-button-container" data-user-id="{{ session.user_id }}"></div>
+                </div>
+            </div>
+            <script data-sdk-integration-source="button-factory"
+                    src="https://www.paypal.com/sdk/js?client-id=ATp90AxmHSm8HQwm8pdEyibtZVhsjC0eQnONlaZB2Z_ovQw6gKrvVuL6_gkuvfqzpu6TmHM0VQjXTBpp&enable-funding=venmo&currency=USD"></script>
     </div>
+</div>
 </div>
 
 </body>

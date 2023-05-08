@@ -1,13 +1,9 @@
 import secrets
 import string
-import re
-
 import bcrypt
 import pytz
-
 from datetime import datetime
-from SMSAlertService import app, mongo
-from SMSAlertService.user import User
+from SMSAlertService import app
 
 
 def timestamp():

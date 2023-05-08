@@ -1,5 +1,5 @@
 import secrets
-
+import os
 import markupsafe
 from bcrypt import checkpw
 from flask import Blueprint, request, redirect, render_template, session, url_for, jsonify, abort
@@ -18,8 +18,9 @@ def account():
     user_id = session.get('user_id')
     user = DAO.get_user_by_id(user_id)
     keywords = user.get_keywords_json()
+    SANDBOX_CLIENT_ID = os.environ['PAYPAL_SANDBOX_CLIENT_ID']
     return render_template('account.html', message_count=user.units_left,
-                           keywords=keywords, username=user.username, current_phone=user.phonenumber)
+                           keywords=keywords, username=user.username, current_phone=user.phonenumber, client_id=SANDBOX_CLIENT_ID)
 
 
 @account_bp.route("/account/login", methods=["POST"])

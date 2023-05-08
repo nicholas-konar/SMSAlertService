@@ -8,7 +8,9 @@
 <head>
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <script src="../static/js/account.js"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id={{ client_id }}&currency=USD&components=buttons&enable-funding=venmo&disable-funding=paylater"></script>
     <script src="../static/js/paypalModal.js"></script>
+    <script src="../static/js/paypalButtons.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <div class="container">
@@ -38,126 +40,6 @@
             <br/>
             <a class="link" href="/instructions">Click here to read tutorial</a>
         </div>
-        <div class="box-area" id="smart-button-container">
-            <div>
-                <div style="text-align: center;">
-                    <div style="margin-bottom: 1.25rem;">
-                        <h5>Buy SMS Alerts here:</h5><br/>
-                        <select id="item-options">
-                            <option>Select Package</option>
-                            <option price="5" value="50 Alerts">50 Alerts - 5.00 USD (.10 each)</option>
-                            <option price="10" value="125 Alerts">125 Alerts - 10.00 USD (.08 each)</option>
-                            <option price="15" value="250 Alerts">250 Alerts - 15.00 USD (.06 each)</option>
-                        </select>
-                        <select id="quantitySelect" style="visibility: hidden"></select>
-                    </div>
-                    <div id="paypal-button-container"></div>
-                </div>
-            </div>
-            <script data-sdk-integration-source="button-factory"
-                    src="https://www.paypal.com/sdk/js?client-id=ATp90AxmHSm8HQwm8pdEyibtZVhsjC0eQnONlaZB2Z_ovQw6gKrvVuL6_gkuvfqzpu6TmHM0VQjXTBpp&enable-funding=venmo&currency=USD"></script>
-            <script>
-      function initPayPalButton() {
-        var shipping = 0;
-        var itemOptions = document.querySelector("#smart-button-container #item-options");
-    var quantity = parseInt();
-    var quantitySelect = document.querySelector("#smart-button-container #quantitySelect");
-    if (!isNaN(quantity)) {
-      quantitySelect.style.visibility = "visible";
-    }
-    var orderDescription = 'SMS Alerts';
-    if(orderDescription === '') {
-      orderDescription = 'Item';
-    }
-    paypal.Buttons({
-      style: {
-        shape: 'rect',
-        color: 'gold',
-        layout: 'vertical',
-        label: 'paypal',
-
-      },
-      createOrder: function(data, actions) {
-        var selectedItemDescription = itemOptions.options[itemOptions.selectedIndex].value;
-        var selectedItemPrice = parseFloat(itemOptions.options[itemOptions.selectedIndex].getAttribute("price"));
-        var tax = (0 === 0 || false) ? 0 : (selectedItemPrice * (parseFloat(0)/100));
-        if(quantitySelect.options.length > 0) {
-          quantity = parseInt(quantitySelect.options[quantitySelect.selectedIndex].value);
-        } else {
-          quantity = 1;
-        }
-
-        tax *= quantity;
-        tax = Math.round(tax * 100) / 100;
-        var priceTotal = quantity * selectedItemPrice + parseFloat(shipping) + tax;
-        priceTotal = Math.round(priceTotal * 100) / 100;
-        var itemTotalValue = Math.round((selectedItemPrice * quantity) * 100) / 100;
-
-        return actions.order.create({
-          purchase_units: [{
-            description: orderDescription,
-            amount: {
-              currency_code: 'USD',
-              value: priceTotal,
-              breakdown: {
-                item_total: {
-                  currency_code: 'USD',
-                  value: itemTotalValue,
-                },
-                shipping: {
-                  currency_code: 'USD',
-                  value: shipping,
-                },
-                tax_total: {
-                  currency_code: 'USD',
-                  value: tax,
-                }
-              }
-            },
-            items: [{
-              name: selectedItemDescription,
-              unit_amount: {
-                currency_code: 'USD',
-                value: selectedItemPrice,
-              },
-              quantity: quantity
-            }]
-          }]
-        });
-      },
-      onApprove: function(data, actions) {
-        return actions.order.capture().then(function(orderData) {
-
-          // Full available details
-          console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-
-          // Show a success message within this page, e.g.
-           const element = document.getElementById('paypal-button-container');
-           element.innerHTML = '';
-           element.innerHTML = '<h3>Thank you for your payment!</h3>';
-           let unitSelection = orderData.purchase_units[0].items[0].name;
-           let units = unitSelection.replace(" Alerts", "");
-           let amount = orderData.purchase_units[0].amount.value;
-           fetch('/process-sale?user={{ username }}' + '&status=' + orderData.status + "&units=" + units + '&amount=' + amount).then(resp => resp.json()).then(response => console.log(response))
-
-          // Or go to another URL:  actions.redirect('thank_you.html');
-
-        });
-      },
-      onError: function(err) {
-        console.log(err);
-      },
-    }).render('#paypal-button-container');
-  }
-  initPayPalButton();
-
-
-
-            </script>
-        </div>
-    </div>
-
-    <div class="sidebar">
         <div class="box-area">
             <p><strong>Paypal Modal Window</strong></p>
             <button class="button btn-primary" id="openPaypalModalButton">Open</button>

@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", async function() {
 
-
     var modalHtmlResponse = await fetch("/modal/paypal");
     var modalHtml = await modalHtmlResponse.text();
 
@@ -9,6 +8,8 @@ document.addEventListener("DOMContentLoaded", async function() {
     modalContainer.innerHTML = modalHtml;
 
     var paypalModal = document.getElementById("paypalModal");
+
+    const paypalModalOpenedEvent = new CustomEvent("paypalModalOpenedEvent");
 
     var openPaypalModalButton = document.getElementById('openPaypalModalButton');
     openPaypalModalButton.addEventListener("click", openPaypalModal);
@@ -23,6 +24,8 @@ document.addEventListener("DOMContentLoaded", async function() {
     function openPaypalModal() {
         paypalModal.style.display = 'block';
         document.body.appendChild(overlay);
+        window.dispatchEvent(paypalModalOpenedEvent);
+        console.log('dispatched event')
     }
 
     function closePaypalModal() {
@@ -30,3 +33,5 @@ document.addEventListener("DOMContentLoaded", async function() {
         document.body.removeChild(overlay);
     }
 });
+
+
