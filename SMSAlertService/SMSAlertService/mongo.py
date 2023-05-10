@@ -3,7 +3,7 @@ import os
 import arrow
 import pymongo
 
-from bson.objectid import ObjectId
+from bson import ObjectId, Decimal128
 
 # NO VPN
 # In compass, enter regular_url value from below, then select default tls and upload mongodb.pem in the second file upload box (nothing in the first)
@@ -14,7 +14,7 @@ from bson.objectid import ObjectId
 
 
 url = os.environ['MONGO_URL']
-client = pymongo.MongoClient(url, tls=True)
+client = pymongo.MongoClient(url, tls=True, waitQueueTimeoutMS=1000)
 
 db_name = os.environ['MONGO_DB_NAME']
 db = client.get_database(db_name)
@@ -50,33 +50,51 @@ def set_cookie(user_id, cookie):
     return user_records.update_one(query, value)
 
 
-# todo: this needs help
-def process_transaction(username, units_purchased, amount):
-    timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
+def fulfill_order(user_id,
+                  payer_id,
+                  order_id,
+                  transaction_id,
+                  units_purchased: int,
+                  gross: Decimal128,
+                  paypal_fee: Decimal128,
+                  net: Decimal128,
+                  first_name,
+                  last_name,
+                  email,
+                  create_time,
+                  timestamp):
 
-    old_unit_count = get_message_count(username)
-    updated_unit_count = old_unit_count + int(units_purchased)
-
-    user = get_user_data_by_username(username)
-    updated_units_purchased = user['UnitsPurchased'] + int(units_purchased)
-    updated_total_revenue = user["TotalRevenue"] + math.floor(float(amount))
-
-    query = {"Username": username}
+    query = {"_id": ObjectId(user_id)}
     value = {
-        "$set": {
-            "Units": updated_unit_count,
-            "UnitsPurchased": updated_units_purchased,
-            "TotalRevenue": updated_total_revenue
+        "$inc": {
+            "Units": units_purchased,
+            "UnitsPurchased": units_purchased,
+            "TotalRevenue": gross
         },
         "$push": {
             "SalesRecords": {
-                "Date": timestamp,
-                "Units": units_purchased,
-                "Revenue": amount
+                "OrderDetails": {
+                    "TimeStamp": timestamp,
+                    "PayPalOrderId": order_id,
+                    "Units": units_purchased,
+                    "PurchaseAmount": gross
+                },
+                "UserDetails": {
+                    "PayPalPayerId": payer_id,
+                    "FirstName": first_name,
+                    "LastName": last_name,
+                    "Email": email
+                },
+                "TransactionDetails": {
+                    "PayPalTimeStamp": create_time,
+                    "PayPalTransactionId": transaction_id,
+                    "Gross": gross,
+                    "PayPalFee": paypal_fee,
+                    "Net": net
+                }
             }
         }
     }
-
     return user_records.update_one(query, value)
 
 
@@ -100,26 +118,21 @@ def get_user_data_by_phonenumber(ph):
     return user_records.find_one({"PhoneNumber": ph})
 
 
-def save_alert_data(alert):
-    timestamp = arrow.now().format("MM-DD-YYYY HH:mm:ss")
-    user = get_user_data_by_username(alert.owner.username)
-    updated_msg_count = user["Units"] - 1
-    updated_sent_count = user["UnitsSent"] + 1
-
-    query = {"Username": alert.owner.username}
+def save_alert_data(user_id, twilio, timestamp):
+    query = {"_id": ObjectId(user_id)}
     value = {
-        "$set": {
-            "Units": updated_msg_count,
-            "UnitsSent": updated_sent_count
+        "$inc": {
+            "Units": -1,
+            "UnitsSent": 1
         },
         "$push": {
             "TwilioRecords": {
                 "Date": timestamp,
                 "Type": "Alert",
-                "Body": alert.twilio.body,
-                "Status": alert.twilio.status,
-                "ErrorMessage": alert.twilio.error_message,
-                "SID": alert.twilio.sid
+                "Body": twilio.body,
+                "Status": twilio.status,
+                "ErrorMessage": twilio.error_message,
+                "SID": twilio.sid
             }
         }
     }
