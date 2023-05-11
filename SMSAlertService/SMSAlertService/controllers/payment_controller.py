@@ -6,45 +6,44 @@ from bson import Decimal128
 
 from SMSAlertService import app, paypal, util
 from SMSAlertService.dao import DAO
+from SMSAlertService.services import alert_service
 
 payment_bp = Blueprint('payment_controller', __name__)
 
 
 @payment_bp.route("/modal/paypal", methods=["GET"])
 def paypal_modal():
-    SANDBOX_CLIENT_ID = os.environ['PAYPAL_SANDBOX_CLIENT_ID']
-    return render_template('modal/paypal.html', client_id=SANDBOX_CLIENT_ID)
+    return render_template('modal/paypal.html')
 
 
 @app.route('/paypal/payment/capture/completed', methods=['POST'])
 def paypal_webhook():
-    data = request.json
-    if data['event_type'] == 'PAYMENT.CAPTURE.COMPLETED':
+    webhook = request.json
+    if webhook['event_type'] == 'PAYMENT.CAPTURE.COMPLETED':
 
         # Transaction data
-        resource = data['resource']
+        resource = webhook['resource']
         user_id = resource['custom_id']
         order_id = resource["supplementary_data"]["related_ids"]["order_id"]
         transaction_id = resource['id']
-        app.logger.debug(f'order_id = {order_id}')
-        app.logger.debug(f'transaction_id = {transaction_id}')
 
         # Fetch order data from PayPal API
         access_token = paypal.get_access_token()
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json"
-        }
-        response = requests.get(f"https://api.sandbox.paypal.com/v2/checkout/orders/{order_id}", headers=headers)
-        order_details = response.json()
+        order_details = paypal.get_order_details(access_token, order_id)
+        authenticated = paypal.authenticate_order(order_details)
 
         # Kick phony request
-        if 'name' in order_details and order_details['name'] == 'RESOURCE_NOT_FOUND':
-            app.logger.error(
-                f'Phony order_id in request: {order_details["name"]} for order_id {order_id}. Webhook request: {data}')
+        if not authenticated:
+            app.logger.error(f'Phony order_id {order_id} found in webhook. Full webhook request: {webhook}')
             return make_response('Forbidden', 403)
 
+        order_id = '79N21312B64486116'
+        if found := DAO.get_user_by_order_id(order_id):
+            app.logger.error(f'Order {order_id} already fulfilled under user_id {found.id}. Requested by user_id {user_id}.')
+            return make_response('OK', 200)
+
         else:
+
             # Customer data
             payer = order_details['payer']
             payer_id = payer['payer_id']
@@ -64,12 +63,9 @@ def paypal_webhook():
             net = seller_receivable_breakdown['net_amount']['value']
             create_time = order_details['create_time']
 
-            # make sure we haven't already fulfilled order_id
-            # Save to db
-            # text user their order is filled
-
-            # Process order fulfillment
+            # Process order
             user = DAO.get_user_by_id(user_id)
+            app.logger.info(f'{user.username} purchased {units_purchased} units for {gross} USD!')
 
             success = DAO.fulfill_order(user=user,
                                         payer_id=payer_id,
@@ -84,13 +80,13 @@ def paypal_webhook():
                                         email=email,
                                         create_time=create_time)
             if success:
-                # text user
-                app.logger.debug(f'Your account has been loaded with {units_purchased} alerts.')
-                pass
+                alert_service.send_order_fulfilled_msg(user=user, order_description=order_description)
+                alert_service.alert_admin(f'{user.username} purchased {order_description}')
+                app.logger.info(f'Notified {user.username} that their order was filled.')
+
             else:
-                # text admin
-                app.logger.debug(f'Oh no bro.')
-                pass
+                alert_service.alert_admin(f'Failed to fill order {order_id} for {user.username} in database.')
+                app.logger.error(f'Alerted ADMIN to order fulfillment failure.')
 
             return make_response('OK', 200)
     else:

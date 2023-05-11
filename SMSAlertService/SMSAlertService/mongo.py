@@ -1,8 +1,5 @@
-import math
 import os
-import arrow
 import pymongo
-
 from bson import ObjectId, Decimal128
 
 # NO VPN
@@ -27,19 +24,19 @@ def create_user(username, pw_hash, phonenumber, verified, timestamp, cookie):
     user_data = {
         'Cookie': cookie,
         'SignUpDate': timestamp,
-        'Password': pw_hash,
         'Username': username,
+        'Password': pw_hash,
         'PhoneNumber': phonenumber,
+        'Verified': verified,
+        'Blocked': False,
         'Subreddits': [],
         'Keywords': [],
         'TotalRevenue': 0,
         'Units': 0,
         'UnitsSent': 0,
         'UnitsPurchased': 0,
-        'Verified': verified,
-        'Blocked': False,
-        'TwilioRecords': [],
-        'SalesRecords': []
+        'SalesRecords': [],
+        'TwilioRecords': []
     }
     return user_records.insert_one(user_data)
 
@@ -63,7 +60,6 @@ def fulfill_order(user_id,
                   email,
                   create_time,
                   timestamp):
-
     query = {"_id": ObjectId(user_id)}
     value = {
         "$inc": {
@@ -98,26 +94,6 @@ def fulfill_order(user_id,
     return user_records.update_one(query, value)
 
 
-def get_all_user_data():
-    return user_records.find()
-
-
-def get_all_active_user_data():
-    return user_records.find({"Units": {"$gt": 0}})
-
-
-def get_user_data_by_id(user_id):
-    return user_records.find_one({"_id": ObjectId(user_id)})
-
-
-def get_user_data_by_username(username):
-    return user_records.find_one({"Username": username})
-
-
-def get_user_data_by_phonenumber(ph):
-    return user_records.find_one({"PhoneNumber": ph})
-
-
 def save_alert_data(user_id, twilio, timestamp):
     query = {"_id": ObjectId(user_id)}
     value = {
@@ -139,10 +115,28 @@ def save_alert_data(user_id, twilio, timestamp):
     return user_records.update_one(query, value)
 
 
-def reset_password(user_id, hashed_pw):
-    query = {"_id": ObjectId(user_id)}
-    value = {"$set": {"Password": hashed_pw}}
-    return user_records.update_one(query, value)
+def get_all_user_data():
+    return user_records.find()
+
+
+def get_all_active_user_data():
+    return user_records.find({"Units": {"$gt": 0}})
+
+
+def get_user_data_by_id(user_id):
+    return user_records.find_one({"_id": ObjectId(user_id)})
+
+
+def get_user_data_by_order_id(order_id):
+    return user_records.find_one({"SalesRecords.OrderDetails.PayPalOrderId": order_id})
+
+
+def get_user_data_by_username(username):
+    return user_records.find_one({"Username": username})
+
+
+def get_user_data_by_phonenumber(ph):
+    return user_records.find_one({"PhoneNumber": ph})
 
 
 def add_to_blacklist(phonenumber):
@@ -177,6 +171,12 @@ def delete_keyword(user_id, keyword):
 def delete_all_keywords(user_id):
     query = {"_id": ObjectId(user_id)}
     value = {"$set": {"Keywords": []}}
+    return user_records.update_one(query, value)
+
+
+def reset_password(user_id, hashed_pw):
+    query = {"_id": ObjectId(user_id)}
+    value = {"$set": {"Password": hashed_pw}}
     return user_records.update_one(query, value)
 
 

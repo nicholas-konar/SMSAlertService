@@ -36,8 +36,8 @@ class DAO:
                                       email=email,
                                       create_time=create_time,
                                       timestamp=timestamp).modified_count
-        info = f'Order {order_id} fulfilled: {user.username} purchased {units_purchased} units for {gross} USD.'
-        error = f'ORDER FULFILLMENT FAILURE! USER: {user.username} ORDER_ID: {order_id} TXN_ID: {transaction_id}'
+        info = f'Order {order_id} fulfilled.'
+        error = f'ORDER {order_id} FULFILLMENT FAILURE!'
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
@@ -67,6 +67,11 @@ class DAO:
     @staticmethod
     def get_user_by_id(user_id):
         user_data = mongo.get_user_data_by_id(user_id)
+        return None if user_data is None else User(user_data)
+
+    @staticmethod
+    def get_user_by_order_id(order_id):
+        user_data = mongo.get_user_data_by_order_id(order_id)
         return None if user_data is None else User(user_data)
 
     @staticmethod
