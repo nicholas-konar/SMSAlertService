@@ -1,4 +1,5 @@
 from SMSAlertService import util, mongo, app
+from SMSAlertService.services.auth_service import AuthService
 from SMSAlertService.user import User
 
 
@@ -7,7 +8,7 @@ class DAO:
     @staticmethod
     def create_account(username, password, phonenumber, verified, cookie):
         timestamp = util.timestamp()
-        pw_hash = util.hash_data(password)
+        pw_hash = AuthService.hash_data(password)
         insertion = mongo.create_user(username=username,
                                       pw_hash=pw_hash,
                                       phonenumber=phonenumber,
@@ -66,8 +67,8 @@ class DAO:
 
     @staticmethod
     def get_active_users_by_subreddit(subreddit):
-        user_data = mongo.get_active_user_data_by_subreddit(subreddit)
-        return None if user_data is None else User(user_data)
+        user_data_set = mongo.get_active_user_data_by_subreddit(subreddit)
+        return [User(user_data) for user_data in user_data_set]
 
     @staticmethod
     def get_user_by_id(user_id):
@@ -91,7 +92,7 @@ class DAO:
 
     @staticmethod
     def add_keyword(user, keyword):
-        if keyword in user.keywords_found:
+        if keyword in user.keywords:
             return False
         success = mongo.add_keyword(user.id, keyword).modified_count
         info = f'{user.username} added keyword {keyword}.'
@@ -125,7 +126,7 @@ class DAO:
 
     @staticmethod
     def reset_password(user, new_password):
-        hashed_pw = util.hash_data(new_password)
+        hashed_pw = AuthService.hash_data(new_password)
         success = mongo.reset_password(user_id=user.id, hashed_pw=hashed_pw).modified_count
         info = f'{user.username} reset their password.'
         error = f'Failed to reset password for {user.username}.'
@@ -137,7 +138,7 @@ class DAO:
         old = user.username
         success = mongo.update_username(user.id, new).modified_count
         info = f'{old} changed their username to {new}.'
-        error = f'Failed to update username {old}. Requested: {new}.'
+        error = f'{old} failed to update username to {new}.'
         app.logger.info(info) if success else app.logger.error(error)
         return success
 

@@ -10,12 +10,11 @@ class AlertService:
         for alert in alerts:
             body = STANDARD_ALERT_MSG.format(
                 subreddit=alert.subreddit,
-                keywords=alert.keywords_found,
+                keywords=alert.keywords,
                 url=alert.url
             )
             twilio.send_message(body=body, ph=alert.owner.phonenumber)
-            # mongo.save_alert_data(alert)
-
+            mongo.save_alert_data(alert)
 
     @staticmethod
     def send_otp(phonenumber):
@@ -24,12 +23,10 @@ class AlertService:
         twilio.send_message(body=body, ph=phonenumber)
         return AuthService.hash_data(otp)
 
-
     @staticmethod
     def send_order_confirmation(user, order_description):
         body = ORDER_CONFIRMATION_MSG.format(order_description=order_description)
         twilio.send_message(body=body, ph=user.phonenumber)
-
 
     @staticmethod
     def send_admin(body):

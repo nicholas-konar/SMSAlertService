@@ -8,7 +8,7 @@ from bson import ObjectId, Decimal128
 # to get the certs to work, in the command line say:
 # python3 -m pip install certifi
 # export SSL_CERT_FILE=$(python3 -c "import certifi; print(certifi.where())")
-
+from SMSAlertService import app
 
 url = os.environ['MONGO_URL']
 client = pymongo.MongoClient(url, tls=True, waitQueueTimeoutMS=1000)
@@ -47,19 +47,21 @@ def set_cookie(user_id, cookie):
     return user_records.update_one(query, value)
 
 
-def fulfill_order(user_id,
-                  payer_id,
-                  order_id,
-                  transaction_id,
-                  units_purchased: int,
-                  gross: Decimal128,
-                  paypal_fee: Decimal128,
-                  net: Decimal128,
-                  first_name,
-                  last_name,
-                  email,
-                  create_time,
-                  timestamp):
+def fulfill_order(
+    user_id,
+    payer_id,
+    order_id,
+    transaction_id,
+    units_purchased: int,
+    gross: Decimal128,
+    paypal_fee: Decimal128,
+    net: Decimal128,
+    first_name,
+    last_name,
+    email,
+    create_time,
+    timestamp
+):
     query = {"_id": ObjectId(user_id)}
     value = {
         "$inc": {
@@ -124,11 +126,10 @@ def get_all_active_user_data():
 
 
 def get_active_user_data_by_subreddit(subreddit):
-    query = {
+    return user_records.find({
         "Units": {"$gt": 0},
         "Subreddits": subreddit
-    }
-    return user_records.find(query)
+    })
 
 
 def get_user_data_by_id(user_id):

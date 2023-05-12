@@ -26,7 +26,8 @@ class Reddit:
             previous_post_id = reddit_data[f'${subreddit}']['LastPostId']
             app.logger.debug(f'Last known {subreddit} post id: {previous_post_id}')
             app.logger.debug(f'Current {subreddit} post id: {post.id}')
-            if post.id != previous_post_id and '[WTS]' in post.title.upper():  # todo: relocate WTS filter or make filter class
+
+            if post.id != previous_post_id and 'WTB' not in post.title.upper():  # todo: relocate WTS filter or make filter class
                 DAO.update_post_id(post)
                 posts.append(post)
                 app.logger.info(f'New post in r/{subreddit}: {post.id}')

@@ -1,11 +1,11 @@
-from flask import Blueprint, request, redirect, render_template, session, url_for, jsonify
-from SMSAlertService import alert_engine
+from flask import Blueprint, jsonify
+from SMSAlertService.alert_engine import AlertEngine
 
 alert_bp = Blueprint('alert_controller', __name__)
 
 
 @alert_bp.route("/notify", methods=["GET"])
 def notify():
-    alert_engine.run()
+    AlertEngine.run()
     return jsonify({'status': True})
 

@@ -73,7 +73,7 @@ def calculate_total_codes_redeemed(users):
 def format_keywords(keywords):
     formatted_keywords = ''
     for keyword in keywords:
-        formatted_keywords += f' {keyword["Keyword"]}'
+        formatted_keywords += f' {keyword}'
     return formatted_keywords
 
 
