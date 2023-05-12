@@ -65,6 +65,11 @@ class DAO:
         return [User(user_data) for user_data in user_data_set]
 
     @staticmethod
+    def get_active_users_by_subreddit(subreddit):
+        user_data = mongo.get_active_user_data_by_subreddit(subreddit)
+        return None if user_data is None else User(user_data)
+
+    @staticmethod
     def get_user_by_id(user_id):
         user_data = mongo.get_user_data_by_id(user_id)
         return None if user_data is None else User(user_data)
@@ -135,6 +140,16 @@ class DAO:
         error = f'Failed to update username {old}. Requested: {new}.'
         app.logger.info(info) if success else app.logger.error(error)
         return success
+
+    @staticmethod
+    def get_reddit_data():
+        return mongo.get_reddit_data()
+
+    @staticmethod
+    def update_post_id(post):
+        post_id = post.id
+        subreddit = post.subreddit.display_name
+        mongo.update_post_id(post_id=post_id, subreddit=subreddit)
 
     @staticmethod
     def get_blacklist():

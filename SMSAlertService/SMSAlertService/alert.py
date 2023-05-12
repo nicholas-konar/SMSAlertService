@@ -1,12 +1,12 @@
-from SMSAlertService import util, app
+from SMSAlertService import util
 
 
 class Alert:
 
-    def __init__(self, user, post):
+    def __init__(self, user, post, keywords):
         self.owner = user
         self.post = post
         self.subreddit = post.subreddit.display_name
         self.url = post.url
-        self.keywords_found = util.format_keywords(user.keyword_hits)
+        self.keywords = util.format_keywords(keywords)
 

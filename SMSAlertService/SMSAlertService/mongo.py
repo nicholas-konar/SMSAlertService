@@ -123,6 +123,14 @@ def get_all_active_user_data():
     return user_records.find({"Units": {"$gt": 0}})
 
 
+def get_active_user_data_by_subreddit(subreddit):
+    query = {
+        "Units": {"$gt": 0},
+        "Subreddits": subreddit
+    }
+    return user_records.find(query)
+
+
 def get_user_data_by_id(user_id):
     return user_records.find_one({"_id": ObjectId(user_id)})
 
@@ -197,11 +205,15 @@ def get_reddit_data():
     return document["SubReddits"]
 
 
-def save_post_id(post):
+def get_distinct_subreddit_names():
+    return user_records.distinct("Subreddits")
+
+
+def update_post_id(subreddit, post_id):
     query = {"Document": "REDDIT"}
     value = {"$set": {
-        f"SubReddits.${post.subreddit.display_name}": {
-            "LastPostId": post.id
+        f"SubReddits.${subreddit}": {
+            "LastPostId": post_id
         }}}
     return app_records.update_one(query, value, upsert=True)
 

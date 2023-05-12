@@ -15,7 +15,7 @@ def login():
     return render_template('login.html')
 
 
-@site_nav_bp.route("/signup", methods=["GET", "POST"])
+@site_nav_bp.route("/signup", methods=["GET"])
 def signup():
     if 'otp_resends' and 'otp_attempts' not in session:
         session['otp_resends'] = 0
