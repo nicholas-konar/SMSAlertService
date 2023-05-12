@@ -3,7 +3,7 @@ from flask import Flask
 app = Flask(__name__)
 
 import os
-from SMSAlertService.config import SESSION_TIMEOUT
+from SMSAlertService.resources.config import SESSION_TIMEOUT
 from SMSAlertService.controllers.account_controller import account_bp
 from SMSAlertService.controllers.admin_controller import admin_bp
 from SMSAlertService.controllers.alert_controller import alert_bp

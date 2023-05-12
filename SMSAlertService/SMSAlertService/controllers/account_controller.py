@@ -6,8 +6,9 @@ from flask import Blueprint, request, redirect, render_template, session, url_fo
 from SMSAlertService import app
 from SMSAlertService.dao import DAO
 from SMSAlertService.decorators import protected
-from SMSAlertService.config import SUCCESS, FAIL, FAIL_MSG, INVALID_LOGIN_MSG, MAX_LOGIN_ATTEMPTS, \
-    BLOCKED, BLOCKED_MSG, USERNAME_TAKEN_MSG, CREATE_ACCOUNT_FAIL_MSG, PW_RESET_SUCCESS_MSG, PW_RESET_FAIL_MSG
+from SMSAlertService.resources.config import SUCCESS, FAIL, MAX_LOGIN_ATTEMPTS, BLOCKED
+from SMSAlertService.resources.screen_templates import INVALID_LOGIN_MSG, BLOCKED_MSG, PW_RESET_FAIL_MSG, \
+    PW_RESET_SUCCESS_MSG, USERNAME_TAKEN_MSG, FAIL_MSG, CREATE_ACCOUNT_FAIL_MSG
 
 account_bp = Blueprint('account_controller', __name__)
 

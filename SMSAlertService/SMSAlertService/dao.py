@@ -86,7 +86,7 @@ class DAO:
 
     @staticmethod
     def add_keyword(user, keyword):
-        if keyword in user.keywords:
+        if keyword in user.keywords_found:
             return False
         success = mongo.add_keyword(user.id, keyword).modified_count
         info = f'{user.username} added keyword {keyword}.'

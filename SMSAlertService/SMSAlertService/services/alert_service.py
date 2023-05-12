@@ -1,44 +1,36 @@
-from SMSAlertService import twilio, mongo
-from SMSAlertService.alert import Alert
-from SMSAlertService.dao import DAO
-from twilio.base.exceptions import TwilioRestException
-
-from SMSAlertService.resources import sms_templates
-from SMSAlertService.resources.sms_templates import ORDER_COMPLETE_MSG
+from SMSAlertService import twilio
+from SMSAlertService.resources.sms_templates import ORDER_CONFIRMATION_MSG, STANDARD_ALERT_MSG, OTP_MSG
+from SMSAlertService.services.auth_service import AuthService
 
 
-def process_alerts(alerts):
-    for alert in alerts:
-        twilio.send_alert(alert)
-        mongo.save_alert_data(alert)
+class AlertService:
+
+    @staticmethod
+    def send_alerts(alerts):
+        for alert in alerts:
+            body = STANDARD_ALERT_MSG.format(
+                subreddit=alert.subreddit,
+                keywords=alert.keywords_found,
+                url=alert.url
+            )
+            twilio.send_message(body=body, ph=alert.owner.phonenumber)
+            # mongo.save_alert_data(alert)
 
 
-def create_alerts_for_many(posts):
-    alerts = []
-    users = DAO.get_all_users()
-    for post in posts:
-        batch = create_alerts_for_one(post, users)
-        alerts.extend(batch)
-    return alerts
+    @staticmethod
+    def send_otp(phonenumber):
+        otp = AuthService.generate_otp()
+        body = OTP_MSG.format(otp=otp)
+        twilio.send_message(body=body, ph=phonenumber)
+        return AuthService.hash_data(otp)
 
 
-def create_alerts_for_one(post, users):
-    batch = []
-    for user in users:
-        if user.requires_alert_for_post(post):
-            alert = Alert(user, post)
-            batch.append(alert)
-    return batch
-
-
-def send_order_fulfilled_msg(user, order_description):
-    try:
-        body = ORDER_COMPLETE_MSG.format(order_description=order_description)
+    @staticmethod
+    def send_order_confirmation(user, order_description):
+        body = ORDER_CONFIRMATION_MSG.format(order_description=order_description)
         twilio.send_message(body=body, ph=user.phonenumber)
-    except TwilioRestException as e:
-        body = f'TwilioRestException during order fulfillment notification for {user.username}.\n{e.details}'
+
+
+    @staticmethod
+    def send_admin(body):
         twilio.send_message(body=body, admin=True)
-
-
-def alert_admin(body):
-    twilio.send_message(body=body, admin=True)

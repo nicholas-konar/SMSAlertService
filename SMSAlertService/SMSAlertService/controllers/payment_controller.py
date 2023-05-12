@@ -1,12 +1,10 @@
 import re
-import os
-import requests
 from flask import Blueprint, request, render_template, make_response
 from bson import Decimal128
 
-from SMSAlertService import app, paypal, util
-from SMSAlertService.dao import DAO
+from SMSAlertService import app, paypal
 from SMSAlertService.services import alert_service
+from SMSAlertService.dao import DAO
 
 payment_bp = Blueprint('payment_controller', __name__)
 
@@ -34,12 +32,11 @@ def paypal_webhook():
 
         # Kick phony request
         if not authenticated:
-            app.logger.error(f'Phony order_id {order_id} found in webhook. Full webhook request: {webhook}')
+            app.logger.error(f'Phony order #{order_id} found in webhook. Full webhook request: {webhook}')
             return make_response('Forbidden', 403)
 
-        order_id = '79N21312B64486116'
         if found := DAO.get_user_by_order_id(order_id):
-            app.logger.error(f'Order {order_id} already fulfilled under user_id {found.id}. Requested by user_id {user_id}.')
+            app.logger.error(f'Order #{order_id} already fulfilled under user_id {found.id}. Requested by user_id {user_id}.')
             return make_response('OK', 200)
 
         else:
@@ -52,12 +49,12 @@ def paypal_webhook():
             email = payer['email_address']
 
             # Order data
-            order_description = order_details['purchase_units'][0]['items'][0]['name']
+            purchase_units = order_details['purchase_units'][0]
+            order_description = purchase_units['items'][0]['name']
             units_purchased = int(re.findall(r'\d+', order_description)[0])
 
             # Payment data
-            seller_receivable_breakdown = order_details['purchase_units'][0]['payments']['captures'][0][
-                'seller_receivable_breakdown']
+            seller_receivable_breakdown = purchase_units['payments']['captures'][0]['seller_receivable_breakdown']
             gross = seller_receivable_breakdown['gross_amount']['value']
             paypal_fee = seller_receivable_breakdown['paypal_fee']['value']
             net = seller_receivable_breakdown['net_amount']['value']
@@ -65,7 +62,7 @@ def paypal_webhook():
 
             # Process order
             user = DAO.get_user_by_id(user_id)
-            app.logger.info(f'{user.username} purchased {units_purchased} units for {gross} USD!')
+            app.logger.info(f'Confirmed order #{order_id}: {user.username} purchased {units_purchased} units for {gross} USD!')
 
             success = DAO.fulfill_order(user=user,
                                         payer_id=payer_id,
@@ -80,12 +77,12 @@ def paypal_webhook():
                                         email=email,
                                         create_time=create_time)
             if success:
-                alert_service.send_order_fulfilled_msg(user=user, order_description=order_description)
-                alert_service.alert_admin(f'{user.username} purchased {order_description}')
+                alert_service.send_order_confirmation(user=user, order_description=order_description)
+                alert_service.send_admin(f'{user.username} purchased {order_description}')
                 app.logger.info(f'Notified {user.username} that their order was filled.')
 
             else:
-                alert_service.alert_admin(f'Failed to fill order {order_id} for {user.username} in database.')
+                alert_service.send_admin(f'Failed to fill order #{order_id} for {user.username} in database.')
                 app.logger.error(f'Alerted ADMIN to order fulfillment failure.')
 
             return make_response('OK', 200)

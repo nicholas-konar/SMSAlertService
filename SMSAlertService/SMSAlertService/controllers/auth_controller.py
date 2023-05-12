@@ -3,11 +3,13 @@ import markupsafe
 from flask import Blueprint
 from flask import request, render_template, session, jsonify
 from twilio.base.exceptions import TwilioRestException
-from SMSAlertService import app, util
+from SMSAlertService import app
 from SMSAlertService.dao import DAO
-from SMSAlertService.services.otp_service import OtpService
-from SMSAlertService.config import MAX_RESENDS, BLOCKED, BLOCKED_MSG, MAX_ATTEMPTS, RESEND_MSG, ERROR_MSG, FAIL, \
-    RETRY_MSG, SUCCESS, ERROR, INVALID_PH_MSG, AUTHENTICATED
+from SMSAlertService.resources.screen_templates import BLOCKED_MSG, ERROR_MSG, RESEND_MSG, RETRY_MSG, INVALID_PH_MSG
+from SMSAlertService.services.alert_service import AlertService
+from SMSAlertService.services.auth_service import AuthService
+from SMSAlertService.resources.config import MAX_RESENDS, BLOCKED, MAX_ATTEMPTS, FAIL, \
+    SUCCESS, ERROR, AUTHENTICATED
 
 auth_bp = Blueprint('auth_controller', __name__)
 
@@ -28,7 +30,7 @@ def send_to_create():
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
 
     try:
-        otp_hash = OtpService.send_otp(ph)
+        otp_hash = AlertService.send_otp(ph)
         app.logger.info(f'Sending OTP to prospective user at {ph}. Resends = {session["otp_resends"]}.')
         session['otp_resends'] += 1
         session['otp'] = otp_hash
@@ -50,7 +52,7 @@ def resend_to_create():
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
 
     try:
-        otp_hash = OtpService.send_otp(ph)
+        otp_hash = AlertService.send_otp(ph)
         app.logger.info(f'Sending OTP to prospective user at {ph}. Resends = {session["otp_resends"]}.')
         session['otp_resends'] += 1
         session['otp'] = otp_hash
@@ -66,7 +68,7 @@ def validate_to_create():
     flow_type = markupsafe.escape(request.json['FlowType'])
     expected_hash = session.get('otp')
     actual = markupsafe.escape(request.json['OTP'])
-    authenticated = OtpService.authenticate_otp(expected=expected_hash, actual=actual)
+    authenticated = AuthService.authenticate_otp(expected=expected_hash, actual=actual)
 
     if session.get('otp_attempts') >= MAX_ATTEMPTS:
         app.logger.info(f'Max attempts limit (in session only) reached by prospective user. Denied resend.')
@@ -105,7 +107,7 @@ def send_to_recover():
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
 
     try:
-        otp_hash = OtpService.send_otp(user.phonenumber)
+        otp_hash = AlertService.send_otp(user.phonenumber)
         app.logger.debug(f'Sending OTP to {user.username}. Resends = {session["otp_resends"]}.')
         session['otp'] = otp_hash
         session['otp_resends'] += 1
@@ -133,7 +135,7 @@ def resend_to_recover():
         return jsonify({'Status': BLOCKED, 'Message': BLOCKED_MSG})
 
     try:
-        otp_hash = OtpService.send_otp(user.phonenumber)
+        otp_hash = AlertService.send_otp(user.phonenumber)
         app.logger.debug(f'Resending OTP to {user.username}. Resends = {session["otp_resends"]}.')
         session['otp_resends'] += 1
         session['otp'] = otp_hash
@@ -149,7 +151,7 @@ def validate_to_recover():
     flow_type = request.json['FlowType']
     expected_hash = session.get('otp')
     actual = markupsafe.escape(request.json['OTP'])
-    authenticated = OtpService.authenticate_otp(expected=expected_hash, actual=actual)
+    authenticated = AuthService.authenticate_otp(expected=expected_hash, actual=actual)
 
     ph = markupsafe.escape(request.json['PhoneNumber'])
     user = DAO.get_user_by_phonenumber(ph)
