@@ -4,7 +4,7 @@
 {% block content %}
 <html xmlns="http://www.w3.org/1999/html">
 <head>
-    <link href="static/style.css" rel="stylesheet">
+    <link href="static/style/style.css" rel="stylesheet">
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://www.w3schools.com/w3css/4/w3.css" rel="stylesheet">
@@ -21,24 +21,7 @@
         <h3>Welcome to the SMS Alert Service</h3>
         <h3><i class="fa fa-envelope fa-2x"></i></h3>
     </div>
-    <div class="flex-container">
-        {% if username %}
-        <button onclick="getPage('instructions')" class="flex-item menu-btn menu-btn-first btn-primary" type="submit">Instructions</button>
-        <button onclick="getPage('support')" class="flex-item menu-btn btn-primary" type="submit">Support</button>
-        <button onclick="getPage('profile')" class="flex-item menu-btn btn-primary" type="submit">Profile</button>
-        {% else %}
-        <button onclick="getPage('instructions')" class="flex-item menu-btn menu-btn-first btn-primary" type="submit">Instructions</button>
-        <button onclick="getPage('support')" class="flex-item menu-btn btn-primary" type="submit">Support</button>
-        <button onclick="getPage('signup')" class="flex-item menu-btn btn-primary" type="submit">Sign Up</button>
-        <button onclick="getPage('login')" class="flex-item menu-btn btn-primary" type="submit">Log in</button>
-        {% endif %}
-        <script>
-            function getPage(page) {
-              window.location.href = "/" + page;
-            }
-        </script>
 
-    </div>
     <div>
         <div class="box-area">
             <h5><strong>What is the SMS Alert Service?</strong></h5>

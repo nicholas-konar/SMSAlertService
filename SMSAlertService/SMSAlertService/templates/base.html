@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <link href="../static/style.css" rel="stylesheet">
+    <link href="../static/style/header_footer.css" rel="stylesheet">
     <title>{% block title %}{% endblock %}</title>
     <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" rel="stylesheet">
@@ -9,12 +9,12 @@
 
 </head>
 <div class="base">
-    <nav class="navbar navbar-light justify-content-center">
+    <nav class="sticky-nav navbar navbar-light justify-content-center">
         <a class="navbar-brand" href="/" style="color: black;"><h3><i class="fa fa-envelope"></i>&nbsp;&nbsp;The SMS Alert Service
         </h3></a>
 
         <ul class="nav">
-            {% if not username %}
+            {% if not session.user_id %}
             <li class="nav-item">
                 <a class="nav-item nav-link" href="/">Home</a>
             </li>
@@ -32,10 +32,10 @@
                 <a class="nav-item nav-link" href="/">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-item nav-link" href="/account">Account</a>
+                <a class="nav-item nav-link" href="/support">Support</a>
             </li>
             <li class="nav-item">
-                <a class="nav-item nav-link" href="/support">Support</a>
+                <a class="nav-item nav-link" href="/account">Account</a>
             </li>
             <li class="nav-item">
                 <a class="nav-item nav-link" href="account/logout" methods="get">Log Out</a>
