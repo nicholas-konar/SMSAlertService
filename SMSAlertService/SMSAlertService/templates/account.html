@@ -12,6 +12,7 @@
     <script src="../static/js/paypalModal.js"></script>
     <script src="../static/js/paypalButtons.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <div class="container">
     <div class="box-area billboard">
@@ -21,7 +22,7 @@
     <div class="info">
         <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
         <strong>Notice: </strong>Your username here should match your username on Reddit. If you need to change it,
-        <a class="info-link" href="edit-info"><u>click here</u>.</a>
+        <a class="info-link" href="/account/update"><u>click here</u>.</a>
     </div>
 
     <div class="main">
@@ -63,12 +64,6 @@
                            placeholder="" required="required" type="text">
                     <button class="button btn btn-primary mini-container" type="submit">Redeem</button>
                 </div>
-            </form>
-        </div>
-        <div class="box-area">
-            <form action="/edit-info">
-                <label><strong>Account Details</strong></label>
-                <button class="button btn btn-primary" type="submit">Update Info</button>
             </form>
         </div>
     </div>

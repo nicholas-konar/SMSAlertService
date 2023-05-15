@@ -61,13 +61,6 @@
   flex: 10%;
 }
 
-.banner {
-  margin-top: 0%;
-  padding: 1em !important;
-  background: #FBBC05 !important;
-  border-color: #FBBC05 !important;
-}
-
 .menu-btn-first {
   margin-left: 0px !important;
   padding-left: 5px !important;
@@ -93,18 +86,17 @@
 }
 
 .box-area {
+  min-height: 25vh;
   color: black;
   text-align: center;
   vertical-align: middle;
   box-sizing: border-box;
-  margin-bottom: .5em;
+  margin-bottom: 2em;
   padding: 5%;
-  background-color: white;
-  border-style: solid;
-  border-color: lightgray;
-  border-width: 1px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
+  background: #ebebeb;
+  border-radius: 25px;
+  box-shadow: 20px 20px 60px #bababa,
+               -20px -20px 60px #ffffff;
 }
 
 .button {
@@ -161,16 +153,6 @@ label {
 
 table {
   width: 100%;
-}
-
-h3 {
-  margin-top: 10px !important;
-  font-family: Sans-serif;
-}
-
-h5 {
-  font-family: Sans-serif;
-  margin-bottom: 0% !important;
 }
 
 tr:nth-child(even){
@@ -246,14 +228,6 @@ li {
 
 .closebtn:hover {
   color: black;
-}
-
-body {
-  text-align: center;
-  min-height: 100vh;
-  background-repeat: no-repeat;
-  background-image: url("white-abstract.jpg");
-  background-size: cover;
 }
 
 .payment-flex-item {

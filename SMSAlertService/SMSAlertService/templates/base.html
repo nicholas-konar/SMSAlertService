@@ -2,66 +2,67 @@
 <html lang="en">
 <head>
     <link href="../static/style/header_footer.css" rel="stylesheet">
+    <link href="../static/style/modal.css" rel="stylesheet">
+    <script src="../static/js/header.js"></script>
     <title>{% block title %}{% endblock %}</title>
     <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
 </head>
-<div class="base">
-    <nav class="sticky-nav navbar navbar-light justify-content-center">
-        <a class="navbar-brand" href="/" style="color: black;"><h3><i class="fa fa-envelope"></i>&nbsp;&nbsp;The SMS Alert Service
-        </h3></a>
+<header class="header">
+    <div id="desktopHeaderContainer">
+        <div id="desktopHeaderLogo">
+            <a href="/"><h3><i class="fa fa-envelope fa-x3"></i>&nbsp;&nbsp;The SMS Alert Service</h3></a>
+        </div>
+        <nav id="desktopHeaderNav">
+            <div id="desktopMenu">
+                <ul>
+                    {% if not session.user_id %}
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/support">Support</a></li>
+                    <li><a href="/signup">Sign Up</a></li>
+                    <li><a href="/login">Log In</a></li>
+                    {% else %}
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/support">Support</a></li>
+                    <li><a href="/account">Account</a></li>
+                    <li><a href="/account/logout">Log Out</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div id="mobileHeaderContainer">
 
-        <ul class="nav">
-            {% if not session.user_id %}
-            <li class="nav-item">
-                <a class="nav-item nav-link" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-item nav-link" href="/support">Support</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-item nav-link" href="/signup">Sign Up</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-item nav-link" href="/login">Log In</a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-                <a class="nav-item nav-link" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-item nav-link" href="/support">Support</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-item nav-link" href="/account">Account</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-item nav-link" href="account/logout" methods="get">Log Out</a>
-            </li>
-            {% endif %}
-        </ul>
-    </nav>
+        <!-- Header Content-->
+        <div id="mobileHeaderEnvelope"><a href="/"><i class="fa fa-envelope fa-2x"></i></a></div>
+        <div id="mobileHeaderLogo"><a href="/"><h3>The SMS Alert Service</h3></a></div>
+        <div id="openMobileMenuIcon"><i class="fa fa-bars fa-2x"></i></div>
 
-
-    <script crossorigin="anonymous"
-            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-            src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script crossorigin="anonymous"
-            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-            src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <script crossorigin="anonymous"
-            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-            src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-    <script crossorigin="anonymous"
-            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-            src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-    <script>
-    </script>
-</div>
+        <!-- Nav Menu -->
+        <div id="mobileMenu">
+            <span id="closeMobileMenuIcon" class="close"><i class="fa fa-times fa-2x"></i></span>
+            <ul>
+                {% if not session.user_id %}
+                <li><a href="/">Home</a></li>
+                <li><a href="/signup">Sign Up</a></li>
+                <li><a href="/login">Log In</a></li>
+                <li><a href="/support">Support</a></li>
+                <li><a href="/privacy">Privacy</a></li>
+                <li><a href="/instructions">Instructions</a></li>
+                {% else %}
+                <li><a href="/">Home</a></li>
+                <li><a href="/account">Account</a></li>
+                <li><a href="/account/logout">Log Out</a></li>
+                <li><a href="/support">Support</a></li>
+                <li><a href="/privacy">Privacy</a></li>
+                <li><a href="/instructions">Instructions</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</header>
 {% block content %}{% endblock %}
-</html>
 
 <div class="imaginary-line"></div>
 <footer class="footer">
@@ -91,6 +92,7 @@
     </div>
     <br/>
     <br/>
+    <a href="https://www.vecteezy.com/free-vector/flat-design">Flat Design Vectors by Vecteezy</a>
     <!-- PayPal Logo -->
     <a href="https://www.paypal.com/webapps/mpp/paypal-popup"
        onclick="javascript:window.open('https://www.paypal.com/webapps/mpp/paypal-popup','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;"
@@ -100,3 +102,4 @@
 
     <p style="color: grey; margin: 0% !important;">&copy; 2023 SMS Alert Service<br/> All Rights Reserved.</p><br/>
 </footer>
+</html>
