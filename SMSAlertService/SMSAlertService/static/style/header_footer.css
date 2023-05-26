@@ -1,5 +1,6 @@
 /* Desktop Header */
 .header {
+    font-family: 'Comfortaa';
     height: 100px;
     display: flex;
     align-items: center;
@@ -11,6 +12,11 @@
     left: 0;
     width: 100%;
     z-index: 100; /* Overlay is 99, top element is 100 */
+}
+
+.header a {
+  color: black;
+  text-decoration: none;
 }
 
 .header a:hover {
@@ -63,6 +69,7 @@
 
 /* Mobile Header */
 #mobileHeaderContainer {
+    color: black;
     display: none;
     position: relative;
     justify-content: space-between;
@@ -84,6 +91,7 @@
 
 #mobileHeaderLogo h3 {
     font-size: 24px;
+    margin: 0px;
 }
 
 #openMobileMenuIcon i {
@@ -126,6 +134,12 @@
     border-bottom: 1px solid black;
 }
 
+#mobileMenuLabel h3 {
+    align-self: center;
+    padding: 10px;
+    margin: 0;
+}
+
 #closeMobileMenuIcon {
     align-self: flex-end;
     margin-left: auto;
@@ -154,12 +168,16 @@
     flex: 1; /* new */
 }
 
-li:hover {
+#mobileMenu li:hover {
   background-color: black;
   color: white;
 }
 
-li:active {
+#mobileMenu li:hover a {
+  color: white;
+}
+
+#mobileMenu li:active {
   background-color: white;
   color: black;
 }
@@ -180,60 +198,57 @@ li:active {
     }
 }
 
-body {
-  min-height: 100vh;
-  background-repeat: no-repeat;
-  background: #FFFFFF;
-}
-
-.imaginary-line {
-  margin: 0% !important;
-  max-height: 0vh;
-  width: 100% !important;
-  display: flex;
-  flex-direction: column;
-}
-
+/* Footer */
 .footer {
-  padding: 2em;
-  padding-bottom: 0% !important;
-  margin-top: 50px !important;
-  min-height: 20vh;
-  width: 100% !important;
-  background: rgba(255, 255, 255, .7);
-  display: flex;
-  flex-direction: column;
-  align-content: stretch;
-  text-align: center;
+    margin-top: auto;
+    background-color: #fff;
 }
 
-.footer-flex-container {
-  margin: 0% !important;
-  padding-left: 20%;
-  padding-right: 20%;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: center;
+/* Body */
+body {
+    display: flex;
+    flex-direction: column;
+    background-image: url('1028.jpg');
+    background-size: 100% 100%;
+
 }
 
-.footer-flex-item {
-  flex: 20% !important;
-  width: 20%;
-  text-align: center;
+.container {
+    flex: 1;
+    width: 100vw;
+    max-width: 1200px;
+    margin: 100px auto 100px auto;
+    padding: 50px;
 }
 
-@media (max-width: 800px) {
-  .footer-flex-item {
-    flex: 100% !important;
-  }
+@media (max-width: 1000px) {
+    body .container {
+        padding: 0px 5vw;
+    }
 }
 
-.payment-flex-container {
-  margin: 0% !important;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
+@media (max-width: 600px) {
+    body .container {
+        padding: 0px 12px;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

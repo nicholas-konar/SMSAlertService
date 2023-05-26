@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <title>{% block title %}SMS Alert Service{% endblock %}</title>
-    <link href="../static/style/header_footer.css" rel="stylesheet">
-    <link href="../static/style/modal.css" rel="stylesheet">
     <script src="../static/js/header.js"></script>
     <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="https://www.w3schools.com/w3css/4/w3.css" rel="stylesheet">
-    <link href="https://www.w3schools.com/lib/w3-colors-win.css" rel="stylesheet">
-
+    <link href='https://fonts.googleapis.com/css?family=Alfa Slab One' rel='stylesheet'>
+<link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet'>
+    <link href="../static/style/header_footer.css" rel="stylesheet">
+    <link href="../static/style/modal.css" rel="stylesheet">
 </head>
+<body>
 <header class="header">
     <div id="desktopHeaderContainer">
         <div id="desktopHeaderLogo">
@@ -36,47 +36,45 @@
         </nav>
     </div>
     <div id="mobileHeaderContainer">
-
-        <!-- Header Content-->
+        <!-- Mobile Header Content-->
         <div id="mobileHeaderEnvelope"><a href="/"><i class="fa fa-envelope fa-2x"></i></a></div>
         <div id="mobileHeaderLogo"><a href="/"><h3>The SMS Alert Service</h3></a></div>
         <div id="openMobileMenuIcon"><i class="fa fa-bars fa-2x"></i></div>
 
-        <!-- Nav Menu -->
+        <!-- Pop-up Nav Menu -->
         <div id="mobileMenu">
             <div id="mobileMenuContainer">
-
                 <div id="mobileMenuLabel">
                     <h3>Menu</h3>
-                    <i id="closeMobileMenuIcon" class="fa fa-times fa-2x"></i>
+                    <i class="fa fa-times fa-2x" id="closeMobileMenuIcon"></i>
                 </div>
                 <ul>
                     {% if not session.user_id %}
                     <li><a href="/">Home</a></li>
-                    <li><a href="/signup">Sign Up</a></li>
                     <li><a href="/login">Log In</a></li>
+                    <li><a href="/signup">Sign Up</a></li>
+                    <li><a href="/instructions">Instructions</a></li>
                     <li><a href="/support">Support</a></li>
                     <li><a href="/privacy">Privacy</a></li>
-                    <li><a href="/instructions">Instructions</a></li>
                     {% else %}
                     <li><a href="/">Home</a></li>
                     <li><a href="/account">Account</a></li>
-                    <li><a href="/account/logout">Log Out</a></li>
+                    <li><a href="/instructions">Instructions</a></li>
                     <li><a href="/support">Support</a></li>
                     <li><a href="/privacy">Privacy</a></li>
-                    <li><a href="/instructions">Instructions</a></li>
+                    <li><a href="/account/logout">Log Out</a></li>
                     {% endif %}
                 </ul>
             </div>
         </div>
     </div>
 </header>
-{% block content %}{% endblock %}
 
-<div class="imaginary-line"></div>
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
 <footer class="footer">
-    <br/>
-    <div class="footer-flex-container">
         <div class="footer-flex-item">
             <a href="/">Home</a>
         </div>
@@ -98,10 +96,6 @@
         <div class="footer-flex-item">
             <a href="/privacy">Privacy</a>
         </div>
-    </div>
-    <br/>
-    <br/>
-    <a href="https://www.vecteezy.com/free-vector/flat-design">Flat Design Vectors by Vecteezy</a>
     <!-- PayPal Logo -->
     <a href="https://www.paypal.com/webapps/mpp/paypal-popup"
        onclick="javascript:window.open('https://www.paypal.com/webapps/mpp/paypal-popup','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;"
@@ -109,6 +103,7 @@
             alt="PayPal Acceptance Mark" border="0"
             src="https://www.paypalobjects.com/webstatic/mktg/logo/AM_mc_vs_dc_ae.jpg"></a>
 
-    <p style="color: grey; margin: 0% !important;">&copy; 2023 SMS Alert Service<br/> All Rights Reserved.</p><br/>
+    <p style="color: grey;">&copy; 2023 SMS Alert Service<br/> All Rights Reserved.</p><br/>
 </footer>
+</body>
 </html>
