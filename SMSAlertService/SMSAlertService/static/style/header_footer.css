@@ -1,7 +1,7 @@
 /* Desktop Header */
 .header {
     font-family: 'Comfortaa';
-    color: #277f82;
+    color: #2b8d90;
     height: 64px;
     display: flex;
     align-items: center;
@@ -16,7 +16,7 @@
 }
 
 .header a {
-  color: #277f82;
+  color: #2b8d90;
   text-decoration: none;
 }
 
@@ -71,7 +71,7 @@
 
 /* Mobile Header */
 #mobileHeaderContainer {
-    color: black;
+    color: #2b8d90;
     display: none;
     position: relative;
     justify-content: space-between;
@@ -128,12 +128,13 @@
 }
 
 #mobileMenuLabel {
+    color: #fff;
+    background-color: #2b8d90;
     position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
-    border-bottom: 1px solid black;
 }
 
 #mobileMenuLabel h3 {
@@ -172,7 +173,7 @@
 }
 
 #mobileMenu li:hover {
-  background-color: #88d4c7;
+  background-color: #2b8d90;
   color: #fff;
 }
 
@@ -182,7 +183,7 @@
 
 #mobileMenu li:active {
   background-color: #fff;
-  color: #88d4c7;
+  color: #2b8d90;
 }
 
 /* Switch to Mobile View */

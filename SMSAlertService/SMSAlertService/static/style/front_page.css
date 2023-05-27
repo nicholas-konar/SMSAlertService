@@ -50,12 +50,12 @@
 }
 
 .front-page button {
+    font-size: clamp(8px, 3vw, 24px);
     padding: 10px;
-    background-color: #fff;
-    color: #277f82;
-    border: 1px solid #fff;
-    border-radius: 10px;
-    box-shadow: 2px 2px 4px #3fa5a4, -1px -1px 2px #2b8d90;
+    background-color: transparent;
+    color: #fff;
+    border: 3px solid #fff;
+    border-radius: 0px;
     align-self: center;
     margin-top: 50vh;
     width: 50%;
