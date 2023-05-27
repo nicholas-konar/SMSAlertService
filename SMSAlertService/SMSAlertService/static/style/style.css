@@ -56,42 +56,6 @@
   padding-left: 5px !important;
 }
 
-.front-page {
-    height: 90vh;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-}
-
-.front-page h3 {
-    font-family: 'Comfortaa';
-    font-size: clamp(12px, 4vw, 48px);
-    align-self: flex-start;
-    margin: 0;
-}
-
-.front-page h1 {
-    font-family: 'Alfa Slab One';
-    font-size: clamp(16px, 9vw, 100px);
-    align-self: center;
-    margin: 0;
-
-}
-
-.front-page p {
-    font-family: 'Comfortaa';
-    font-size: clamp(8px, 3vw, 24px);
-    align-self: flex-end;
-    margin: 0;
-}
-
-.front-page button {
-    align-self: center;
-    margin-top: 50vh;
-    width: 80%;
-}
-
 .box-area {
   color: black;
   text-align: center;

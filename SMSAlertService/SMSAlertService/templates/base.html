@@ -9,6 +9,7 @@
     <link href='https://fonts.googleapis.com/css?family=Alfa Slab One' rel='stylesheet'>
 <link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet'>
     <link href="../static/style/header_footer.css" rel="stylesheet">
+    <link href="../static/style/front_page.css" rel="stylesheet">
     <link href="../static/style/modal.css" rel="stylesheet">
 </head>
 <body>
@@ -48,7 +49,7 @@
                     <h3>Menu</h3>
                     <i class="fa fa-times fa-2x" id="closeMobileMenuIcon"></i>
                 </div>
-                <ul>
+                <ul id="mobileMenuItems">
                     {% if not session.user_id %}
                     <li><a href="/">Home</a></li>
                     <li><a href="/login">Log In</a></li>
@@ -70,9 +71,9 @@
     </div>
 </header>
 
-<div class="container">
+<section class="block-content">
     {% block content %}{% endblock %}
-</div>
+</section>
 
 <footer class="footer">
         <div class="footer-flex-item">

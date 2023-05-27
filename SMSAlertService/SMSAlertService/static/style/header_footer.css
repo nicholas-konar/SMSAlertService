@@ -1,7 +1,8 @@
 /* Desktop Header */
 .header {
     font-family: 'Comfortaa';
-    height: 100px;
+    color: #277f82;
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -15,7 +16,7 @@
 }
 
 .header a {
-  color: black;
+  color: #277f82;
   text-decoration: none;
 }
 
@@ -45,6 +46,7 @@
     display: flex;
     font-size: 36px;
     white-space: nowrap;
+    margin: 0;
 }
 
 #desktopHeaderNav {
@@ -159,27 +161,28 @@
 #mobileMenu ul li {
     display: flex;
     margin: 0;
-    padding: 25px;
+    padding: 0;
     white-space: nowrap;
     width: 100%;
 }
 
 #mobileMenu ul li a {
-    flex: 1; /* new */
+    flex: 1;
+    padding: 25px;
 }
 
 #mobileMenu li:hover {
-  background-color: black;
-  color: white;
+  background-color: #88d4c7;
+  color: #fff;
 }
 
 #mobileMenu li:hover a {
-  color: white;
+  color: #fff;
 }
 
 #mobileMenu li:active {
-  background-color: white;
-  color: black;
+  background-color: #fff;
+  color: #88d4c7;
 }
 
 /* Switch to Mobile View */
@@ -206,18 +209,16 @@
 
 /* Body */
 body {
+    font-family: 'Comfortaa';
     display: flex;
     flex-direction: column;
-    background-image: url('1028.jpg');
-    background-size: 100% 100%;
-
+    background-color: #88d4c7;
 }
 
 .container {
     flex: 1;
     width: 100vw;
     max-width: 1200px;
-    margin: 100px auto 100px auto;
     padding: 50px;
 }
 
