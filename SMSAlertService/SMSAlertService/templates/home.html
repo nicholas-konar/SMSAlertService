@@ -2,6 +2,7 @@
 {% extends "base.html" %}
 {% block content %}
 <html xmlns="http://www.w3.org/1999/html">
+
 <head>
     <link href="static/style/style.css" rel="stylesheet">
     <script src="/static/js/home.js"></script>
@@ -10,10 +11,13 @@
 </head>
 
 <section class="front-page">
-    <h3>Welcome to the</h3>
-    <h1>SMS Alert Service</h1>
-    <p>Never miss a deal on Reddit again</p>
-    <button type="button" id="createAccountButton">Create an Account</button>
+    <div class="front-page-content">
+        <h3>Welcome to the</h3>
+        <h1>SMS Alert Service</h1>
+        <p>Never miss a deal on Reddit again</p>
+        <button type="button" id="createAccountButton">Create an Account</button>
+    </div>
+    <section class="blender"></section>
 </section>
 
 <div class="container">
@@ -24,42 +28,45 @@
             discouraged.
         </div>
     -->
-    <div class="box-area">
-        <h5><strong>What is the SMS Alert Service?</strong></h5>
-        <br/>
-        <p>The SMS Alert Service continuously scans <a href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a>
-            and alerts you (via SMS) the instant an item you want is
-            posted for sale. <br/><br/>You tell the service which items you want by adding keywords in your
-            <a href="/profile">profile</a> page.<br/><br/>If you're hunting a specific item, the SMS
-            Alert Service is the weapon of choice.</p><br/>
-        <button class="btn btn-primary mini-container" type="submit">Sign Up</button>
-
+    <div class="card">
+        <div class="card-heading">
+            <h5><strong>First dibs on everything.</strong></h5>
+        </div>
+        <div class="card-body">
+            <p>The SMS Alert Service is a powerful web tool that continuously scans whatever buy/sell/trade subreddits
+                you want,
+                and alerts you (via SMS) the instant an item you're looking for is
+                posted for sale.</p>
+            <p>If you're hunting for the hottest deals and the rarest items,
+                the SMS Alert Service gives you an edge that normal users simply can't compete with.</p>
+        </div>
     </div>
-    <div class="box-area">
-        <h5><strong>How do I use it?</strong></h5>
-        <br/>
-        <a class="link" href="/instructions"><strong>Click here to read the instructions</strong></a>
-        <br/>
-        <br/>
-        <p>Once you've <a href="/signup">signed
-            up</a> and gotten an Alert Package, simply add keywords on your
-            <a href="/profile">profile</a> page to begin receiving alerts.
-            <br/><br/><i>Alert Packages start at just $5 with alerts as low as $0.06!</i>
+    <div class="card">
+        <div class="card-heading">
+            <h5><strong>Automation, personalized.</strong></h5>
+        </div>
+        <div class="card-body">
+            <p>Unlock the power of being everywhere, all the time. What can you achieve with your new personal assistant?</p>
+            <ul>
+                <li>Beat other buyers to the punch and score the best deals.</li>
+                <li>Be the first to know when hard to find items pop up.</li>
+                <li>Don't rely on luck to find that special something before it's sold.</li>
+                <li>No more hours wasted searching Reddit the old fashioned way.</li>
+            </ul>
+        </div>
     </div>
-    <div class="box-area">
-        <h5><strong>Why SMS Alert Service?</strong></h5>
-        <br/>
-        <p>The SMS Alert Service is purpose-built just for the GAFS community.
-            We know there are free Reddit extensions on the market. However, we found that they were all too slow,
-            too
-            unreliable, and not ideal for a place like GAFS. This service is tailored to the specific needs of GAFS
-            members, and is designed to save you money.
-            <br/><br/>SMS Alert Service is built to be fast,
-            reliable, and easy to use.
-            You'll get notified within <strong>~5 seconds</strong> of the post hitting Reddit.<br/><br/>
-            <i>Never miss a deal again on <a href="https://www.reddit.com/r/GunAccessoriesForSale/">r/GunAccessoriesForSale</a></i>
-        </p>
+    <div class="card">
+        <div class="card-heading">
+            <h5><strong>Pricing.</strong></h5>
+        </div>
+        <div class="card-body">
+            <p>If the service could be free, it would be. We charge the lowest possible price we can to cover
+                the costs of sending each alert.</p>
+            <p>Alerts are sold in packages of 50, 125, and 250.</p>
+            <p>Packages start at $5, with alerts as low as 6 cents each.</p>
+        </div>
     </div>
 </div>
+
 </html>
 {% endblock %}

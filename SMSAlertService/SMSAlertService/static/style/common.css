@@ -1,7 +1,7 @@
 /* Desktop Header */
 .header {
     font-family: 'Comfortaa';
-    color: #2b8d90;
+    color: #000;
     height: 64px;
     display: flex;
     align-items: center;
@@ -12,17 +12,20 @@
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 100; /* Overlay is 99, top element is 100 */
+    z-index: 100;
+    /* Overlay is 99, top element is 100 */
 }
 
 .header a {
-  color: #2b8d90;
-  text-decoration: none;
+    color: #000;
+    text-decoration: none;
 }
 
 .header a:hover {
-  color: inherit; /* Prevent color change */
-  text-decoration: none; /* Remove underline */
+    color: inherit;
+    /* Prevent color change */
+    text-decoration: none;
+    /* Remove underline */
 }
 
 #desktopHeaderContainer {
@@ -71,7 +74,7 @@
 
 /* Mobile Header */
 #mobileHeaderContainer {
-    color: #2b8d90;
+    color: #000;
     display: none;
     position: relative;
     justify-content: space-between;
@@ -109,10 +112,12 @@
     width: 200px;
     height: 100%;
     background: #fff;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* adjust to your preference */
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    /* adjust to your preference */
     transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
-    overflow-y: auto; /* in case your menu is longer than the screen */
+    transition: transform 0.2s ease-in-out;
+    overflow-y: auto;
+    /* in case your menu is longer than the screen */
     z-index: 1000;
 }
 
@@ -129,7 +134,7 @@
 
 #mobileMenuLabel {
     color: #fff;
-    background-color: #2b8d90;
+    background-color: #009FBB;
     position: relative;
     display: flex;
     justify-content: space-between;
@@ -173,17 +178,17 @@
 }
 
 #mobileMenu li:hover {
-  background-color: #2b8d90;
-  color: #fff;
+    background-color: #009FBB;
+    color: #fff;
 }
 
 #mobileMenu li:hover a {
-  color: #fff;
+    color: #fff;
 }
 
 #mobileMenu li:active {
-  background-color: #fff;
-  color: #2b8d90;
+    background-color: #fff;
+    color: #2b8d90;
 }
 
 /* Switch to Mobile View */
@@ -213,7 +218,8 @@ body {
     font-family: 'Comfortaa';
     display: flex;
     flex-direction: column;
-    background-color: #88d4c7;
+    background-color: #94D6E1;
+    color: #000;
 }
 
 .container {
@@ -225,32 +231,12 @@ body {
 
 @media (max-width: 1000px) {
     body .container {
-        padding: 0px 5vw;
+        padding: 5vw;
     }
 }
 
 @media (max-width: 600px) {
     body .container {
-        padding: 0px 12px;
+        padding: 12px;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
