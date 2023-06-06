@@ -76,27 +76,22 @@
 </section>
 
 <footer class="footer">
-        <div class="footer-flex-item">
-            <a href="/">Home</a>
-        </div>
-        {% if username %}
-        <div class="footer-flex-item">
-            <a href="/account">Account</a>
-        </div>
-        {% else %}
-        <div class="footer-flex-item">
-            <a href="/signup">Sign Up</a>
-        </div>
-        {% endif %}
-        <div class="footer-flex-item">
-            <a href="/instructions">Instructions</a>
-        </div>
-        <div class="footer-flex-item">
-            <a href="/support">Support</a>
-        </div>
-        <div class="footer-flex-item">
-            <a href="/privacy">Privacy</a>
-        </div>
+                <ul id="footer-links">
+                    {% if not session.user_id %}
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/login">Log In</a></li>
+                    <li><a href="/signup">Sign Up</a></li>
+                    <li><a href="/instructions">Instructions</a></li>
+                    <li><a href="/support">Support</a></li>
+                    <li><a href="/privacy">Privacy</a></li>
+                    {% else %}
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/account">Account</a></li>
+                    <li><a href="/instructions">Instructions</a></li>
+                    <li><a href="/support">Support</a></li>
+                    <li><a href="/privacy">Privacy</a></li>
+                    {% endif %}
+                </ul>
     <!-- PayPal Logo -->
     <a href="https://www.paypal.com/webapps/mpp/paypal-popup"
        onclick="javascript:window.open('https://www.paypal.com/webapps/mpp/paypal-popup','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;"
@@ -104,7 +99,8 @@
             alt="PayPal Acceptance Mark" border="0"
             src="https://www.paypalobjects.com/webstatic/mktg/logo/AM_mc_vs_dc_ae.jpg"></a>
 
-    <p style="color: grey;">&copy; 2023 SMS Alert Service<br/> All Rights Reserved.</p><br/>
+    <p>&copy; 2023 SMS Alert Service</p>
+    <p>All Rights Reserved.</p>
 </footer>
 </body>
 </html>
