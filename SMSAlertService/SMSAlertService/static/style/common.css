@@ -208,6 +208,16 @@
 }
 
 /* Body */
+.block-content {
+    padding-top: 64px;
+}
+
+@media (max-width: 1000px) {
+    .block-content {
+        padding-top: 50px;
+    }
+}
+
 body {
     font-family: 'Comfortaa';
     display: flex;
