@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function() {
     var verifiedCredentialsEvent = new CustomEvent("verifiedCredentialsEvent");
 
     var createAccountStatusMessage = document.getElementById("createAccountStatusMessage");
-    createAccountStatusMessage.style.color = "red";
 
     document.addEventListener("authenticationEvent", function(event) {
         var username = document.getElementById("usernameInputField").value;
@@ -26,10 +25,8 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(response => response.json())
         .then(data => {
             if (data.Status == "SUCCESS"){
-                console.log("Account created successfully. Going to account.")
                 window.location.href = "/account";
             } else {
-                console.log("Account creation failed.")
                 var loginStatusMessage = document.getElementById("signUpStatusMessage");
                 loginStatusMessage.innerHTML = data.Message;
                 loginStatusMessage.classList.add("alert");
@@ -54,18 +51,21 @@ document.addEventListener("DOMContentLoaded", function() {
         const regex = /^\d{10}$/;
         if (username.length <= 3 || username.length >= 24) {
             createAccountStatusMessage.innerHTML = "Please enter a valid username.";
+            createAccountStatusMessage.classList.add("red");
             return false;
         } else if (!regex.test(ph)) {
             createAccountStatusMessage.innerHTML = "Please enter a valid 10 digit phone number.";
+            createAccountStatusMessage.classList.add("red");
             return false;
         } else if (pw.length < 8) {
             createAccountStatusMessage.innerHTML = "Your password must be at least 8 characters long.";
+            createAccountStatusMessage.classList.add("red");
             return false;
         } else if (!consent.checked) {
             createAccountStatusMessage.innerHTML = "Please check the consent box to continue.";
+            createAccountStatusMessage.classList.add("red");
             return false;
         } else {
-            createAccountStatusMessage.innerHTML = "";
             return true;
         }
     }
@@ -83,11 +83,11 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
             if (data.CredentialAvailability.Username == false) {
                 createAccountStatusMessage.innerHTML = "Sorry, this username is not available.";
+                createAccountStatusMessage.classList.add("red");
             } else if (data.CredentialAvailability.PhoneNumber == false) {
                 createAccountStatusMessage.innerHTML = "Sorry, this phone number is not available.";
+                createAccountStatusMessage.classList.add("red");
             } else {
-                console.log("Both credentials available! Dispatching event!")
-                createAccountStatusMessage.innerHTML = "";
                 document.dispatchEvent(verifiedCredentialsEvent);
             }
         })

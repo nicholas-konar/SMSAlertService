@@ -12,13 +12,11 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(response => response.json())
         .then(data => {
             if (data.Status == "SUCCESS"){
-                console.log("login success")
                 window.location.href = "/account";
             } else {
-                console.log("failed login")
                 var loginStatusMessage = document.getElementById("loginStatusMessage");
                 loginStatusMessage.innerHTML = data.Message;
-                loginStatusMessage.classList.add("alert");
+                loginStatusMessage.classList.add("red");
             }
         })
         .catch(error => console.error(error));

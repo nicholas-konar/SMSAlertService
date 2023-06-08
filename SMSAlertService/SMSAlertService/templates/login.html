@@ -12,21 +12,16 @@
 </head>
 
 <div class="container">
-    <div class="box-area billboard">
-        <h3>Welcome to the SMS Alert Service<br/><i class="fa fa-envelope fa-2x"></i></h3>
-    </div>
-    <div class="box-area">
+    <div class="full-size-form-container">
         <h4>Log In</h4>
-        <p class="statusMessage" id="loginStatusMessage"><!-- Dynamic JS Status Message --></p>
-        <form class="mini-form">
-            <div>
-                <label for="usernameInputField">Username:</label>
-                <input class="form-control input" id="usernameInputField" name="username" required="required">
-                <label for="passwordInputField">Password:</label>
-                <input class="form-control input" id="passwordInputField" name="passwordInputField" type="password" required="required">
-                <button class="button btn-primary" id="loginButton" type="button">Log In</button>
-                <button class="button btn-danger" id="resetPasswordButton" type="button">Reset Password</button>
-            </div>
+        <form class="full-size-form">
+            <p class="status-message" id="loginStatusMessage"><!-- Dynamic JS Status Message --></p>
+            <label for="usernameInputField">Username:</label>
+            <input id="usernameInputField" name="username" required="required">
+            <label for="passwordInputField">Password:</label>
+            <input id="passwordInputField" name="passwordInputField" required="required" type="password">
+            <button class="blue" id="loginButton" type="button"><span>Log In</span></button>
+            <button class="red" id="resetPasswordButton" type="button"><span>Reset Password</span></button>
         </form>
     </div>
 </div>

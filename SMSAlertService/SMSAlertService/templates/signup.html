@@ -12,32 +12,27 @@
 </head>
 
 <div class="container">
-    <div class="box-area billboard">
-        <h3>Welcome to the SMS Alert Service<br/><i class="fa fa-envelope fa-2x"></i></h3>
-    </div>
-    <div class="box-area">
+    <div class="full-size-form-container">
         <h4>Sign Up</h4>
-        <p class="statusMessage" id="createAccountStatusMessage"><!-- Dynamic JS Status Message --></p>
-        <form class="mini-form">
-            <div>
-                <label for="usernameInputField">Reddit Username</label>
-                <input class="form-control input" id="usernameInputField" name="usernameInputField" required="required">
-                <label for="phoneNumberInputField">Phone Number</label>
-                <input class="form-control input"
-                       id="phoneNumberInputField"
-                       name="phoneNumberInputField"
-                       pattern="[0-9]{10}"
-                       placeholder="No spaces or dashes"
-                       required="required"
-                       type="tel">
-                <label for="passwordInputField">Password</label>
-                <input class="form-control input" id="passwordInputField" name="passwordInputField" type="password" required="required">
-                <div class="checkbox-container"><br/>
-                    <input id="consentCheckBox" name="consentCheckBox" type="checkbox" required="required">
-                    <label for="consentCheckBox">I consent to receiving communications via text from the SMS Alert Service.</label>
-                </div>
-                <button class="button btn-success" id="createAccountButton" type="submit">Create Account</button>
+        <form class="full-size-form">
+            <p class="status-message" id="createAccountStatusMessage"><!-- Dynamic JS Status Message --></p>
+            <label for="usernameInputField">Reddit Username</label>
+            <input id="usernameInputField" name="usernameInputField" required="required">
+            <label for="phoneNumberInputField">Phone Number</label>
+            <input id="phoneNumberInputField"
+                   name="phoneNumberInputField"
+                   pattern="[0-9]{10}"
+                   placeholder="No spaces or dashes"
+                   required="required"
+                   type="tel">
+            <label for="passwordInputField">Password</label>
+            <input id="passwordInputField" name="passwordInputField" required="required" type="password">
+            <div class="checkbox-container"><br/>
+                <input id="consentCheckBox" name="consentCheckBox" required="required" type="checkbox">
+                <label for="consentCheckBox">I consent to receiving communications via text from the SMS Alert
+                    Service.</label>
             </div>
+            <button class="green" id="createAccountButton" type="submit"><span>Create Account</span></button>
         </form>
     </div>
 </div>

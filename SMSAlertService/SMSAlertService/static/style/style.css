@@ -1,59 +1,81 @@
-* {
-  box-sizing: border-box;
+
+.full-size-form-container {
+    padding: 50px 25px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    text-align: center;
+    vertical-align: middle;
+    max-width: 800px;
+    border-radius: 5px;
+    border: 1px solid #aaa;
 }
 
-@media (max-width: 900px) {
- .leftside {
-  width: 100%;
-  float: left;
-  margin-right: 0.5%;
- }
+.full-size-form {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
 }
 
-@media (min-width: 900px) {
- .leftside {
-  width: 49.5%;
-  float: left;
-  margin-right: 0.5%;
- }
+.full-size-form input {
+    padding: 5px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #aaa;
 }
 
-@media (max-width: 900px) {
- .rightside {
-  width: 100%;
-  float: right;
-  margin-left: 0.5%;
- }
+.full-size-form button {
+    margin: 15px 0px;
 }
 
-@media (min-width: 900px) {
- .rightside {
-  width: 49.5%;
-  float: right;
-  margin-left: 0.5%;
- }
+/* Common format for all buttons */
+button {
+    position: relative;
+    padding: 5px;
+    border-radius: 5px;
+    border-width: 0px;
 }
 
-.mini-container {
-  width: 100% !important;
-  position: center;
+/* Separate text from background for hover effect */
+button span {
+    color: #fff;
+    position: relative;
+    z-index: 1;
 }
 
-.flex-container {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  align-content: stretch;
+/* Add transparent overlay */
+button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0);
+    transition: background-color 0.3s ease;
+    z-index: 0;
 }
 
-.flex-item {
-  flex: 20%;
-  white-space:nowrap;
+/* Darken overlay on hover */
+button:hover::after {
+    background-color: rgba(0, 0, 0, .2);
 }
 
-.menu-btn-first {
-  margin-left: 0px !important;
-  padding-left: 5px !important;
+.blue {
+    background-color: #007bff; /* Blue */
+}
+
+.red {
+  background-color: #f44336; /* Red */
+}
+
+.green {
+  background-color: #34A853; /* Green */
 }
 
 .box-area {
@@ -114,6 +136,7 @@
     text-align: left;
 }
 
+/* This is only being used by the front page signup button and should be refactored */
 .button {
   width: 100%;
   max-width: 400px;
@@ -133,34 +156,6 @@
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.5);
 }
 
-@media (min-width: 900px) {
- .mini-form {
-   width: 50%;
-   display: block;
-   margin: 0 auto;
-   flex: 100%;
-   align-content: stretch;
- }
-}
-
-.input {
-  margin-top: 10px !important;
-  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.5);
-  border-style: solid;
-  border-color: white;
-  border-width: 1px;
-  border-radius: 10px;
-  width: 100%;
-}
-
-.word-wrap {
-  word-wrap: break-word;
-}
-
-label {
-  margin-top: 1em;
-  margin-bottom: 0em;
-}
 
 table {
   width: 100%;
@@ -185,14 +180,6 @@ li {
 
 .red {
   background-color: #f44336 !important; /* Red */
-}
-
-.alert {
-  padding: 20px;
-  background-color: #f44336; /* Red */
-  color: white;
-  margin-bottom: 0.5em;
-  border-radius: 10px;
 }
 
 .success {
@@ -231,26 +218,28 @@ label[for="consentCheckBox"] {
   color: grey;
 }
 
+.status-message {
+    color: #fff;
+    margin: 25px 0px;
+    padding: 10px;
+    overflow: auto;
+    border-radius: 10px;
+}
+
 @media screen and (min-width: 600px) { /* desktop */
-  .statusMessage {
-      margin-top: 2.5rem; /* adjust to desired height */
-      overflow: auto;
+  .status-message {
       font-size: 1rem;
   }
 }
 
-@media screen and (max-width: 800px) { /* tablet */
-  .statusMessage {
-      margin-top: 2.5rem; /* adjust to desired height */
-      overflow: auto;
+@media screen and (max-width: 800px) {
+  .status-message {
       font-size: 0.9rem;
   }
 }
 
 @media screen and (max-width: 400px) { /* mobile */
-  .statusMessage {
-      margin-top: 2.5rem; /* adjust to desired height */
-      overflow: auto;
+  .status-message {
       font-size: 0.7rem;
   }
 }
