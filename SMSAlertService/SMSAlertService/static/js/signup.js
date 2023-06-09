@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
             } else {
                 var loginStatusMessage = document.getElementById("signUpStatusMessage");
                 loginStatusMessage.innerHTML = data.Message;
-                loginStatusMessage.classList.add("alert");
+                loginStatusMessage.classList.add("red");
             }
         })
         .catch(error => console.error(error));

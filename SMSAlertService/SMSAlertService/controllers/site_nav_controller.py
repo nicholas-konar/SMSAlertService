@@ -12,6 +12,8 @@ def home():
 def login():
     if 'login_attempts' not in session:
         session['login_attempts'] = 0
+        session['otp_resends'] = 0
+        session['otp_attempts'] = 0
     return render_template('login.html')
 
 

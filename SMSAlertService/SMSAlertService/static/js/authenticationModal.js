@@ -18,10 +18,32 @@ document.addEventListener("DOMContentLoaded", async function() {
     var closeValidateModalBtn = document.getElementById("closeValidateButton");
     closeValidateModalBtn.addEventListener("click", closeModal);
 
+    var sendCodeButton = document.getElementById("sendCodeButton");
+    var sendCodeForm = document.getElementById("challengeForm");
+    sendCodeButton.addEventListener("click", submitSendCodeForm);
+    sendCodeForm.addEventListener("submit", function(event) {
+        console.log('sendCodeForm has been submitted.')
+        event.preventDefault();
+        submitSendCodeForm();
+    });
+
+    var validateButton = document.getElementById('validateButton');
+    var validateCodeForm = document.getElementById("validateForm");
+    // flowType must be passed in these functions, thus requiring code duplication below (if user hits enter) because if it's added inside the validateCode function SOMETHING does not yet exist. This requires more debugging, but Twilio is blocking links and I need to move on from this and get the big update pushed out.
+    // Potentially similar situation on Resend Code flow.
+    validateButton.addEventListener('click', function() {
+        var flowType = validateButton.getAttribute('flowType');
+        validateCode(flowType);
+    });
+    validateCodeForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        var flowType = validateButton.getAttribute('flowType');
+        validateCode(flowType);
+    });
+
     var overlay = document.createElement("div");
     overlay.addEventListener("click", closeModal);
     overlay.classList.add("overlay");
-
 
     // After Sign-Up Form is submitted + validated
     document.addEventListener("verifiedCredentialsEvent", function() {
@@ -65,9 +87,8 @@ document.addEventListener("DOMContentLoaded", async function() {
         document.body.removeChild(overlay);
     }
 
-    // Send Code Button
-    var sendCodeButton = document.getElementById("sendCodeButton");
-    sendCodeButton.addEventListener("click", function() {
+    // Send Code
+    function submitSendCodeForm() {
         var flowType = sendCodeButton.getAttribute('flowType');
         var ph = document.getElementById("modalPhoneNumberInputField").value;
         const regex = /^\d{10}$/;
@@ -76,9 +97,9 @@ document.addEventListener("DOMContentLoaded", async function() {
         } else {
             challengeStatusMessage = document.getElementById("challengeStatusMessage");
             challengeStatusMessage.innerHTML = "Please enter a valid 10 digit phone number.";
-            challengeStatusMessage.classList.add("alert");
+            challengeStatusMessage.classList.add("red");
         }
-    });
+    }
 
     function sendCode(flowType) {
         var ph = document.getElementById("modalPhoneNumberInputField").value;
@@ -124,22 +145,15 @@ document.addEventListener("DOMContentLoaded", async function() {
             validateStatusMessage = document.getElementById("validateStatusMessage");
             if (data.Status == "SUCCESS") {
                 validateStatusMessage.innerHTML = data.Message;
-                validateStatusMessage.classList.remove("alert");
-                validateStatusMessage.classList.add("info");
+                validateStatusMessage.classList.remove("red");
+                validateStatusMessage.classList.add("blue");
             } else {
                 validateStatusMessage.innerHTML = data.Message;
-                validateStatusMessage.classList.remove("info");
-                validateStatusMessage.classList.add("alert");
+                validateStatusMessage.classList.remove("blue");
+                validateStatusMessage.classList.add("red");
             }
         })
     };
-
-    // Validate Button
-    var validateButton = document.getElementById('validateButton');
-    validateButton.addEventListener('click', function() {
-        var flowType = validateButton.getAttribute('flowType');
-        validateCode(flowType);
-    });
 
     function validateCode(flowType) {
         var verificationCodeField = document.getElementById("verificationCode");
@@ -166,7 +180,8 @@ document.addEventListener("DOMContentLoaded", async function() {
                 verificationCodeField.value = "";
                 validateStatusMessage = document.getElementById("validateStatusMessage");
                 validateStatusMessage.innerHTML = data.Message;
-                validateStatusMessage.classList.remove("info").add("alert");
+                validateStatusMessage.classList.remove("blue");
+                validateStatusMessage.classList.add("red");
             }
         })
     }

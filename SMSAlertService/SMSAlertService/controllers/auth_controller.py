@@ -32,6 +32,7 @@ def send_to_create():
     try:
         otp_hash = AlertService.send_otp(ph)
         app.logger.info(f'Sending OTP to prospective user at {ph}. Resends = {session["otp_resends"]}.')
+        session['phonenumber'] = ph
         session['otp_resends'] += 1
         session['otp'] = otp_hash
         return jsonify({'Status': SUCCESS, 'FlowType': flow_type})
@@ -54,6 +55,7 @@ def resend_to_create():
     try:
         otp_hash = AlertService.send_otp(ph)
         app.logger.info(f'Sending OTP to prospective user at {ph}. Resends = {session["otp_resends"]}.')
+        session['phonenumber'] = ph
         session['otp_resends'] += 1
         session['otp'] = otp_hash
         return jsonify({'Status': SUCCESS, 'FlowType': flow_type, 'Message': RESEND_MSG})
@@ -109,6 +111,7 @@ def send_to_recover():
     try:
         otp_hash = AlertService.send_otp(user.phonenumber)
         app.logger.debug(f'Sending OTP to {user.username}. Resends = {session["otp_resends"]}.')
+        session['phonenumber'] = user.phonenumber
         session['otp'] = otp_hash
         session['otp_resends'] += 1
         return jsonify({'Status': SUCCESS, 'FlowType': flow_type})

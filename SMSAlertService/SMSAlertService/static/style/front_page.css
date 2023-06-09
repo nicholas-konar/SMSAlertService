@@ -72,6 +72,11 @@
     transition: all 0.3s ease-in-out;
 }
 
+/* Disable darken effect (applied to all buttons but this one) */
+.front-page button::after {
+    content: none;
+}
+
 .front-page button:hover {
     background-color: #fff;
     color: #94D6E1;

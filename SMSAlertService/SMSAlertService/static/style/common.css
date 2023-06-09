@@ -12,8 +12,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 100;
-    /* Overlay is 99, top element is 100 */
+    z-index: 100; /* Overlay is 99, top element is 100 */
 }
 
 .header a {
@@ -23,9 +22,7 @@
 
 .header a:hover {
     color: inherit;
-    /* Prevent color change */
     text-decoration: none;
-    /* Remove underline */
 }
 
 #desktopHeaderContainer {
