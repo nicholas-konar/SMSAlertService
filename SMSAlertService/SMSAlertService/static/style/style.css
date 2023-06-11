@@ -1,81 +1,87 @@
+.content-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #fff;
+  border-radius: 5px;
+  border: 0px solid #aaa;
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.2);
+}
 
 .full-size-form-container {
-    padding: 50px 25px;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #fff;
-    text-align: center;
-    vertical-align: middle;
-    max-width: 800px;
-    border-radius: 5px;
-    border: 1px solid #aaa;
+  padding: 50px 25px;
+  margin: auto;
+  max-width: 800px;
 }
 
 .full-size-form {
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 600px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
 }
 
 .full-size-form input {
-    padding: 5px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    border: 1px solid #aaa;
+  padding: 5px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  border: 1px solid #aaa;
 }
 
 .full-size-form button {
-    margin: 15px 0px;
+  margin: 15px 0px;
 }
 
 /* Common format for all buttons */
 button {
-    position: relative;
-    padding: 5px;
-    border-radius: 5px;
-    border-width: 0px;
+  position: relative;
+  padding: 5px;
+  border-radius: 5px;
+  border-width: 0px;
 }
 
 /* Separate text from background for hover effect */
 button span {
-    color: #fff;
-    position: relative;
-    z-index: 1;
+  color: #fff;
+  position: relative;
+  z-index: 1;
 }
 
 /* Add transparent overlay */
 button::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0);
-    transition: background-color 0.3s ease;
-    z-index: 0;
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, 0);
+  transition: background-color 0.3s ease;
+  z-index: 0;
 }
 
 /* Darken overlay on hover */
 button:hover::after {
-    background-color: rgba(0, 0, 0, .2);
+  background-color: rgba(0, 0, 0, .2);
 }
 
 .blue {
-    background-color: #007bff; /* Blue */
+  background-color: #007bff;
+  /* Blue */
 }
 
 .red {
-  background-color: #f44336; /* Red */
+  background-color: #f44336;
+  /* Red */
 }
 
 .green {
-  background-color: #34A853; /* Green */
+  background-color: #34A853;
+  /* Green */
 }
 
 .box-area {
@@ -91,56 +97,56 @@ button:hover::after {
 }
 
 .card {
-    display: flex;
-    flex-direction: vertical;
-    text-align: center;
-    vertical-align: middle;
-    box-sizing: border-box;
-    margin-bottom: 5vh;
-    background-color: #fff;
-    border-radius: 10px;
-    border: 0px solid #fff;
-    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: vertical;
+  text-align: center;
+  vertical-align: middle;
+  box-sizing: border-box;
+  margin-bottom: 5vh;
+  background-color: #fff;
+  border-radius: 10px;
+  border: 0px solid #fff;
+  box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.2);
 }
 
 .card .card-heading {
-    display: flex;
-    align-self: center;
-    justify-content: center;
-    border-radius: 10px 10px 0px 0px;
-    background: #009FBB;
-    color: #fff;
-    width: 100%;
+  display: flex;
+  align-self: center;
+  justify-content: center;
+  border-radius: 10px 10px 0px 0px;
+  background: #009FBB;
+  color: #fff;
+  width: 100%;
 }
 
 .card .card-heading h5 {
-    font-size: clamp(12px, 4vw, 24px);
-    align-self: center;
-    padding: 20px;
-    margin: 0;
+  font-size: clamp(12px, 4vw, 24px);
+  align-self: center;
+  padding: 20px;
+  margin: 0;
 }
 
 .card .card-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 25px;
-    margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 25px;
+  margin: 0;
 }
 
 .card .card-body ul {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin: 0;
-    text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 0;
+  text-align: left;
 }
 
 table {
   width: 100%;
 }
 
-tr:nth-child(even){
+tr:nth-child(even) {
   background-color: lightgray;
 }
 
@@ -178,47 +184,27 @@ label[for="consentCheckBox"] {
 }
 
 .status-message {
-    color: #fff;
-    margin: 25px 0px;
-    padding: 10px;
-    overflow: auto;
-    border-radius: 10px;
+  color: #fff;
+  margin: 25px 0px;
+  padding: 10px;
+  overflow: auto;
+  border-radius: 10px;
 }
 
-@media screen and (min-width: 600px) { /* desktop */
+@media screen and (min-width: 600px) {
   .status-message {
-      font-size: 1rem;
+    font-size: 1rem;
   }
 }
 
 @media screen and (max-width: 800px) {
   .status-message {
-      font-size: 0.9rem;
+    font-size: 0.9rem;
   }
 }
 
-@media screen and (max-width: 400px) { /* mobile */
+@media screen and (max-width: 400px) {
   .status-message {
-      font-size: 0.7rem;
+    font-size: 0.7rem;
   }
 }
-
-.form-container form {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-container label {
-  margin-bottom: 10px;
-}
-
-.form-container input {
-  padding: 10px;
-  border: solid;
-  border-color: black;
-  border-width: 1px;
-  border-radius: 10px;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
-  margin-bottom: 20px;
-}
-

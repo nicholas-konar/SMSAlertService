@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         openChallengeModal('create')
     });
 
-    // Reset Password Button Click (only exists on Login page)
+    // Reset Password Button only exists on Login page
     var resetPasswordButton = document.getElementById("resetPasswordButton");
     if (resetPasswordButton) {
         resetPasswordButton.addEventListener("click", function() {
@@ -65,8 +65,10 @@ document.addEventListener("DOMContentLoaded", async function() {
             var modalPhoneNumberInputField = document.getElementById("modalPhoneNumberInputField");
             modalPhoneNumberInputField.value = phoneNumberInput.value;
         }
+
         var sendCodeButton = document.getElementById("sendCodeButton");
         sendCodeButton.setAttribute('flowType', flowType);
+        
         var resendCodeButton = document.getElementById("resendCodeButton");
         resendCodeButton.setAttribute('flowType', flowType);
         challengeModal.style.display = "block";
@@ -118,12 +120,11 @@ document.addEventListener("DOMContentLoaded", async function() {
             } else {
                 challengeStatusMessage = document.getElementById("challengeStatusMessage");
                 challengeStatusMessage.innerHTML = data.Message;
-                challengeStatusMessage.classList.add("alert");
+                challengeStatusMessage.classList.add("red");
             }
         })
     };
 
-    // Resend Code Button
     var resendCodeButton = document.getElementById("resendCodeButton");
     resendCodeButton.addEventListener("click", function() {
         var flowType = sendCodeButton.getAttribute('flowType');
