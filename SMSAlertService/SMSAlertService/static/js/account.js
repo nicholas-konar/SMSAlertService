@@ -22,9 +22,9 @@ document.addEventListener("DOMContentLoaded", function() {
         var icon = document.createElement("i");
         icon.classList.add("fa", "fa-trash");
 
-        var deleteKeywordButton = document.createElement("deleteKeywordButton");
+        var deleteKeywordButton = document.createElement("button");
+        deleteKeywordButton.classList.add("delete-keyword-btn", "red");
         deleteKeywordButton.setAttribute("id", `${keyword}`)
-        deleteKeywordButton.classList.add("btn", "btn-danger");
         deleteKeywordButton.appendChild(icon);
 
         var deleteKeywordButtonCell = document.createElement("td");
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     // Delete Keyword
-    var deleteKeywordButtons = table.querySelectorAll("deleteKeywordButton");
+    var deleteKeywordButtons = table.querySelectorAll(".delete-keyword-btn");
     for (var i = 0; i < deleteKeywordButtons.length; i++) {
         deleteKeywordButtons[i].addEventListener("click", function() {
             var keywordToDelete = this.id;

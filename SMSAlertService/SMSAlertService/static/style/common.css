@@ -226,7 +226,7 @@ body {
 .container {
     flex: 1;
     width: 100vw;
-    max-width: 1200px;
+    max-width: 1300px;
     min-height: 80vh;
     padding: 50px;
 }
@@ -259,6 +259,7 @@ body {
     justify-content: space-between;
     list-style: none;
     clear: both;
+    padding: 0;
 }
 
 .footer ul li {

@@ -2,67 +2,98 @@
 {% extends "base.html" %}
 {% block content %}
 <html>
+
 <head>
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <script src="../static/js/account.js"></script>
-    <script src="https://www.paypal.com/sdk/js?client-id={{ client_id }}&currency=USD&components=buttons&enable-funding=venmo&disable-funding=paylater"></script>
+    <script
+        src="https://www.paypal.com/sdk/js?client-id={{ client_id }}&currency=USD&components=buttons&enable-funding=venmo&disable-funding=paylater"></script>
     <script src="../static/js/paypalModal.js"></script>
     <script src="../static/js/paypalButtons.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <div class="container">
-    <div class="box-area billboard">
-        <h3>Welcome, {{ username }}!</h3>
-        <p><i>Thank you for using the SMS Alert Service</i></p>
-        <h3><i class="fa fa-envelope fa-2x"></i></h3></div>
-    <div class="info">
-        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-        <strong>Notice: </strong>Your username here should match your username on Reddit. If you need to change it,
-        <a class="info-link" href="/account/update"><u>click here</u>.</a>
+    <div class="content-block">
+        <p>Welcome, {{ username }}!</p>
+        <h3>Account Dashboard</h3>
+        <i class="fa fa-envelope fa-2x"></i>
     </div>
-    <div class="main">
-        <div class="box-area">
-            <form id="addKeywordForm">
-                <div class="form-group">
-                    <h5><label for="newKeyword" style="margin-top: 0%">Add Keywords:</label></h5>
-                    <input class="form-control input" id="newKeyword" name="newKeyword"
-                           placeholder="" required="required" type="text">
-                    <small class="form-text text-muted">When a new post contains a keyword, we'll
-                        send you an alert!</small><br/>
-                    <button class="btn btn-primary mini-container" type="button" id="addKeywordButton">Add Keyword</button>
-                </div>
-            </form>
-            <button class="btn btn-danger mini-container" id="deleteAllKeywordsButton">Delete All Keywords</button>
-            <br/>
-            <a class="link" href="/instructions">Click here to read tutorial</a>
+    <div class="blue notice">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        <p><strong>Notice: </strong>Your username here should match your username on Reddit. If you need to change it,
+            <a class="info-link" href="/account/update"><u>click here</u></a>.
+        </p>
+    </div>
+    <div class="info-center">
+        <div class="content-block info-item">
+            <p><strong>Buy Alerts here:</strong></p>
+            <button class="green" id="openPaypalModalButton"><span>Get Alerts</span></button>
         </div>
-        <div class="box-area">
-            <p><strong>Paypal Modal Window</strong></p>
-            <button class="button btn-primary" id="openPaypalModalButton">Open</button>
-        </div>
-        <div class="box-area">
+        <div class="content-block info-item">
             <p><strong>SMS Alerts:</strong></p>
             <h3>{{ message_count }}</h3>
         </div>
-        <div class="box-area">
-            <p><strong>Active Keywords:</strong></p>
-            <div id="keywords" data-keywords="{{ keywords }}">
-                <!-- Dynamic JS Table -->
+    </div>
+    <div class="content-block dashboard-item">
+        <form class="full-size-form" id="addKeywordForm">
+            <h5><label for="newKeyword">Add Keywords:</label></h5>
+            <input id="newKeyword" name="newKeyword" placeholder="" required="required" type="text">
+            <small class="form-text text-muted">When a new post contains a keyword, we'll
+                send you an alert!</small>
+            <button class="blue" type="button" id="addKeywordButton"><span>Add Keyword</span></button>
+        </form>
+        <a class="link" href="/instructions">Click here to read tutorial</a>
+    </div>
+    <div class="account-dashboard">
+        <div class="content-block dashboard-item">
+            <div class="content-container">
+                <h5>Active Keywords:</h5>
+                <div id="keywords" data-keywords="{{ keywords }}">
+                    <!-- Dynamic JS Table -->
+                </div>
+                <button class="red" id="deleteAllKeywordsButton"><span>Delete All Keywords</span></button>
             </div>
         </div>
-        <div class="box-area" style="display: none;">
-            <form action="/promo-code" method="POST">
-                <div class="form-group">
-                    <label for="promo-code"><strong>Promo Code:</strong></label>
-                    <input aria-describedby="keywordHelp" class="form-control input" id="promo-code"
-                           name="promo-code"
-                           placeholder="" required="required" type="text">
-                    <button class="button btn btn-primary mini-container" type="submit">Redeem</button>
-                </div>
-            </form>
+        <div class="content-block dashboard-item">
+            <div class="content-container">
+                <h5>Subreddits:</h5>
+                <ul class="subreddits">
+                    <li>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                        </label>r/GearTrade
+                    </li>
+                    <li>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                        </label>r/GunAccessoriesForSale
+                    </li>
+                    <li>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                        </label>r/KnifeSwap
+                    </li>
+                    <li>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                        </label>r/StuffForSale
+                    </li>
+                    <li>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider round"></span>
+                        </label>r/BuySellTrade
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
+
 </html>
 {% endblock %}
