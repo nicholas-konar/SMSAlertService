@@ -183,6 +183,18 @@ def delete_all_keywords(user_id):
     return user_records.update_one(query, value)
 
 
+def add_subreddit(user_id, subreddit):
+    query = {"_id": ObjectId(user_id)}
+    value = {"$push": {"Subreddits": subreddit}}
+    return user_records.update_one(query, value)
+
+
+def delete_subreddit(user_id, subreddit):
+    query = {"_id": ObjectId(user_id)}
+    value = {"$pull": {"Subreddits": subreddit}}
+    return user_records.update_one(query, value)
+
+
 def reset_password(user_id, hashed_pw):
     query = {"_id": ObjectId(user_id)}
     value = {"$set": {"Password": hashed_pw}}

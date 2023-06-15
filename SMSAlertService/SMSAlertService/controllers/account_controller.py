@@ -19,9 +19,11 @@ def account():
     user_id = session.get('user_id')
     user = DAO.get_user_by_id(user_id)
     keywords = user.get_keywords_json()
+    watched_subreddits = user.get_subreddits_json()
+    all_subreddits = DAO.get_subreddits()
     SANDBOX_CLIENT_ID = os.environ['PAYPAL_SANDBOX_CLIENT_ID']
     return render_template('account.html', message_count=user.units_left,
-                           keywords=keywords, username=user.username, current_phone=user.phonenumber, client_id=SANDBOX_CLIENT_ID)
+                           keywords=keywords, username=user.username, watched_subreddits=watched_subreddits, all_subreddits=all_subreddits, client_id=SANDBOX_CLIENT_ID)
 
 
 @account_bp.route("/account/login", methods=["POST"])
@@ -165,4 +167,25 @@ def delete_all_keywords():
     return jsonify({'Status': SUCCESS}) if success \
         else jsonify({'Status': FAIL})
 
+
+@account_bp.route("/account/subreddit/add", methods=["POST"])
+@protected
+def add_subreddit():
+    user_id = session.get('user_id')
+    user = DAO.get_user_by_id(user_id)
+    subreddit = markupsafe.escape(request.json['Subreddit'])
+    success = DAO.add_subreddit(user=user, subreddit=subreddit)
+    return jsonify({'Status': SUCCESS}) if success \
+        else jsonify({'Status': FAIL})
+
+
+@account_bp.route("/account/subreddit/delete", methods=["POST"])
+@protected
+def delete_subreddit():
+    user_id = session.get('user_id')
+    user = DAO.get_user_by_id(user_id)
+    subreddit = markupsafe.escape(request.json['Subreddit'])
+    success = DAO.delete_subreddit(user=user, subreddit=subreddit)
+    return jsonify({'Status': SUCCESS}) if success \
+        else jsonify({'Status': FAIL})
 

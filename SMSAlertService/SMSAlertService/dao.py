@@ -1,3 +1,4 @@
+import json
 from SMSAlertService import util, mongo, app
 from SMSAlertService.services.auth_service import AuthService
 from SMSAlertService.user import User
@@ -117,6 +118,22 @@ class DAO:
         return success
 
     @staticmethod
+    def add_subreddit(user, subreddit):
+        success = mongo.add_subreddit(user.id, subreddit).modified_count
+        info = f'{user.username} began watching r/{subreddit}.'
+        error = f'{user.username} failed to watch r/{subreddit}.'
+        app.logger.info(info) if success else app.logger.error(error)
+        return success
+
+    @staticmethod
+    def delete_subreddit(user, subreddit):
+        success = mongo.delete_subreddit(user.id, subreddit).modified_count
+        info = f'{user.username} unwatched r/{subreddit}.'
+        error = f'{user.username} failed to unwatch r/{subreddit}.'
+        app.logger.info(info) if success else app.logger.error(error)
+        return success
+
+    @staticmethod
     def block_user(user):
         success = mongo.block(user.id).modified_count
         info = f'{user.username}\'s account has been blocked.'
@@ -145,6 +162,12 @@ class DAO:
     @staticmethod
     def get_reddit_data():
         return mongo.get_reddit_data()
+
+    @staticmethod
+    def get_subreddits():
+        data = mongo.get_reddit_data()
+        subreddits = [key.replace('$', '') for key in data.keys()]
+        return json.dumps(subreddits)
 
     @staticmethod
     def update_post_id(post):

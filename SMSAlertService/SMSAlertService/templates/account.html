@@ -58,37 +58,8 @@
         <div class="content-block dashboard-item">
             <div class="content-container">
                 <h5>Subreddits:</h5>
-                <ul class="subreddits">
-                    <li>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider round"></span>
-                        </label>r/GearTrade
-                    </li>
-                    <li>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider round"></span>
-                        </label>r/GunAccessoriesForSale
-                    </li>
-                    <li>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider round"></span>
-                        </label>r/KnifeSwap
-                    </li>
-                    <li>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider round"></span>
-                        </label>r/StuffForSale
-                    </li>
-                    <li>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider round"></span>
-                        </label>r/BuySellTrade
-                    </li>
+                <ul class="subreddits" id="subreddits" data-watched-subreddits="{{ watched_subreddits }}" data-all-subreddits="{{ all_subreddits }}">
+                    <!-- Dynamic JS List -->
                 </ul>
             </div>
         </div>
