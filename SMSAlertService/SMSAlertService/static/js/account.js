@@ -15,6 +15,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     document.getElementById("keywords").appendChild(table);
 
+    const addKeywordButton = document.getElementById("addKeywordButton");
+    addKeywordButton.addEventListener("click", addKeyword);
+
+    const addKeywordForm = document.getElementById("addKeywordForm");
+    addKeywordForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        addKeyword();
+    });
+
+    var deleteAllKeywordsButton = document.getElementById("deleteAllKeywordsButton");
+    deleteAllKeywordsButton.addEventListener("click", function () {
+        deleteAllKeywords();
+    });
+
     function makeTableRow(keyword) {
         var keywordCell = document.createElement("td");
         keywordCell.innerText = keyword;
@@ -26,6 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
         deleteKeywordButton.classList.add("delete-keyword-btn", "red");
         deleteKeywordButton.setAttribute("id", `${keyword}`)
         deleteKeywordButton.appendChild(icon);
+        deleteKeywordButton.addEventListener("click", () => deleteKeyword(`${keyword}`));
 
         var deleteKeywordButtonCell = document.createElement("td");
         deleteKeywordButtonCell.appendChild(deleteKeywordButton);
@@ -37,16 +52,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         return tableRow
     }
-
-    // Add Keyword
-    const addKeywordButton = document.getElementById("addKeywordButton");
-    addKeywordButton.addEventListener("click", addKeyword);
-
-    const addKeywordForm = document.getElementById("addKeywordForm");
-    addKeywordForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-        addKeyword();
-    });
 
     function addKeyword() {
         const newKeyword = document.getElementById("newKeyword").value;
@@ -69,15 +74,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error(error));
     }
 
-    // Delete Keyword
-    var deleteKeywordButtons = table.querySelectorAll(".delete-keyword-btn");
-    for (var i = 0; i < deleteKeywordButtons.length; i++) {
-        deleteKeywordButtons[i].addEventListener("click", function () {
-            var keywordToDelete = this.id;
-            deleteKeyword(keywordToDelete);
-        });
-    }
-
     var deleteKeyword = function (keywordToDelete) {
         var rowId = `row-${keywordToDelete}`;
         var row = document.getElementById(`${rowId}`);
@@ -95,12 +91,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     };
-
-    // Delete All Keywords
-    var deleteAllKeywordsButton = document.getElementById("deleteAllKeywordsButton");
-    deleteAllKeywordsButton.addEventListener("click", function () {
-        deleteAllKeywords();
-    });
 
     function deleteAllKeywords() {
         $.ajax({
