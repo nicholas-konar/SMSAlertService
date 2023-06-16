@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var keywords = JSON.parse(keywordsAttribute);
 
     for (var i = keywords.length - 1; i >= 0; i--) {
-        tableRow = makeTableRow(keywords[i])
+        tableRow = makeTableRow(keywords[i]);
         table.appendChild(tableRow);
     }
     document.getElementById("keywords").appendChild(table);
