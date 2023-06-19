@@ -99,6 +99,28 @@
     margin: 5px 0px;
 }
 
+.modalBody {
+  text-align: center;
+}
+
+.checkout {
+  display: flex;
+  flex-direction: column;
+  margin: 25px 0px;
+}
+
+.checkout .checkout-item {
+  flex-direction: row;
+}
+
+.checkout h5 {
+  margin: 25px 0px;
+}
+
+.checkout input label{
+  display: flex;
+}
+
 .overlay {
   position: fixed;
   top: 0;

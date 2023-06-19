@@ -9,7 +9,6 @@ window.addEventListener("paypalModalOpenedEvent", function() {
     }
 
     function initPayPalButton() {
-        var itemOptions = document.querySelector("#smart-button-container #item-options");
         paypal.Buttons({
             style: {
                 shape: 'rect',
@@ -21,10 +20,12 @@ window.addEventListener("paypalModalOpenedEvent", function() {
 
                 var paypalContainer = document.getElementById('paypal-button-container');
                 var user_id = paypalContainer.getAttribute('data-user-id');
-                console.log('user_id = ' + user_id);
 
-                var selectedItemDescription = itemOptions.options[itemOptions.selectedIndex].getAttribute("value");
-                var selectedItemPrice = parseFloat(itemOptions.options[itemOptions.selectedIndex].getAttribute("price"));
+                var selectedItem = document.querySelector('input[name="option"]:checked');
+                var selectedItemDescription = selectedItem.getAttribute("value");
+                var selectedItemPrice = selectedItem.getAttribute("price");;
+
+                console.log(`value = ${selectedItemDescription} price = ${selectedItemPrice}`);
 
                 return actions.order.create({
                     purchase_units: [{
@@ -61,15 +62,21 @@ window.addEventListener("paypalModalOpenedEvent", function() {
                     // Full available details
                     console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
 
-                    // Show a success message within this page, e.g.
-                    const element = document.getElementById('paypal-button-container');
-                    element.innerHTML = '';
-                    element.innerHTML = '<h3>Order ID: ' + orderData.id + '</h3>';
-                    let unitSelection = orderData.purchase_units[0].items[0].name;
-                    let units = unitSelection.replace(" Alerts", "");
-                    let amount = orderData.purchase_units[0].amount.value;
+                    var thankYou = document.createElement("h3");
+                    thankYou.innerText = "Thank you for your purchase!";
 
-                    // Or go to another URL:  actions.redirect('thank_you.html');
+                    var message = document.createElement("p");
+                    message.innerText = "Your account will be updated shortly.";
+
+                    var orderNumber = document.createElement("h5");
+                    orderNumber.innerText = "Order ID: " + orderData.id;
+
+                    const modalBody = document.querySelector(".modalBody");
+                    modalBody.innerHTML = ""; // clear contents
+                    modalBody.style.padding = "50px 0px";
+                    modalBody.appendChild(thankYou);
+                    modalBody.appendChild(message);
+                    modalBody.appendChild(orderNumber);
                 });
             },
             onError: function(err) {
