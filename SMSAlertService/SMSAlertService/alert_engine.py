@@ -1,4 +1,3 @@
-from SMSAlertService import app
 from SMSAlertService.alert import Alert
 from SMSAlertService.dao import DAO
 from SMSAlertService.reddit import Reddit
@@ -10,7 +9,6 @@ class AlertEngine:
     @staticmethod
     def run():
         posts = Reddit.get_new_posts()
-        app.logger.debug(f'posts object = {posts}')
         alerts = AlertEngine.create_alerts_for_many(posts)
         AlertService.send_alerts(alerts)
         return alerts

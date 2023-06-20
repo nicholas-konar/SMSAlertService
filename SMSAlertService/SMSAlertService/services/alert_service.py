@@ -1,4 +1,4 @@
-from SMSAlertService import twilio
+from SMSAlertService import twilio, app
 from SMSAlertService.dao import DAO
 from SMSAlertService.resources.sms_templates import ORDER_CONFIRMATION_MSG, STANDARD_ALERT_MSG, OTP_MSG
 from SMSAlertService.services.auth_service import AuthService
@@ -16,6 +16,7 @@ class AlertService:
             )
             twilio_object = twilio.send_message(body=body, ph=alert.owner.phonenumber)
             DAO.save_alert_data(alert, twilio_object)
+            app.logger.info(f'Sent alert to {alert.owner.username} with SID {twilio_object.sid}')
 
     @staticmethod
     def send_otp(phonenumber):
