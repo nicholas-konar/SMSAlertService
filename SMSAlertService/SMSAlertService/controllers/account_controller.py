@@ -1,3 +1,4 @@
+import json
 import secrets
 import os
 import markupsafe
@@ -20,10 +21,16 @@ def account():
     user = DAO.get_user_by_id(user_id)
     keywords = user.get_keywords_json()
     watched_subreddits = user.get_subreddits_json()
-    all_subreddits = DAO.get_subreddits()
-    SANDBOX_CLIENT_ID = os.environ['PAYPAL_SANDBOX_CLIENT_ID']
-    return render_template('account.html', message_count=user.units_left,
-                           keywords=keywords, username=user.username, watched_subreddits=watched_subreddits, all_subreddits=all_subreddits, client_id=SANDBOX_CLIENT_ID)
+    all_subreddits = json.dumps(DAO.get_subreddits())
+    SANDBOX_PAYPAL_CLIENT_ID = os.environ['PAYPAL_SANDBOX_CLIENT_ID']
+    PAYPAL_CLIENT_ID = os.environ['PAYPAL_CLIENT_ID']
+    return render_template('account.html',
+                           username=user.username,
+                           message_count=user.units_left,
+                           keywords=keywords,
+                           watched_subreddits=watched_subreddits,
+                           all_subreddits=all_subreddits,
+                           client_id=SANDBOX_PAYPAL_CLIENT_ID) # TODO: make sure this is correct during prod deploy
 
 
 @account_bp.route("/account/login", methods=["POST"])

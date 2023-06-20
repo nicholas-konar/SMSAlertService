@@ -44,10 +44,9 @@ class DAO:
         return success
 
     @staticmethod
-    def save_alert_data(alert):
+    def save_alert_data(alert, twilio):
         timestamp = util.timestamp()
-        user_id = alert.owner.id
-        success = mongo.save_alert_data(user_id=user_id, twilio=alert.twilio, timestamp=timestamp)
+        success = mongo.save_alert_data(user_id=alert.owner.id, twilio=twilio, timestamp=timestamp)
         info = f'Updated alert records for {alert.owner.username}.'
         error = f'Failed to update alert records for {alert.owner.username}.'
         app.logger.info(info) if success else app.logger.error(error)
@@ -166,8 +165,7 @@ class DAO:
     @staticmethod
     def get_subreddits():
         data = mongo.get_reddit_data()
-        subreddits = [key.replace('$', '') for key in data.keys()]
-        return json.dumps(subreddits)
+        return [key.replace('$', '') for key in data.keys()]
 
     @staticmethod
     def update_post_id(post):

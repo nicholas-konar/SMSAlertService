@@ -12,11 +12,11 @@ messaging_service_sid = os.environ['TWILIO_MESSAGING_SERVICE_SID']
 def send_message(body: str, ph=None, admin: bool = False):
     client = Client(account_sid, auth_token)
     destination = os.environ['ADMIN_NUMBER'] if admin else ph
-    # message = client.messages.create(
-    #     body=body,
-    #     messaging_service_sid=messaging_service_sid,
-    #     to=destination
-    # )
-    message = None
-    app.logger.debug(f'Sent pretend message to {destination}. Admin = {admin} Body = {body}')
+    message = client.messages.create(
+        body=body,
+        messaging_service_sid=messaging_service_sid,
+        to=destination
+    )
+    # message = None
+    # app.logger.debug(f'Sent pretend message to {destination}. Admin = {admin} Body = {body}')
     return message

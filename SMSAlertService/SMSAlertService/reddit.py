@@ -2,7 +2,6 @@ import os
 import praw
 from SMSAlertService import app
 from SMSAlertService.dao import DAO
-from SMSAlertService.resources.config import SUBREDDITS
 
 reddit = praw.Reddit(
     client_id=os.environ['REDDIT_CLIENT_ID'],
@@ -12,20 +11,17 @@ reddit = praw.Reddit(
     password=os.environ['REDDIT_PASSWORD']
 )
 
-subreddits = SUBREDDITS
-
 
 class Reddit:
 
     @staticmethod
     def get_new_posts():
         reddit_data = DAO.get_reddit_data()
+        subreddits = DAO.get_subreddits()
         posts = []
         for subreddit in subreddits:
             post = Reddit.get_current_post(subreddit)
             previous_post_id = reddit_data[f'${subreddit}']['LastPostId']
-            app.logger.debug(f'Last known {subreddit} post id: {previous_post_id}')
-            app.logger.debug(f'Current {subreddit} post id: {post.id}')
 
             if post.id != previous_post_id and 'WTB' not in post.title.upper():  # todo: relocate WTS filter or make filter class
                 DAO.update_post_id(post)

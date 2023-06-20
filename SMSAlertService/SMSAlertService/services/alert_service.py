@@ -1,4 +1,5 @@
 from SMSAlertService import twilio
+from SMSAlertService.dao import DAO
 from SMSAlertService.resources.sms_templates import ORDER_CONFIRMATION_MSG, STANDARD_ALERT_MSG, OTP_MSG
 from SMSAlertService.services.auth_service import AuthService
 
@@ -13,8 +14,8 @@ class AlertService:
                 keywords=alert.keywords,
                 url=alert.url
             )
-            twilio.send_message(body=body, ph=alert.owner.phonenumber)
-            mongo.save_alert_data(alert)
+            twilio_object = twilio.send_message(body=body, ph=alert.owner.phonenumber)
+            DAO.save_alert_data(alert, twilio_object)
 
     @staticmethod
     def send_otp(phonenumber):
