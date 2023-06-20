@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", async function() {
         paypalModal.style.display = 'block';
         document.body.appendChild(overlay);
         window.dispatchEvent(paypalModalOpenedEvent);
-        console.log('dispatched event')
     }
 
     function closePaypalModal() {

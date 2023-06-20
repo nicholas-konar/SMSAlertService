@@ -1,5 +1,12 @@
 document.addEventListener("DOMContentLoaded", function() {
 
+    var loginButton = document.getElementById("loginButton");
+    loginButton.addEventListener('click', function() {
+        username = document.getElementById("usernameInputField").value;
+        password = document.getElementById("passwordInputField").value;
+        login(username, password);
+    })
+
     function login(username, password) {
         fetch("/account/login", {
             method: "POST",
@@ -21,11 +28,4 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .catch(error => console.error(error));
     }
-
-    var loginButton = document.getElementById("loginButton");
-    loginButton.addEventListener('click', function() {
-        username = document.getElementById("usernameInputField").value;
-        password = document.getElementById("passwordInputField").value;
-        login(username, password);
-    })
 });

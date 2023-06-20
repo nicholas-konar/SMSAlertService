@@ -103,12 +103,11 @@ def edit_info():
 def update_username():
     user_id = session.get('user_id')
     user = DAO.get_user_by_id(user_id)
-    old = user.username
-    new = markupsafe.escape(request.json['NewUsername'].upper())
-    available = DAO.get_credential_availability(username=new, ph=None)
+    new_username = markupsafe.escape(request.json['NewUsername'].upper())
+    available = DAO.get_credential_availability(username=new_username, ph=None)
     if available['Username']:
-        success = DAO.update_username(old, new)
-        session["username"] = new
+        success = DAO.update_username(user, new_username)
+        session["username"] = new_username
         return jsonify({'Status': SUCCESS}) if success \
             else jsonify({'Status': FAIL, 'Message': FAIL_MSG})
     else:

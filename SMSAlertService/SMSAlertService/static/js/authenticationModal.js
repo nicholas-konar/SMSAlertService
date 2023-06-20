@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     var sendCodeForm = document.getElementById("challengeForm");
     sendCodeButton.addEventListener("click", submitSendCodeForm);
     sendCodeForm.addEventListener("submit", function(event) {
-        console.log('sendCodeForm has been submitted.')
         event.preventDefault();
         submitSendCodeForm();
     });
@@ -68,7 +67,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         var sendCodeButton = document.getElementById("sendCodeButton");
         sendCodeButton.setAttribute('flowType', flowType);
-        
+
         var resendCodeButton = document.getElementById("resendCodeButton");
         resendCodeButton.setAttribute('flowType', flowType);
         challengeModal.style.display = "block";

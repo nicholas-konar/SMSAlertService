@@ -146,13 +146,12 @@ document.addEventListener("DOMContentLoaded", function () {
     var watchedSubreddits = JSON.parse(watchedSubredditsJson);
 
     for (var i = 0; i < watchedSubreddits.length; i++) {
-        console.log(`presetting r/${watchedSubreddits[i]}`)
         var toggleSwitch = document.getElementById(watchedSubreddits[i]);
         toggleSwitch.checked = true;
 
     }
 
-    // Toggle Events
+    // Toggle Subs
     document.querySelectorAll(".switch input").forEach(function (toggleSwitch) {
         toggleSwitch.addEventListener("change", (event) => {
             var subreddit = event.target.id

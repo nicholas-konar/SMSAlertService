@@ -1,52 +1,35 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
-{% block title %}Edit Info{% endblock %}
+{% block title %}SMS Alert Service{% endblock %}
 
 {% block content %}
-
 <html>
+
 <head>
+    <link href="../static/style/style.css" rel="stylesheet">
+    <script src="../static/js/accountUpdate.js"></script>
     <meta content="width=device-width, initial-scale=1" name="viewport">
 </head>
 
-<body>
 <div class="container">
-    <div class="box-area billboard">
-        <h3>Edit Account Details<br/><i class="fa fa-envelope fa-2x"></i></h3>
-    </div>
-    {% if success %}
-    <p class="success">Your username has been updated successfully.</p>
-    {% endif %}
-    {% if failed %}
-    <p class="alert">Sorry, that username is taken. If you need help, please contact <strong>support@smsalertservice.com</strong></p>
-    {% endif %}
-    <div class="main">
-        <div class="box-area">
-            <form action="/update-username" class="mini-form" method="POST">
-                <h5><label for="NewUsername">Update Username</label></h5>
-                <input aria-describedby="usernameHelp" class="form-control input" id="NewUsername" name="newusername"
-                       placeholder="New Username">
-                <button class="button btn-primary" type="submit">Submit</button>
-            </form>
-            <br/><br/>
-            <h5>Update Phone Number</h5>
-            <p>If you need to change your phone number, <br/>please contact <strong>support@smsalertservice.com</strong>
-            </p>
-        </div>
-    </div>
-    <div class="sidebar">
-        <div class="box-area">
-            <p><strong>Username:</strong></p>
+    <div class="content-block full-size-form-container">
+        <h4>Edit Account Details</h4>
+        <form class="full-size-form">
+            <p class="status-message" id="editInfoStatusMessage"><!-- Dynamic JS Status Message --></p>
+            <h5><label for="NewUsername">Update Username</label></h5>
             <p>"{{ username }}"</p>
-        </div>
-    </div>
-    <div class="sidebar">
-        <div class="box-area">
-            <p><strong>Phone Number:</strong></p>
-            <p>{{ current_phone }}</p>
-        </div>
+            <input id="newUsernameField" name="newusername" placeholder="New Username">
+            <button id="updateUsernameButton" class="blue" type="button"><span>Submit</span></button>
+        </form>
+        <br/><br/>
+        <form class="full-size-form">
+        <h5>Update Phone Number</h5>
+        <p>{{ current_phone }}</p>
+        <p>If you need to change your phone number, <br />please contact
+            <strong>support@smsalertservice.com</strong>
+        </p></form>
     </div>
 </div>
-</body>
+
 </html>
 {% endblock %}

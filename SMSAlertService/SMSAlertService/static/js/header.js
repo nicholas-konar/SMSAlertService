@@ -13,13 +13,11 @@ document.addEventListener("DOMContentLoaded", function() {
     closeMobileMenuIcon.addEventListener('click', closeMobileMenu);
 
     function openMobileMenu() {
-        console.log('open menu');
         mobileMenu.classList.add('open');
         addOverlay();
     }
 
     function closeMobileMenu() {
-        console.log('close menu');
         mobileMenu.classList.remove('open');
         removeOverlay();
     }

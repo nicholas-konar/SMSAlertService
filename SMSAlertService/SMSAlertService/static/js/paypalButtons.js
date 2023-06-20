@@ -25,8 +25,6 @@ window.addEventListener("paypalModalOpenedEvent", function() {
                 var selectedItemDescription = selectedItem.getAttribute("value");
                 var selectedItemPrice = selectedItem.getAttribute("price");;
 
-                console.log(`value = ${selectedItemDescription} price = ${selectedItemPrice}`);
-
                 return actions.order.create({
                     purchase_units: [{
                         custom_id: user_id,
@@ -59,9 +57,6 @@ window.addEventListener("paypalModalOpenedEvent", function() {
             },
             onApprove: function(data, actions) {
                 return actions.order.capture().then(function(orderData) {
-                    // Full available details
-                    console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-
                     var thankYou = document.createElement("h3");
                     thankYou.innerText = "Thank you for your purchase!";
 
