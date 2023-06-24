@@ -10,6 +10,7 @@ from SMSAlertService.decorators import protected
 from SMSAlertService.resources.config import SUCCESS, FAIL, MAX_LOGIN_ATTEMPTS, BLOCKED
 from SMSAlertService.resources.screen_templates import INVALID_LOGIN_MSG, BLOCKED_MSG, PW_RESET_FAIL_MSG, \
     PW_RESET_SUCCESS_MSG, USERNAME_TAKEN_MSG, FAIL_MSG, CREATE_ACCOUNT_FAIL_MSG
+from SMSAlertService.services.alert_service import AlertService
 
 account_bp = Blueprint('account_controller', __name__)
 
@@ -80,7 +81,6 @@ def create():
         username = markupsafe.escape(request.json['Username'])
         ph = markupsafe.escape(request.json['PhoneNumber'])
         pw = markupsafe.escape(request.json['Password'])
-        verified = markupsafe.escape(request.json['Verified'])
 
         token = secrets.token_hex(16)
         insertion = DAO.create_account(username=username.upper(),
@@ -93,6 +93,7 @@ def create():
             session['token'] = token
             resp = jsonify({'Status': SUCCESS})
             resp.set_cookie('sms_alert_service_login', value=token, secure=True, httponly=True)
+            AlertService.send_admin(f'{username} created an account.')
             return resp
         else:
             return jsonify({'Status': FAIL, 'Message': CREATE_ACCOUNT_FAIL_MSG})

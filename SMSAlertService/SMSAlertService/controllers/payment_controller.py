@@ -78,7 +78,7 @@ def paypal_webhook():
                                         create_time=create_time)
             if success:
                 alert_service.send_order_confirmation(user=user, order_description=order_description)
-                alert_service.send_admin(f'{user.username} purchased {order_description}')
+                alert_service.send_admin(f'{user.username} purchased {order_description} for {gross}!')
                 app.logger.info(f'Notified {user.username} that their order was filled.')
 
             else:
