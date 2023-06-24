@@ -213,9 +213,9 @@ def update_username(user_id, new_username):
     return user_records.update_one(query, value)
 
 
-def get_reddit_data():
+def get_subreddits():
     document = app_records.find_one({"Document": "REDDIT"})
-    return document["SubReddits"]
+    return document["Subreddits"]
 
 
 def get_distinct_subreddit_names():
@@ -223,17 +223,16 @@ def get_distinct_subreddit_names():
 
 
 def update_post_id(subreddit, post_id):
-    query = {"Document": "REDDIT"}
+    query = {f"Subreddits.Subreddit": subreddit}
     value = {"$set": {
-        f"SubReddits.${subreddit}": {
-            "LastPostId": post_id
-        }}}
+        "Subreddits.$.LastPostId": post_id
+    }}
     return app_records.update_one(query, value, upsert=True)
 
-# def add_field_to_all_users():
-#     app.logger.info(f'adding field to all users')
-#     users = get_user_data()
-#     for user in users:
-#         query = {"Username": user["Username"]}
-#         value = {"$set": {"Blocked": False}}
-#         user_records.update_one(query, value)
+def add_field_to_all_users():
+    app.logger.info(f'adding field to all users')
+    users = get_user_data()
+    for user in users:
+        query = {"Username": user["Username"]}
+        value = {"$set": {"Blocked": False}}
+        user_records.update_one(query, value)

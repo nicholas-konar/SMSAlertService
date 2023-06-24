@@ -1,3 +1,4 @@
+import json
 import os
 import praw
 from SMSAlertService import app
@@ -16,17 +17,17 @@ class Reddit:
 
     @staticmethod
     def get_new_posts():
-        reddit_data = DAO.get_reddit_data()
         subreddits = DAO.get_subreddits()
         posts = []
         for subreddit in subreddits:
-            post = Reddit.get_current_post(subreddit)
-            previous_post_id = reddit_data[f'${subreddit}']['LastPostId']
+            post = Reddit.get_current_post(subreddit['Subreddit'])
+            previous_post_id = subreddit['LastPostId']
 
             if post.id != previous_post_id and 'WTB' not in post.title.upper():  # todo: relocate WTS filter or make filter class
                 DAO.update_post_id(post)
                 posts.append(post)
-                app.logger.info(f'New post in r/{subreddit}: {post.id}')
+                app.logger.info(f'New post in r/{subreddit["Subreddit"]}: {post.id}')
+
         return posts
 
     @staticmethod

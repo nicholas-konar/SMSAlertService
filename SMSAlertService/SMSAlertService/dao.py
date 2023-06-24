@@ -159,13 +159,8 @@ class DAO:
         return success
 
     @staticmethod
-    def get_reddit_data():
-        return mongo.get_reddit_data()
-
-    @staticmethod
     def get_subreddits():
-        data = mongo.get_reddit_data()
-        return [key.replace('$', '') for key in data.keys()]
+        return mongo.get_subreddits()
 
     @staticmethod
     def update_post_id(post):

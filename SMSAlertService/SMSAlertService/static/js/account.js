@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var allSubreddits = JSON.parse(allSubredditsJson);
 
     for(var i = 0; i < allSubreddits.length; i++) {
-        var li = makeListItem(allSubreddits[i]);
+        var li = makeListItem(allSubreddits[i].Subreddit);
         subredditsList.appendChild(li);
     }
 
@@ -148,7 +148,6 @@ document.addEventListener("DOMContentLoaded", function () {
     for (var i = 0; i < watchedSubreddits.length; i++) {
         var toggleSwitch = document.getElementById(watchedSubreddits[i]);
         toggleSwitch.checked = true;
-
     }
 
     // Toggle Subs
