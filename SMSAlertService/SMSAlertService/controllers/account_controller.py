@@ -17,13 +17,16 @@ account_bp = Blueprint('account_controller', __name__)
 @account_bp.route("/account", methods=["GET"])
 @protected
 def account():
+    """ If a subreddit is ever removed from the "REDDIT" mongo doc, it will break the UI
+    for users who were watching it, unless it is also removed from all watch lists."""
+
     user_id = session.get('user_id')
     user = DAO.get_user_by_id(user_id)
     keywords = user.get_keywords_json()
     watched_subreddits = user.get_subreddits_json()
     all_subreddits = json.dumps(DAO.get_subreddits())
-    PAYPAL_CLIENT_ID = os.environ['PAYPAL_SANDBOX_CLIENT_ID']
-    # PAYPAL_CLIENT_ID = os.environ['PAYPAL_CLIENT_ID']
+    # PAYPAL_CLIENT_ID = os.environ['PAYPAL_SANDBOX_CLIENT_ID']
+    PAYPAL_CLIENT_ID = os.environ['PAYPAL_CLIENT_ID']
     return render_template('account.html',
                            username=user.username,
                            message_count=user.units_left,
@@ -83,7 +86,7 @@ def create():
         insertion = DAO.create_account(username=username.upper(),
                                        phonenumber=ph,
                                        password=pw,
-                                       verified=verified,
+                                       verified=True,
                                        cookie=token)
         if insertion.acknowledged:
             session['user_id'] = str(insertion.inserted_id)

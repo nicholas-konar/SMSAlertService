@@ -313,7 +313,21 @@ td:nth-child(even) {
   color: black;
 }
 
-label[for="consentCheckBox"] {
+.checkbox-container {
+  display: flex;
+  align-items: left;
+  margin-right: auto;
+}
+
+.checkbox-container input {
+  padding: 0;
+  margin: 0 5px;
+}
+
+.checkbox-container label {
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
   display: inline;
   color: grey;
 }

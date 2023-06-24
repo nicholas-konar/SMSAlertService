@@ -41,13 +41,14 @@ document.addEventListener("DOMContentLoaded", function() {
         var username = document.getElementById("usernameInputField").value;
         var ph = document.getElementById("phoneNumberInputField").value;
         var pw = document.getElementById("passwordInputField").value;
-        var consent = document.getElementById("consentCheckBox");
-        if (validateForm(username, ph, pw, consent)) {
+        var consentSMS = document.getElementById("consentCheckBox");
+        var consentCookies = document.getElementById("cookiesCheckBox");
+        if (validateForm(username, ph, pw, consentSMS, consentCookies)) {
             verifyCredentials(username, ph);
         }
     })
 
-    function validateForm(username, ph, pw, consent) {
+    function validateForm(username, ph, pw, consentSMS, consentCookies) {
         const regex = /^\d{10}$/;
         if (username.length <= 3 || username.length >= 24) {
             createAccountStatusMessage.innerHTML = "Please enter a valid username.";
@@ -61,8 +62,12 @@ document.addEventListener("DOMContentLoaded", function() {
             createAccountStatusMessage.innerHTML = "Your password must be at least 8 characters long.";
             createAccountStatusMessage.classList.add("red");
             return false;
-        } else if (!consent.checked) {
-            createAccountStatusMessage.innerHTML = "Please check the consent box to continue.";
+        } else if (!consentSMS.checked) {
+            createAccountStatusMessage.innerHTML = "Please check the consent boxes to continue.";
+            createAccountStatusMessage.classList.add("red");
+            return false;
+        } else if (!consentCookies.checked) {
+            createAccountStatusMessage.innerHTML = "Please check the consent boxes to continue.";
             createAccountStatusMessage.classList.add("red");
             return false;
         } else {

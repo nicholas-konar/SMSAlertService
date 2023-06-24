@@ -4,6 +4,7 @@
 
 {% block content %}
 <html>
+
 <head>
     <link href="static/style/style.css" rel="stylesheet">
     <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -19,22 +20,23 @@
             <label for="usernameInputField">Reddit Username</label>
             <input id="usernameInputField" name="usernameInputField" required="required">
             <label for="phoneNumberInputField">Phone Number</label>
-            <input id="phoneNumberInputField"
-                   name="phoneNumberInputField"
-                   pattern="[0-9]{10}"
-                   placeholder="No spaces or dashes"
-                   required="required"
-                   type="tel">
+            <input id="phoneNumberInputField" name="phoneNumberInputField" pattern="[0-9]{10}"
+                placeholder="No spaces or dashes" required="required" type="tel">
             <label for="passwordInputField">Password</label>
             <input id="passwordInputField" name="passwordInputField" required="required" type="password">
-            <div class="checkbox-container"><br/>
+            <div class="checkbox-container">
                 <input id="consentCheckBox" name="consentCheckBox" required="required" type="checkbox">
                 <label for="consentCheckBox">I consent to receiving communications via text from the SMS Alert
                     Service.</label>
+            </div>
+            <div class="checkbox-container">
+                <input id="cookiesCheckBox" name="cookiesCheckBox" required="required" type="checkbox">
+                <label for="cookiesCheckBox">I consent to cookies.</label>
             </div>
             <button class="green" id="createAccountButton" type="submit"><span>Create Account</span></button>
         </form>
     </div>
 </div>
+
 </html>
 {% endblock %}
