@@ -114,7 +114,6 @@ document.addEventListener("DOMContentLoaded", function () {
     var subredditsList = document.getElementById("subreddits");
     var allSubredditsJson = subredditsList.getAttribute("data-all-subreddits");
     var allSubreddits = JSON.parse(allSubredditsJson);
-    console.log(allSubreddits)
 
     for(var i = 0; i < allSubreddits.length; i++) {
         var li = makeListItem(allSubreddits[i]);
