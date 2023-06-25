@@ -17,7 +17,7 @@ class Reddit:
 
     @staticmethod
     def get_new_posts():
-        subreddits = DAO.get_subreddits()
+        subreddits = DAO.get_reddit_data()
         posts = []
         for subreddit in subreddits:
             post = Reddit.get_current_post(subreddit['Subreddit'])

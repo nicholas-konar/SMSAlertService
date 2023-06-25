@@ -159,8 +159,14 @@ class DAO:
         return success
 
     @staticmethod
-    def get_subreddits():
-        return mongo.get_subreddits()
+    def get_reddit_data():
+        return mongo.get_subreddit_data()
+
+    @staticmethod
+    def get_subreddit_names():
+        subreddit_names = [ obj['Subreddit'] for obj in mongo.get_subreddit_data() ]
+        subreddit_names.sort()
+        return subreddit_names
 
     @staticmethod
     def update_post_id(post):

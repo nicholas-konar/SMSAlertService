@@ -213,7 +213,7 @@ def update_username(user_id, new_username):
     return user_records.update_one(query, value)
 
 
-def get_subreddits():
+def get_subreddit_data():
     document = app_records.find_one({"Document": "REDDIT"})
     return document["Subreddits"]
 
@@ -229,10 +229,3 @@ def update_post_id(subreddit, post_id):
     }}
     return app_records.update_one(query, value, upsert=True)
 
-def add_field_to_all_users():
-    app.logger.info(f'adding field to all users')
-    users = get_user_data()
-    for user in users:
-        query = {"Username": user["Username"]}
-        value = {"$set": {"Blocked": False}}
-        user_records.update_one(query, value)

@@ -25,7 +25,7 @@ def account():
     user = DAO.get_user_by_id(user_id)
     keywords = user.get_keywords_json()
     watched_subreddits = user.get_subreddits_json()
-    all_subreddits = json.dumps(DAO.get_subreddits())
+    all_subreddits = json.dumps(DAO.get_subreddit_names())
     # PAYPAL_CLIENT_ID = os.environ['PAYPAL_SANDBOX_CLIENT_ID']
     PAYPAL_CLIENT_ID = os.environ['PAYPAL_CLIENT_ID']
     return render_template('account.html',
