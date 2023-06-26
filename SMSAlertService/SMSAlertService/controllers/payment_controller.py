@@ -1,9 +1,8 @@
 import re
 from flask import Blueprint, request, render_template, make_response
 from bson import Decimal128
-
+from SMSAlertService.services.alert_service import AlertService
 from SMSAlertService import app, paypal
-from SMSAlertService.services import alert_service
 from SMSAlertService.dao import DAO
 
 payment_bp = Blueprint('payment_controller', __name__)
@@ -40,6 +39,7 @@ def paypal_webhook():
             return make_response('OK', 200)
 
         else:
+            app.logger.info(f'Authenticated order #{order_id}.')
 
             # Customer data
             payer = order_details['payer']
@@ -62,7 +62,6 @@ def paypal_webhook():
 
             # Process order
             user = DAO.get_user_by_id(user_id)
-            app.logger.info(f'Confirmed order #{order_id}: {user.username} purchased {units_purchased} units for {gross} USD!')
 
             success = DAO.fulfill_order(user=user,
                                         payer_id=payer_id,
@@ -77,12 +76,11 @@ def paypal_webhook():
                                         email=email,
                                         create_time=create_time)
             if success:
-                alert_service.send_order_confirmation(user=user, order_description=order_description)
-                alert_service.send_admin(f'{user.username} purchased {order_description} for {gross}!')
-                app.logger.info(f'Notified {user.username} that their order was filled.')
+                AlertService.send_order_confirmation(user=user, order_description=order_description)
+                AlertService.send_admin(f'{user.username} purchased {order_description} for {gross}.')
 
             else:
-                alert_service.send_admin(f'Failed to fill order #{order_id} for {user.username} in database.')
+                AlertService.send_admin(f'Failed to fill order #{order_id} for {user.username} in database.')
                 app.logger.error(f'Alerted ADMIN to order fulfillment failure.')
 
             return make_response('OK', 200)

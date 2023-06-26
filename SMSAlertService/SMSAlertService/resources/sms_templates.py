@@ -4,4 +4,4 @@ STANDARD_ALERT_MSG = '(www.smsalertservice.com)\n\nr/{subreddit}: {keywords}\n\n
 
 OTP_MSG = 'Your SMS Alert Service verification code is {otp}.'
 
-ORDER_CONFIRMATION_MSG = '{order_description} have been added to your account. Thank you for using the SMS Alert Service.'
+ORDER_CONFIRMATION_MSG = '{order_description} have been added to your account! Thank you for using the SMS Alert Service.'

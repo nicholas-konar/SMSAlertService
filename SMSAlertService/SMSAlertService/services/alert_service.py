@@ -29,7 +29,8 @@ class AlertService:
     @staticmethod
     def send_order_confirmation(user, order_description):
         body = ORDER_CONFIRMATION_MSG.format(order_description=order_description)
-        twilio.send_message(body=body, ph=user.phonenumber)
+        message = twilio.send_message(body=body, ph=user.phonenumber)
+        app.logger.info(f'Notified {user.username} that their order was filled. SID: {message.sid}')
 
     @staticmethod
     def send_admin(body):
