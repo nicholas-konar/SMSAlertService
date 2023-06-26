@@ -22,7 +22,7 @@ def get_access_token():
         'grant_type': 'client_credentials'
     }
 
-    response = requests.post('https://api.sandbox.paypal.com/v1/oauth2/token', headers=headers, data=payload)
+    response = requests.post('https://api.paypal.com/v1/oauth2/token', headers=headers, data=payload)
     access_token = response.json()['access_token']
     return access_token
 
@@ -33,7 +33,7 @@ def get_order_details(access_token, order_id):
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json"
     }
-    response = requests.get(f"https://api.sandbox.paypal.com/v2/checkout/orders/{order_id}", headers=headers)
+    response = requests.get(f"https://api.paypal.com/v2/checkout/orders/{order_id}", headers=headers)
     return response.json()
 
 
