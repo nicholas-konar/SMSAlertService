@@ -1,5 +1,4 @@
 import os
-
 from twilio.rest import Client
 from SMSAlertService import app
 
@@ -16,5 +15,5 @@ def send_message(body: str, ph=None, admin: bool = False):
         messaging_service_sid=messaging_service_sid,
         to=destination
     )
-    app.logger.debug(f'Sent pretend message to {destination}. Admin = {admin} Body = {body}')
+    app.logger.debug(f'Message sent to {destination} with SID: {message.sid}')
     return message
