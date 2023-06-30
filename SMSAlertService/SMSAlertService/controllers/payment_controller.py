@@ -62,19 +62,21 @@ def paypal_webhook():
 
             # Process order
             user = DAO.get_user_by_id(user_id)
+            success = DAO.fulfill_order(
+                user=user,
+                payer_id=payer_id,
+                order_id=order_id,
+                transaction_id=transaction_id,
+                units_purchased=int(units_purchased),
+                gross=Decimal128(gross),
+                paypal_fee=Decimal128(paypal_fee),
+                net=Decimal128(net),
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                create_time=create_time
+            )
 
-            success = DAO.fulfill_order(user=user,
-                                        payer_id=payer_id,
-                                        order_id=order_id,
-                                        transaction_id=transaction_id,
-                                        units_purchased=int(units_purchased),
-                                        gross=Decimal128(gross),
-                                        paypal_fee=Decimal128(paypal_fee),
-                                        net=Decimal128(net),
-                                        first_name=first_name,
-                                        last_name=last_name,
-                                        email=email,
-                                        create_time=create_time)
             if success:
                 AlertService.send_order_confirmation(user=user, order_description=order_description)
                 AlertService.send_admin(f'{user.username} purchased {order_description} for {gross}.')

@@ -14,7 +14,6 @@ class AlertService:
                 keywords=alert.keywords,
                 url=alert.url
             )
-            # app.logger.debug(f'Sent mock alert to {alert.owner.username} KEYWORDS = {alert.keywords}')
             twilio_object = twilio.send_message(body=body, ph=alert.owner.phonenumber)
             DAO.save_alert_data(alert, twilio_object)
             app.logger.info(f'Sent alert to {alert.owner.username} with SID {twilio_object.sid}')

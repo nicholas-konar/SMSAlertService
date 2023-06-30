@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", function () {
     var table = document.createElement("table");
     table.setAttribute("id", "keywordTable");
 
-    // todo: get keywords from API
     var keywordsElement = document.getElementById("keywords");
     var keywordsAttribute = keywordsElement.getAttribute("data-keywords");
     var keywords = JSON.parse(keywordsAttribute);
@@ -104,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         table.deleteRow(0);
                     }
                 } else {
-                    // todo: handle error
+                    // TODO: return a failure status to user
                 }
             }
         })

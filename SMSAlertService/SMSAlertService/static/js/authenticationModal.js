@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     var modalHtml = await modalHtmlResponse.text();
 
     var modalContainer = document.createElement("div");
+
     document.body.appendChild(modalContainer);
     modalContainer.innerHTML = modalHtml;
 
@@ -20,6 +21,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     var sendCodeButton = document.getElementById("sendCodeButton");
     var sendCodeForm = document.getElementById("challengeForm");
+
     sendCodeButton.addEventListener("click", submitSendCodeForm);
     sendCodeForm.addEventListener("submit", function(event) {
         event.preventDefault();
@@ -28,12 +30,12 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     var validateButton = document.getElementById('validateButton');
     var validateCodeForm = document.getElementById("validateForm");
-    // flowType must be passed in these functions, thus requiring code duplication below (if user hits enter) because if it's added inside the validateCode function SOMETHING does not yet exist. This requires more debugging, but Twilio is blocking links and I need to move on from this and get the big update pushed out.
-    // Potentially similar situation on Resend Code flow.
+
     validateButton.addEventListener('click', function() {
         var flowType = validateButton.getAttribute('flowType');
         validateCode(flowType);
     });
+
     validateCodeForm.addEventListener('submit', function(event) {
         event.preventDefault();
         var flowType = validateButton.getAttribute('flowType');
@@ -124,6 +126,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         })
     };
 
+    // Resend Code
     var resendCodeButton = document.getElementById("resendCodeButton");
     resendCodeButton.addEventListener("click", function() {
         var flowType = sendCodeButton.getAttribute('flowType');
@@ -155,6 +158,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         })
     };
 
+    // Validate
     function validateCode(flowType) {
         var verificationCodeField = document.getElementById("verificationCode");
         var verificationCode = verificationCodeField.value;

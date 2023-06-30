@@ -8,12 +8,7 @@ from SMSAlertService.dao import DAO
 def admin(func):
     @wraps(func)
     def decorated_function(*args, **kwargs):
-        # todo: refine and test
-        session_cookie = request.cookies.get('sms_alert_service_login')
-        admin_user = DAO.get_user_by_username('ADMIN')
-
-        if admin_user.cookie != session_cookie or session_cookie is None:
-            return redirect(url_for('site_nav_controller.login'))
+        # TODO: admin authentication
         return func(*args, **kwargs)
     return decorated_function
 

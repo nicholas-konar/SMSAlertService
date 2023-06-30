@@ -1,6 +1,5 @@
 import secrets
 import string
-import bcrypt
 import pytz
 from datetime import datetime
 from SMSAlertService import app
@@ -19,10 +18,6 @@ def generate_code(prefix):
     code = prefix.upper() + "-" + code.upper()
     app.logger.info(f"Generated random string '{code}'")
     return code
-
-
-def calculate_issued_codes(codes):
-    return len(codes)
 
 
 def filter_active_codes(codes):

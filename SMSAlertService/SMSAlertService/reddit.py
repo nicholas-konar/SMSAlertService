@@ -23,7 +23,7 @@ class Reddit:
             post = Reddit.get_current_post(subreddit['Subreddit'])
             previous_post_id = subreddit['LastPostId']
 
-            if post.id != previous_post_id and 'WTB' not in post.title.upper():  # todo: relocate WTS filter or make filter class
+            if post.id != previous_post_id and 'WTB' not in post.title.upper():
                 DAO.update_post_id(post)
                 posts.append(post)
                 app.logger.info(f'New post in r/{subreddit["Subreddit"]}: {post.id}')

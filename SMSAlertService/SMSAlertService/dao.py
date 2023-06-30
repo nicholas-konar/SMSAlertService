@@ -25,19 +25,22 @@ class DAO:
     def fulfill_order(user, payer_id, order_id, transaction_id, units_purchased, gross, paypal_fee,
                       net, first_name, last_name, email, create_time):
         timestamp = util.timestamp()
-        success = mongo.fulfill_order(user_id=user.id,
-                                      payer_id=payer_id,
-                                      order_id=order_id,
-                                      transaction_id=transaction_id,
-                                      units_purchased=units_purchased,
-                                      gross=gross,
-                                      paypal_fee=paypal_fee,
-                                      net=net,
-                                      first_name=first_name,
-                                      last_name=last_name,
-                                      email=email,
-                                      create_time=create_time,
-                                      timestamp=timestamp).modified_count
+        success = mongo.fulfill_order(
+            user_id=user.id,
+            payer_id=payer_id,
+            order_id=order_id,
+            transaction_id=transaction_id,
+            units_purchased=units_purchased,
+            gross=gross,
+            paypal_fee=paypal_fee,
+            net=net,
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            create_time=create_time,
+            timestamp=timestamp
+            ).modified_count
+
         info = f'Order {order_id} fulfilled.'
         error = f'ORDER {order_id} FULFILLMENT FAILURE!'
         app.logger.info(info) if success else app.logger.error(error)

@@ -2,14 +2,6 @@ import os
 import pymongo
 from bson import ObjectId, Decimal128
 
-# NO VPN
-# In compass, enter regular_url value from below, then select default tls and upload mongodb.pem in the second file upload box (nothing in the first)
-
-# to get the certs to work, in the command line say:
-# python3 -m pip install certifi
-# export SSL_CERT_FILE=$(python3 -c "import certifi; print(certifi.where())")
-from SMSAlertService import app
-
 url = os.environ['MONGO_URL']
 client = pymongo.MongoClient(url, tls=True, waitQueueTimeoutMS=1000)
 
