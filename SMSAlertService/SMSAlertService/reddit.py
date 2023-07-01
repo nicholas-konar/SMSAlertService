@@ -23,7 +23,7 @@ class Reddit:
             post = Reddit.get_current_post(subreddit['Subreddit'])
             previous_post_id = subreddit['LastPostId']
 
-            if post.id != previous_post_id and 'WTB' not in post.title.upper():
+            if post and post.id != previous_post_id and 'WTB' not in post.title.upper():
                 DAO.update_post_id(post)
                 posts.append(post)
                 app.logger.info(f'New post in r/{subreddit["Subreddit"]}: {post.id}')
@@ -32,4 +32,7 @@ class Reddit:
 
     @staticmethod
     def get_current_post(subreddit):
-        return [post for post in reddit.subreddit(subreddit).new(limit=1)][0]
+        try:
+            return [post for post in reddit.subreddit(subreddit).new(limit=1)][0]
+        except IndexError:
+            return None
