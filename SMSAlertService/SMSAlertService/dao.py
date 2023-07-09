@@ -39,7 +39,7 @@ class DAO:
             email=email,
             create_time=create_time,
             timestamp=timestamp
-            ).modified_count
+        ).modified_count
 
         info = f'Order {order_id} fulfilled.'
         error = f'ORDER {order_id} FULFILLMENT FAILURE!'
