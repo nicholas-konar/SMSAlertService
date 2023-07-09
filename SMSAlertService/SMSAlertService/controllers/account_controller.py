@@ -79,6 +79,9 @@ def create():
         ph = markupsafe.escape(request.json['PhoneNumber'])
         pw = markupsafe.escape(request.json['Password'])
 
+        if DAO.get_user_by_username(username):
+            return jsonify({'Status': SUCCESS})
+
         token = secrets.token_hex(16)
         insertion = DAO.create_account(username=username.upper(),
                                        phonenumber=ph,
