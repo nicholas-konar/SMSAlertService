@@ -13,5 +13,6 @@ def send_message(body: str, ph=None, admin: bool = False):
     return client.messages.create(
         body=body,
         messaging_service_sid=messaging_service_sid,
-        to=destination
+        to=destination,
+        status_callback='https://www.smsalertservice.com/alert/status'
     )

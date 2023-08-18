@@ -88,22 +88,43 @@ def fulfill_order(
     return user_records.update_one(query, value)
 
 
-def save_alert_data(user_id, twilio, timestamp):
+def create_alert_record(user_id, twilio_object, timestamp, msg_type):
     query = {"_id": ObjectId(user_id)}
     value = {
         "$inc": {
-            "Units": -1,
             "UnitsSent": 1
         },
         "$push": {
             "TwilioRecords": {
+                "MessageSID": twilio_object.sid,
                 "Date": timestamp,
-                "Type": "Alert",
-                "Body": twilio.body,
-                "Status": twilio.status,
-                "ErrorMessage": twilio.error_message,
-                "SID": twilio.sid
+                "Type": msg_type,
+                "Status": twilio_object.status,
+                "Body": twilio_object.body
             }
+        }
+    }
+    return user_records.update_one(query, value)
+
+
+def update_alert_status(sid, status):
+    query = {'TwilioRecords.MessageSID': sid}
+    value = {
+        "$set": {
+            "TwilioRecords.$.Status": status
+        }
+    }
+    return user_records.update_one(query, value)
+
+
+def confirm_delivery(sid):
+    query = {'TwilioRecords.MessageSID': sid}
+    value = {
+        "$inc": {
+            "Units": -1
+        },
+        "$set": {
+            "TwilioRecords.$.Status": "Delivered"
         }
     }
     return user_records.update_one(query, value)

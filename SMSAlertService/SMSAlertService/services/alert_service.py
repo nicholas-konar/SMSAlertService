@@ -15,14 +15,15 @@ class AlertService:
                 url=alert.url
             )
             twilio_object = twilio.send_message(body=body, ph=alert.owner.phonenumber)
-            DAO.save_alert_data(alert, twilio_object)
             app.logger.info(f'Sent alert to {alert.owner.username} with SID {twilio_object.sid}')
+            DAO.create_alert_record(alert.owner.id, twilio_object)
 
     @staticmethod
     def send_otp(phonenumber):
         otp = AuthService.generate_otp()
         body = OTP_MSG.format(otp=otp)
-        twilio.send_message(body=body, ph=phonenumber)
+        twilio_object = twilio.send_message(body=body, ph=phonenumber)
+        app.logger.info(f'Sent OTP to {phonenumber} with SID {twilio_object.sid}')
         return AuthService.hash_data(otp)
 
     @staticmethod
@@ -34,3 +35,10 @@ class AlertService:
     @staticmethod
     def send_admin(body):
         twilio.send_message(body=body, admin=True)
+
+    @staticmethod
+    def process_status_update(sid, status):
+        if status.upper() == 'DELIVERED':
+            DAO.confirm_delivery(sid)
+        else:
+            DAO.update_alert_status(sid, status)

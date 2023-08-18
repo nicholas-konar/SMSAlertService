@@ -1,4 +1,3 @@
-import json
 from SMSAlertService import util, mongo, app
 from SMSAlertService.services.auth_service import AuthService
 from SMSAlertService.user import User
@@ -10,12 +9,14 @@ class DAO:
     def create_account(username, password, phonenumber, verified, cookie):
         timestamp = util.timestamp()
         pw_hash = AuthService.hash_data(password)
-        insertion = mongo.create_user(username=username,
-                                      pw_hash=pw_hash,
-                                      phonenumber=phonenumber,
-                                      verified=verified,
-                                      timestamp=timestamp,
-                                      cookie=cookie)
+        insertion = mongo.create_user(
+            username=username,
+            pw_hash=pw_hash,
+            phonenumber=phonenumber,
+            verified=verified,
+            timestamp=timestamp,
+            cookie=cookie
+        )
         info = f'Created new account for {username}.'
         error = f'Failed to create new account for {username}.'
         app.logger.info(info) if insertion.acknowledged else app.logger.error(error)
@@ -40,18 +41,38 @@ class DAO:
             create_time=create_time,
             timestamp=timestamp
         ).modified_count
-
         info = f'Order {order_id} fulfilled.'
         error = f'ORDER {order_id} FULFILLMENT FAILURE!'
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
-    def save_alert_data(alert, twilio):
+    def create_alert_record(user_id, twilio_object):
         timestamp = util.timestamp()
-        success = mongo.save_alert_data(user_id=alert.owner.id, twilio=twilio, timestamp=timestamp)
-        info = f'Updated alert records for {alert.owner.username}.'
-        error = f'Failed to update alert records for {alert.owner.username}.'
+        success = mongo.create_alert_record(
+            user_id=user_id,
+            twilio_object=twilio_object,
+            timestamp=timestamp,
+            msg_type='Alert'
+        ).acknowledged
+        info = f'Created new alert record for SID {twilio_object.sid}.'
+        error = f'Failed to create new alert record for SID {twilio_object.sid}.'
+        app.logger.info(info) if success else app.logger.error(error)
+        return success
+
+    @staticmethod
+    def update_alert_status(sid, status):
+        success = mongo.update_alert_status(sid=sid, status=status).modified_count
+        info = f'Updated SID {sid} status to {status}.'
+        error = f'Failed to update SID {sid} status to {status}.'
+        app.logger.info(info) if success else app.logger.error(error)
+        return success
+
+    @staticmethod
+    def confirm_delivery(sid):
+        success = mongo.confirm_delivery(sid=sid).modified_count
+        info = f'Message {sid} confirmed delivered.'
+        error = f'Error confirming message {sid} delivered.'
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
@@ -167,7 +188,7 @@ class DAO:
 
     @staticmethod
     def get_subreddit_names():
-        subreddit_names = [ obj['Subreddit'] for obj in mongo.get_subreddit_data() ]
+        subreddit_names = [obj['Subreddit'] for obj in mongo.get_subreddit_data()]
         subreddit_names.sort()
         return subreddit_names
 
