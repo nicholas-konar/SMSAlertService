@@ -1,7 +1,7 @@
 # SMS Alert Service
-### previously available at www.smsalertservice.com (no longer in service)
+Previously available at www.smsalertservice.com (no longer in service)
 
- ### How to use
+ ## How to use
  1: Create an account
  
  2: Confirm your phone number
@@ -10,4 +10,6 @@
  
  4: Select which subreddits you'd like to monitor
  
- 5: Add as many keywords as you like. When a post contains a keyword, you'll get notified via SMS within seconds!
+ 5: Add as many keywords as you'd like
+ 
+ 6: When a post contains a keyword, you'll be notified via SMS within seconds!
