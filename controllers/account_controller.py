@@ -1,3 +1,4 @@
+import app
 import json
 import secrets
 import os
@@ -13,11 +14,10 @@ from flask import (
     jsonify,
     abort,
 )
-from SMSAlertService import app
-from SMSAlertService.dao import DAO
-from SMSAlertService.decorators import protected
-from SMSAlertService.resources.config import SUCCESS, FAIL, MAX_LOGIN_ATTEMPTS, BLOCKED
-from SMSAlertService.resources.screen_templates import (
+from dao import DAO
+from decorators import protected
+from resources.config import SUCCESS, FAIL, MAX_LOGIN_ATTEMPTS, BLOCKED
+from resources.screen_templates import (
     INVALID_LOGIN_MSG,
     BLOCKED_MSG,
     PW_RESET_FAIL_MSG,
@@ -26,7 +26,7 @@ from SMSAlertService.resources.screen_templates import (
     FAIL_MSG,
     CREATE_ACCOUNT_FAIL_MSG,
 )
-from SMSAlertService.services.alert_service import AlertService
+from services.alert_service import AlertService
 
 account_bp = Blueprint("account_controller", __name__)
 
