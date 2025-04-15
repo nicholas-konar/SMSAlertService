@@ -6,13 +6,13 @@ app = Flask(__name__)
 load_dotenv()
 
 import os
-from SMSAlertService.resources.config import SESSION_TIMEOUT
-from SMSAlertService.controllers.account_controller import account_bp
-from SMSAlertService.controllers.admin_controller import admin_bp
-from SMSAlertService.controllers.alert_controller import alert_bp
-from SMSAlertService.controllers.auth_controller import auth_bp
-from SMSAlertService.controllers.payment_controller import payment_bp
-from SMSAlertService.controllers.site_nav_controller import site_nav_bp
+from resources.config import SESSION_TIMEOUT
+from controllers.account_controller import account_bp
+from controllers.admin_controller import admin_bp
+from controllers.alert_controller import alert_bp
+from controllers.auth_controller import auth_bp
+from controllers.payment_controller import payment_bp
+from controllers.site_nav_controller import site_nav_bp
 
 app.register_blueprint(account_bp)
 app.register_blueprint(admin_bp)
