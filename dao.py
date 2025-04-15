@@ -15,16 +15,28 @@ class DAO:
             phonenumber=phonenumber,
             verified=verified,
             timestamp=timestamp,
-            cookie=cookie
+            cookie=cookie,
         )
-        info = f'Created new account for {username}.'
-        error = f'Failed to create new account for {username}.'
+        info = f"Created new account for {username}."
+        error = f"Failed to create new account for {username}."
         app.logger.info(info) if insertion.acknowledged else app.logger.error(error)
         return insertion
 
     @staticmethod
-    def fulfill_order(user, payer_id, order_id, transaction_id, units_purchased, gross, paypal_fee,
-                      net, first_name, last_name, email, create_time):
+    def fulfill_order(
+        user,
+        payer_id,
+        order_id,
+        transaction_id,
+        units_purchased,
+        gross,
+        paypal_fee,
+        net,
+        first_name,
+        last_name,
+        email,
+        create_time,
+    ):
         timestamp = util.timestamp()
         success = mongo.fulfill_order(
             user_id=user.id,
@@ -39,10 +51,10 @@ class DAO:
             last_name=last_name,
             email=email,
             create_time=create_time,
-            timestamp=timestamp
+            timestamp=timestamp,
         ).modified_count
-        info = f'Order {order_id} fulfilled.'
-        error = f'ORDER {order_id} FULFILLMENT FAILURE!'
+        info = f"Order {order_id} fulfilled."
+        error = f"ORDER {order_id} FULFILLMENT FAILURE!"
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
@@ -53,34 +65,34 @@ class DAO:
             user_id=user_id,
             twilio_object=twilio_object,
             timestamp=timestamp,
-            msg_type='Alert'
+            msg_type="Alert",
         ).acknowledged
-        info = f'Created new alert record for SID {twilio_object.sid}.'
-        error = f'Failed to create new alert record for SID {twilio_object.sid}.'
+        info = f"Created new alert record for SID {twilio_object.sid}."
+        error = f"Failed to create new alert record for SID {twilio_object.sid}."
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
     def update_alert_status(sid, status):
         success = mongo.update_alert_status(sid=sid, status=status).modified_count
-        info = f'Updated SID {sid} status to {status}.'
-        error = f'Failed to update SID {sid} status to {status}.'
+        info = f"Updated SID {sid} status to {status}."
+        error = f"Failed to update SID {sid} status to {status}."
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
     def confirm_delivery(sid):
         success = mongo.confirm_delivery(sid=sid).modified_count
-        info = f'Message {sid} confirmed delivered.'
-        error = f'Error confirming message {sid} delivered.'
+        info = f"Message {sid} confirmed delivered."
+        error = f"Error confirming message {sid} delivered."
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
     def set_cookie(user, cookie):
         success = mongo.set_cookie(user.id, cookie).modified_count
-        info = f'Set cookie for user {user.username}.'
-        error = f'Failed to set cookie for user {user.username}.'
+        info = f"Set cookie for user {user.username}."
+        error = f"Failed to set cookie for user {user.username}."
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
@@ -119,57 +131,59 @@ class DAO:
         if keyword in user.keywords:
             return False
         success = mongo.add_keyword(user.id, keyword).modified_count
-        info = f'{user.username} added keyword {keyword}.'
-        error = f'{user.username} failed to add keyword {keyword}.'
+        info = f"{user.username} added keyword {keyword}."
+        error = f"{user.username} failed to add keyword {keyword}."
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
     def delete_keyword(user, keyword):
         success = mongo.delete_keyword(user.id, keyword).modified_count
-        info = f'{user.username} deleted keyword {keyword}.'
-        error = f'{user.username} failed to delete keyword {keyword}.'
+        info = f"{user.username} deleted keyword {keyword}."
+        error = f"{user.username} failed to delete keyword {keyword}."
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
     def delete_all_keywords(user):
         success = mongo.delete_all_keywords(user.id).modified_count
-        info = f'{user.username} deleted all keywords.'
-        error = f'{user.username} failed to delete all keywords.'
+        info = f"{user.username} deleted all keywords."
+        error = f"{user.username} failed to delete all keywords."
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
     def add_subreddit(user, subreddit):
         success = mongo.add_subreddit(user.id, subreddit).modified_count
-        info = f'{user.username} began watching r/{subreddit}.'
-        error = f'{user.username} failed to watch r/{subreddit}.'
+        info = f"{user.username} began watching r/{subreddit}."
+        error = f"{user.username} failed to watch r/{subreddit}."
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
     def delete_subreddit(user, subreddit):
         success = mongo.delete_subreddit(user.id, subreddit).modified_count
-        info = f'{user.username} unwatched r/{subreddit}.'
-        error = f'{user.username} failed to unwatch r/{subreddit}.'
+        info = f"{user.username} unwatched r/{subreddit}."
+        error = f"{user.username} failed to unwatch r/{subreddit}."
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
     def block_user(user):
         success = mongo.block(user.id).modified_count
-        info = f'{user.username}\'s account has been blocked.'
-        error = f'Failed to block {user.username}\'s account. Current blocked status: {user.blocked}.'
+        info = f"{user.username}'s account has been blocked."
+        error = f"Failed to block {user.username}'s account. Current blocked status: {user.blocked}."
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
     @staticmethod
     def reset_password(user, new_password):
         hashed_pw = AuthService.hash_data(new_password)
-        success = mongo.reset_password(user_id=user.id, hashed_pw=hashed_pw).modified_count
-        info = f'{user.username} reset their password.'
-        error = f'Failed to reset password for {user.username}.'
+        success = mongo.reset_password(
+            user_id=user.id, hashed_pw=hashed_pw
+        ).modified_count
+        info = f"{user.username} reset their password."
+        error = f"Failed to reset password for {user.username}."
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
@@ -177,8 +191,8 @@ class DAO:
     def update_username(user, new):
         old = user.username
         success = mongo.update_username(user.id, new).modified_count
-        info = f'{old} changed their username to {new}.'
-        error = f'{old} failed to update username to {new}.'
+        info = f"{old} changed their username to {new}."
+        error = f"{old} failed to update username to {new}."
         app.logger.info(info) if success else app.logger.error(error)
         return success
 
@@ -188,7 +202,7 @@ class DAO:
 
     @staticmethod
     def get_subreddit_names():
-        subreddit_names = [obj['Subreddit'] for obj in mongo.get_subreddit_data()]
+        subreddit_names = [obj["Subreddit"] for obj in mongo.get_subreddit_data()]
         subreddit_names.sort()
         return subreddit_names
 
@@ -207,7 +221,7 @@ class DAO:
         username_availability = not mongo.get_user_data_by_username(username.upper())
         ph_availability = not mongo.get_user_data_by_phonenumber(ph)
         credential_availability = {
-            'Username': username_availability,
-            'PhoneNumber': ph_availability
+            "Username": username_availability,
+            "PhoneNumber": ph_availability,
         }
         return credential_availability
