@@ -1,7 +1,7 @@
-from SMSAlertService.alert import Alert
-from SMSAlertService.dao import DAO
-from SMSAlertService.reddit import Reddit
-from SMSAlertService.services.alert_service import AlertService
+from alert import Alert
+from dao import DAO
+from reddit import Reddit
+from services.alert_service import AlertService
 
 
 class AlertEngine:
@@ -26,13 +26,13 @@ class AlertEngine:
     @staticmethod
     def create_alerts_for_one(post, users):
         return [
-            Alert(
-                user=user,
-                post=post,
-                keywords=keywords
-            )
+            Alert(user=user, post=post, keywords=keywords)
             for user in users
-            if (keywords := AlertEngine.find_keywords_in_post(keywords=user.keywords, post=post))
+            if (
+                keywords := AlertEngine.find_keywords_in_post(
+                    keywords=user.keywords, post=post
+                )
+            )
         ]
 
     @staticmethod
@@ -49,8 +49,8 @@ class AlertEngine:
         body = post.selftext.lower()
         keyword = keyword.lower()
         return (
-                keyword in title or
-                keyword in body or
-                keyword + "s" in title or
-                keyword + "s" in body
+            keyword in title
+            or keyword in body
+            or keyword + "s" in title
+            or keyword + "s" in body
         )
