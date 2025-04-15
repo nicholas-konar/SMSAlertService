@@ -1,8 +1,8 @@
 from functools import wraps
 from flask import session, request, redirect, url_for
 
-from SMSAlertService import app
-from SMSAlertService.dao import DAO
+import app
+from dao import DAO
 
 
 def admin(func):

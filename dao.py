@@ -1,6 +1,6 @@
-from SMSAlertService import util, mongo, app
-from SMSAlertService.services.auth_service import AuthService
-from SMSAlertService.user import User
+import util, mongo, app
+from services.auth_service import AuthService
+from user import User
 
 
 class DAO:
