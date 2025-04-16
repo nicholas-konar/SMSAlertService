@@ -11,11 +11,13 @@ click==8.1.8
 dnspython==2.7.0
 Flask==3.1.0
 frozenlist==1.5.0
+gunicorn==23.0.0
 idna==3.10
 itsdangerous==2.2.0
 Jinja2==3.1.6
 MarkupSafe==3.0.2
 multidict==6.4.3
+packaging==24.2
 praw==7.8.1
 prawcore==2.4.0
 propcache==0.3.1
